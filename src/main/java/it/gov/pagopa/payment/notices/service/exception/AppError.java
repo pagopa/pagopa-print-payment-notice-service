@@ -12,6 +12,8 @@ public enum AppError {
   FORBIDDEN(HttpStatus.FORBIDDEN, "Forbidden", "This method is forbidden"),
   RESPONSE_NOT_READABLE(HttpStatus.BAD_GATEWAY, "Response Not Readable", "The response body is not readable"),
 
+  TEMPLATE_NOT_FOUND(HttpStatus.NOT_FOUND, "Template Not Found",
+          "Required template has not been found on the storage"),
   FOLDER_NOT_AVAILABLE(HttpStatus.NOT_FOUND, "Folder Not Available",
           "Required folder is either missing or not available to the requirer"),
 
