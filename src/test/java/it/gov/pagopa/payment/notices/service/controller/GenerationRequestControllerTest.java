@@ -41,9 +41,8 @@ class GenerationRequestControllerTest {
     void getFolderStatusShouldReturnDataOn200() throws Exception {
         when(noticeGenerationService.getFolderStatus(any(),any()))
                 .thenReturn(GetGenerationRequestStatusResource.builder().build());
-        String url = "/notices/folder/{folder_id}/status";
+        String url = "/notices/folder/folderTest/status";
         mvc.perform(get(url)
-                        .param("folderId", "folderTest")
                         .header("X-User-Id", "userTest")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -57,9 +56,8 @@ class GenerationRequestControllerTest {
                 .thenAnswer(item -> {
                     throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
                 });
-        String url = "/notices/folder/{folder_id}/status";
+        String url = "/notices/folder/folderTest/status";
         mvc.perform(get(url)
-                        .param("folderId", "folderTest")
                         .header("X-User-Id", "userTest")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -73,9 +71,8 @@ class GenerationRequestControllerTest {
                 .thenAnswer(item -> {
                     throw new RuntimeException();
                 });
-        String url = "/notices/folder/{folder_id}/status";
+        String url = "/notices/folder/folderTest/status";
         mvc.perform(get(url)
-                        .param("folderId", "folderTest")
                         .header("X-User-Id", "userTest")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is5xxServerError())
