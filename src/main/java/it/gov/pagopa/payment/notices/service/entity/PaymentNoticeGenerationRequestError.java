@@ -13,14 +13,14 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "folderId")
-@Document("payment_notice_generation_error")
+@Document("payment_notice_generation_request_error")
 @ToString
 public class PaymentNoticeGenerationRequestError {
 
     @Id
     private String id;
 
-    @Indexed(unique = false)
+    @Indexed()
     private String folderId;
 
     @CreatedDate

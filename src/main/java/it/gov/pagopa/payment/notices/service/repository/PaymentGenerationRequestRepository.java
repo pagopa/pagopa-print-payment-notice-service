@@ -9,8 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface PaymentGenerationRequestRepository extends MongoRepository<PaymentNoticeGenerationRequest, String> {
-
-    @Query(value = "{ id : ?0, userId: ?1 }", fields = "{}")
-    Optional<PaymentNoticeGenerationRequest> findAllowedPaymentNoticeRequest(String folderId, String userId);
-
+    Optional<PaymentNoticeGenerationRequest> findByIdAndUserId(String folderId, String userId);
 }

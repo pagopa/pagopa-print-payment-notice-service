@@ -29,7 +29,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     @Override
     public GetGenerationRequestStatusResource getFolderStatus(String folderId, String userId) {
         Optional<PaymentNoticeGenerationRequest> paymentNoticeGenerationRequestOptional =
-                paymentGenerationRequestRepository.findAllowedPaymentNoticeRequest(folderId, userId);
+                paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId);
         if (paymentNoticeGenerationRequestOptional.isEmpty()) {
             throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
         }
