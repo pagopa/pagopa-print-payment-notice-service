@@ -13,6 +13,9 @@ import it.gov.pagopa.payment.notices.service.model.ProblemJson;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
 import it.gov.pagopa.payment.notices.service.service.NoticeTemplateService;
 import it.gov.pagopa.payment.notices.service.util.OpenApiTableMetadata;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,12 +23,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 /**
  * Rest Controller containing APIs for generation request management
  */
 @RestController
 @RequestMapping(value = "/notices/templates", produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
+@Slf4j
 @Tag(name = "Notice Templates APIs")
 public class NoticeTemplatesController {
 
@@ -67,12 +76,28 @@ public class NoticeTemplatesController {
     })
     @GetMapping("/{template_id}")
     public ResponseEntity<Resource> getTemplate(
-            @Parameter(description = "templateId to use for retrieval") @PathVariable("template_id") String templateId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + templateId + ".zip\"");
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .headers(headers)
-                .body(noticeTemplateService.getTemplate(templateId));
+            @Parameter(description = "templateId to use for retrieval")
+            @PathVariable("template_id") String templateId) {
+        File file = noticeTemplateService.getTemplate(templateId);
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + templateId + ".zip\"");
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .headers(headers)
+                    .body(new ByteArrayResource(inputStream.readAllBytes()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            clearTempDirectory(file.toPath().getParent());
+        }
+    }
+
+    private void clearTempDirectory(java.nio.file.Path workingDirPath) {
+        try {
+            FileUtils.deleteDirectory(workingDirPath.toFile());
+        } catch (IOException e) {
+            log.warn("Unable to clear working directory: {}", workingDirPath, e);
+        }
     }
 
 }
