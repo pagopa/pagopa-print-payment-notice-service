@@ -2,7 +2,7 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "print-payment-notices-service",
-    "description" : "PagoPA Print Payment Notices Service",
+    "description" : "@project.description@",
     "termsOfService" : "https://www.pagopa.gov.it/",
     "version" : "0.0.0"
   },

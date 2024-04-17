@@ -11,7 +11,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ByteArrayResource;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,20 +35,22 @@ class NoticeTemplateServiceImplTest {
     }
 
     @Test
-    public void shouldReturnDataOnValidTemplateRequest() {
-        ByteArrayResource resource = new ByteArrayResource("".getBytes());
+    public void shouldReturnDataOnValidTemplateRequest() throws IOException {
+        File tempDirectory = Files.createTempDirectory("test").toFile();
+        File file = Files.createTempFile(tempDirectory.toPath(), "test", ".zip").toFile();
+        when(noticeTemplateService.getTemplate(any()))
+                .thenReturn(file);
         when(noticeTemplateStorageClient.getTemplate("validTemplate"))
-                .thenReturn(resource);
-        ByteArrayResource returnedResource = assertDoesNotThrow(
+                .thenReturn(file);
+        File returnedResource = assertDoesNotThrow(
                 () -> noticeTemplateService.getTemplate("validTemplate"));
         assertNotNull(returnedResource);
-        assertEquals(resource, returnedResource);
+        assertEquals(file, returnedResource);
         verify(noticeTemplateStorageClient).getTemplate("validTemplate");
     }
 
     @Test
     public void shouldReturnKOOnException() {
-        ByteArrayResource resource = new ByteArrayResource("".getBytes());
         when(noticeTemplateStorageClient.getTemplate("missingTemplate"))
                 .thenThrow(new AppException(AppError.TEMPLATE_NOT_FOUND));
         AppException appException = assertThrows(AppException.class,
@@ -54,7 +61,6 @@ class NoticeTemplateServiceImplTest {
 
     @Test
     public void shouldReturnMissingStorageClientOnException() {
-        ByteArrayResource resource = new ByteArrayResource("".getBytes());
         when(noticeTemplateStorageClient.getTemplate("missingClient"))
                 .thenThrow(new AppException(AppError.TEMPLATE_CLIENT_UNAVAILABLE));
         AppException appException = assertThrows(AppException.class,
