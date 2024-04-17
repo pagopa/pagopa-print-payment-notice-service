@@ -16,6 +16,9 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.File;
+import java.nio.file.Files;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,8 +43,10 @@ class NoticeTemplatesControllerTest {
 
     @Test
     void getTemplateShouldReturnDataOn200() throws Exception {
+        File tempDirectory = Files.createTempDirectory("test").toFile();
+        File file = Files.createTempFile(tempDirectory.toPath(), "test", ".zip").toFile();
         when(noticeTemplateService.getTemplate(any()))
-                .thenReturn(new ByteArrayResource("".getBytes()));
+                .thenReturn(file);
         String url = "/notices/templates/validTemplate";
         mvc.perform(get(url)
                         .contentType(MediaType.APPLICATION_JSON))

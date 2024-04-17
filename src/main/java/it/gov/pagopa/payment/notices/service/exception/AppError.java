@@ -17,6 +17,8 @@ public enum AppError {
   TEMPLATE_CLIENT_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE,
           "Template Storage Not Available",
           "Template Storage client temporarily not available"),
+  TEMPLATE_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Template Client Error",
+          "Template Client encountered an error"),
 
   FOLDER_NOT_AVAILABLE(HttpStatus.NOT_FOUND, "Folder Not Available",
           "Required folder is either missing or not available to the requirer"),
