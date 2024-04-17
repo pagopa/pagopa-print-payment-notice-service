@@ -14,6 +14,10 @@ public enum AppError {
 
   TEMPLATE_NOT_FOUND(HttpStatus.NOT_FOUND, "Template Not Found",
           "Required template has not been found on the storage"),
+  TEMPLATE_CLIENT_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE,
+          "Template Storage Not Available",
+          "Template Storage client temporarily not available"),
+
   FOLDER_NOT_AVAILABLE(HttpStatus.NOT_FOUND, "Folder Not Available",
           "Required folder is either missing or not available to the requirer"),
 

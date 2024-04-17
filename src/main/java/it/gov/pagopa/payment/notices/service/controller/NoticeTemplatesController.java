@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
  * Rest Controller containing APIs for generation request management
  */
 @RestController
-@RequestMapping(value = "/notices/template", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/notices/templates", produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
 @Tag(name = "Notice Templates APIs")
 public class NoticeTemplatesController {
