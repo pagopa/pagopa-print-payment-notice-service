@@ -55,7 +55,7 @@ public class NoticeTemplatesController {
     @OpenApiTableMetadata(readWriteIntense = OpenApiTableMetadata.ReadWrite.READ,
             cacheable = true, external = true, internal = false)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK",
+            @ApiResponse(responseCode = "200", description = "Return template data",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE
                     )),
             @ApiResponse(responseCode = "400", description = "Bad Request",

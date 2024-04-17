@@ -58,6 +58,13 @@ public class NoticeTemplateStorageClient {
         }
     }
 
+    /**
+     * Retrieve the template from the Blob Storage
+     *
+     * @param templateId the name of the file to be retrieved
+     * @return the File with the reference to the downloaded template
+     * @throws AppException thrown for error when retrieving the template
+     */
     public File getTemplate(String templateId) {
 
         if (blobContainerClient == null) {
