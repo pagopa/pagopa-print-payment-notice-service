@@ -81,7 +81,7 @@ microservice-chart:
     OTEL_EXPORTER_OTLP_HEADERS: elastic-apm-secret-token
     MONGODB_CONNECTION_URI: 'notices_mongo_connection_string'
   keyvault:
-    name: "pagopa-d-printit-kv"
+    name: "pagopa-d-itn-printit-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
   nodeSelector: { }
   tolerations: [ ]
