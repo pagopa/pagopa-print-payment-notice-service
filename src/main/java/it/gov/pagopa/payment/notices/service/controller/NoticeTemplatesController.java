@@ -96,7 +96,7 @@ public class NoticeTemplatesController {
         try {
             FileUtils.deleteDirectory(workingDirPath.toFile());
         } catch (IOException e) {
-            log.warn("Unable to clear working directory: {}", workingDirPath, e);
+            log.warn("Unable to clear working directory", e);
         }
     }
 
