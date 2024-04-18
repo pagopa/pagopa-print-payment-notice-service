@@ -5,11 +5,16 @@ import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationReque
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
 import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
+import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
+import it.gov.pagopa.payment.notices.service.model.enums.PaymentGenerationRequestStatus;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestErrorRepository;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestRepository;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +47,32 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                 .processedNotices(paymentNoticeGenerationRequest.getItems())
                 .noticesInError(errors)
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public String generateMassive(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId) {
+
+        try {
+            String folderId =
+                    paymentGenerationRequestRepository.save(
+                    PaymentNoticeGenerationRequest.builder()
+                        .status(PaymentGenerationRequestStatus.INSERTED)
+                        .createdAt(Instant.now())
+                        .items(new ArrayList<>())
+                        .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
+                        .requestDate(Instant.now())
+                    .build()).getId();
+
+
+
+            return folderId;
+
+        } catch (Exception e) {
+            //TODO: Error
+            throw new AppException(AppError.UNKNOWN);
+        }
+
     }
 
 }
