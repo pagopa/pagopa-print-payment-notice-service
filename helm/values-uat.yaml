@@ -1,9 +1,9 @@
 microservice-chart:
-  namespace: "your-namespace" # TODO: set your AKS namespace
+  namespace: "printit"
   nameOverride: ""
   fullnameOverride: ""
   image:
-    repository: ghcr.io/pagopa/yourname # TODO
+    repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
     tag: "0.0.0"
     pullPolicy: Always
   livenessProbe:
@@ -42,6 +42,10 @@ microservice-chart:
       type: RuntimeDefault
   securityContext:
     allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - all
   resources:
     requests:
       memory: "512Mi"
