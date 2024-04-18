@@ -11,10 +11,7 @@ import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Component;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -70,10 +67,7 @@ public class NoticeTemplateStorageClient {
         if (blobContainerClient == null) {
             throw new AppException(AppError.TEMPLATE_CLIENT_UNAVAILABLE);
         }
-
         String filePath = createTempDirectory(templateId);
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
             blobContainerClient.getBlobClient(templateId.concat("/template.zip"))
                     .downloadToFileWithResponse(
@@ -101,13 +95,17 @@ public class NoticeTemplateStorageClient {
     private String createTempDirectory(String templateId) {
         try {
             File workingDirectory = createWorkingDirectory();
-            Path tempDirectory = Files.createTempDirectory(workingDirectory.toPath(), "receipt-pdf-service");
-            return tempDirectory.toAbsolutePath() + "/" + templateId + ".zip";
+            Path tempDirectory = Files.createTempDirectory(workingDirectory.toPath(), "notice-generation-service")
+                    .normalize().toAbsolutePath();
+            Path filePath = tempDirectory.resolve(templateId + ".zip").normalize().toAbsolutePath();
+            if (!filePath.startsWith(tempDirectory + File.separator)) {
+                throw new IllegalArgumentException("Invalid filename");
+            }
+            return filePath.toFile().getAbsolutePath();
         } catch (IOException e) {
             throw new AppException(AppError.TEMPLATE_CLIENT_ERROR);
         }
     }
-
 
     private File createWorkingDirectory() throws IOException {
         File workingDirectory = new File("temp");
