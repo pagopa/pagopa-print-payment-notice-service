@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
+import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
 import it.gov.pagopa.payment.notices.service.model.ProblemJson;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
 import it.gov.pagopa.payment.notices.service.util.OpenApiTableMetadata;
@@ -68,6 +69,14 @@ public class GenerationRequestController {
             @Parameter(description = "folderId to use for request status retrieval") @PathVariable("folder_id") String folderId,
             @Parameter(description = "userId to use for request status retrieval") @RequestHeader("X-User-Id") String userId) {
         return noticeGenerationService.getFolderStatus(folderId, userId);
+    }
+
+
+    @PostMapping("/generate-massive")
+    public String getFolderStatus(
+            @RequestBody NoticeGenerationMassiveRequest noticeGenerationMassiveRequest,
+            @Parameter(description = "userId to use for request status retrieval") @RequestHeader("X-User-Id") String userId) {
+        return noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, userId);
     }
 
 }

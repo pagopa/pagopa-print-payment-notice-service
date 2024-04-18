@@ -1,6 +1,7 @@
 package it.gov.pagopa.payment.notices.service.service;
 
 import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
+import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
 
 /**
  * Service interface for notice generation
@@ -17,4 +18,5 @@ public interface NoticeGenerationService {
      */
     GetGenerationRequestStatusResource getFolderStatus(String folderId, String userId);
 
+    String generateMassive(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId);
 }
