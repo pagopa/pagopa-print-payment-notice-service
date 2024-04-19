@@ -13,6 +13,8 @@ import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveReques
 import it.gov.pagopa.payment.notices.service.model.ProblemJson;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
 import it.gov.pagopa.payment.notices.service.util.OpenApiTableMetadata;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -74,8 +76,9 @@ public class GenerationRequestController {
 
     @PostMapping("/generate-massive")
     public String getFolderStatus(
-            @RequestBody NoticeGenerationMassiveRequest noticeGenerationMassiveRequest,
-            @Parameter(description = "userId to use for request status retrieval") @RequestHeader("X-User-Id") String userId) {
+            @Valid @NotNull @RequestBody NoticeGenerationMassiveRequest noticeGenerationMassiveRequest,
+            @Parameter(description = "userId to use for request status retrieval")
+            @RequestHeader("X-User-Id") String userId) {
         return noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, userId);
     }
 

@@ -1,5 +1,7 @@
 package it.gov.pagopa.payment.notices.service.model;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +15,8 @@ import java.util.List;
 @Builder
 public class NoticeGenerationMassiveRequest {
 
+    @NotNull
+    @Size(min = 1)
     private List<NoticeGenerationRequestItem> notices;
 
 }
