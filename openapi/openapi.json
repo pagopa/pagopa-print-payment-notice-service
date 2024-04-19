@@ -2,7 +2,7 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "print-payment-notices-service",
-    "description" : "@project.description@",
+    "description" : "PagoPA Print Payment Notices Service",
     "termsOfService" : "https://www.pagopa.gov.it/",
     "version" : "0.0.0"
   },
@@ -16,7 +16,7 @@
         "tags" : [ "Notice Generation Request APIs" ],
         "summary" : "getFolderStatus",
         "description" : "Return generation request status for a folder of notices",
-        "operationId" : "getFolderStatus",
+        "operationId" : "getFolderStatus_1",
         "parameters" : [ {
           "name" : "folder_id",
           "in" : "path",
@@ -154,6 +154,59 @@
         }
       } ]
     },
+    "/notices/generate-massive" : {
+      "post" : {
+        "tags" : [ "Notice Generation Request APIs" ],
+        "operationId" : "getFolderStatus",
+        "parameters" : [ {
+          "name" : "X-User-Id",
+          "in" : "header",
+          "description" : "userId to use for request status retrieval",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/NoticeGenerationMassiveRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "X-Request-Id",
+        "in" : "header",
+        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+        "schema" : {
+          "type" : "string"
+        }
+      } ]
+    },
     "/notices/templates/{template_id}" : {
       "get" : {
         "tags" : [ "Notice Templates APIs" ],
@@ -171,7 +224,7 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "OK",
+            "description" : "Return template data",
             "headers" : {
               "X-Request-Id" : {
                 "description" : "This header identifies the call",
@@ -288,6 +341,109 @@
   },
   "components" : {
     "schemas" : {
+      "CreditorInstitution" : {
+        "type" : "object"
+      },
+      "Debtor" : {
+        "type" : "object"
+      },
+      "InstallmentData" : {
+        "type" : "object",
+        "properties" : {
+          "amount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dueDate" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Installments" : {
+        "type" : "object",
+        "properties" : {
+          "number" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/InstallmentData"
+            }
+          }
+        }
+      },
+      "Notice" : {
+        "required" : [ "code", "subject" ],
+        "type" : "object",
+        "properties" : {
+          "subject" : {
+            "type" : "string"
+          },
+          "paymentAmount" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "dueDate" : {
+            "type" : "string"
+          },
+          "code" : {
+            "type" : "string"
+          },
+          "installments" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Installments"
+            }
+          }
+        }
+      },
+      "NoticeGenerationMassiveRequest" : {
+        "required" : [ "notices" ],
+        "type" : "object",
+        "properties" : {
+          "notices" : {
+            "maxItems" : 2147483647,
+            "minItems" : 1,
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/NoticeGenerationRequestItem"
+            }
+          }
+        }
+      },
+      "NoticeGenerationRequestItem" : {
+        "type" : "object",
+        "properties" : {
+          "templateId" : {
+            "type" : "string"
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/NoticeRequestData"
+          }
+        }
+      },
+      "NoticeRequestData" : {
+        "type" : "object",
+        "properties" : {
+          "notice" : {
+            "$ref" : "#/components/schemas/Notice"
+          },
+          "creditorInstitution" : {
+            "$ref" : "#/components/schemas/CreditorInstitution"
+          },
+          "debtor" : {
+            "$ref" : "#/components/schemas/Debtor"
+          },
+          "extraData" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object"
+            }
+          }
+        }
+      },
       "ProblemJson" : {
         "type" : "object",
         "properties" : {

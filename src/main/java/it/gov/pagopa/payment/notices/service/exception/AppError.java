@@ -22,6 +22,9 @@ public enum AppError {
 
   FOLDER_NOT_AVAILABLE(HttpStatus.NOT_FOUND, "Folder Not Available",
           "Required folder is either missing or not available to the requirer"),
+  ERROR_ON_MASSIVE_GENERATION_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,
+          "Exception on Massive Generation Request",
+          "Encountered a blocking exception on the massive generation request"),
 
   UNKNOWN(null, null, null);
 
