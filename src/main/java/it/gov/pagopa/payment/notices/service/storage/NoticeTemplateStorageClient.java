@@ -1,6 +1,11 @@
 package it.gov.pagopa.payment.notices.service.storage;
 
+import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
+import com.azure.data.tables.TableClient;
+import com.azure.data.tables.TableClientBuilder;
+import com.azure.data.tables.models.TableEntity;
+import com.azure.data.tables.models.TableServiceException;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
@@ -9,6 +14,7 @@ import com.azure.storage.blob.models.DownloadRetryOptions;
 import com.azure.storage.blob.options.BlobDownloadToFileOptions;
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
+import it.gov.pagopa.payment.notices.service.model.TemplateResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -20,11 +26,14 @@ import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 @Component
 public class NoticeTemplateStorageClient {
 
     private BlobContainerClient blobContainerClient;
+
+    private TableClient tableClient;
 
     private Integer maxRetry;
 
@@ -35,12 +44,15 @@ public class NoticeTemplateStorageClient {
             @Value("${spring.cloud.azure.storage.blob.templates.enabled}") String enabled,
             @Value("${spring.cloud.azure.storage.blob.templates.connection_string}") String connectionString,
             @Value("${spring.cloud.azure.storage.blob.templates.containerName}") String containerName,
+            @Value("${spring.cloud.azure.storage.blob.templates.tableName}") String tableName,
             @Value("${spring.cloud.azure.storage.blob.templates.retry}") Integer maxRetry,
             @Value("${spring.cloud.azure.storage.blob.templates.timeout}") Integer timeout) {
         if (Boolean.TRUE.toString().equals(enabled)) {
             BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
                     .connectionString(connectionString).buildClient();
             blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
+            tableClient = new TableClientBuilder().connectionString(connectionString)
+                    .tableName(tableName).buildClient();
             this.maxRetry = maxRetry;
             this.timeout = timeout;
         }
@@ -53,6 +65,24 @@ public class NoticeTemplateStorageClient {
              this.maxRetry=3;
              this.timeout=10;
         }
+    }
+
+    public List<TemplateResource> getTemplates() {
+
+        if (tableClient == null) {
+            throw new AppException(AppError.TEMPLATE_CLIENT_UNAVAILABLE);
+        }
+
+        try {
+            return tableClient.listEntities().stream().map(item -> TemplateResource.builder()
+                   .templateId(String.valueOf(item.getProperty("templateId")))
+                   .description(String.valueOf(item.getProperty("description")))
+                   .templateExampleUrl(String.valueOf(item.getProperty("templateExampleUrl")))
+                   .build()).toList();
+        } catch (TableServiceException tableServiceException) {
+            throw new AppException(AppError.TEMPLATE_TABLE_CLIENT_ERROR, tableServiceException);
+        }
+
     }
 
     /**

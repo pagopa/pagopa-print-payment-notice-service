@@ -281,6 +281,153 @@
         }
       } ]
     },
+    "/notices/templates" : {
+      "get" : {
+        "tags" : [ "Notice Templates APIs" ],
+        "summary" : "getTemplates",
+        "description" : "Return available templates for notice generation",
+        "operationId" : "getTemplates",
+        "responses" : {
+          "200" : {
+            "description" : "Return template data",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/TemplateResource"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Templates not found",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "Too many requests",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Service error",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service or template table unavailable",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "ApiKey" : [ ]
+        } ]
+      },
+      "parameters" : [ {
+        "name" : "X-Request-Id",
+        "in" : "header",
+        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+        "schema" : {
+          "type" : "string"
+        }
+      } ]
+    },
     "/notices/templates/{template_id}" : {
       "get" : {
         "tags" : [ "Notice Templates APIs" ],
@@ -352,7 +499,7 @@
             }
           },
           "404" : {
-            "description" : "Folder not found or unavailable for the requirer",
+            "description" : "Template not found",
             "headers" : {
               "X-Request-Id" : {
                 "description" : "This header identifies the call",
@@ -566,6 +713,24 @@
             "type" : "string",
             "description" : "A human readable explanation specific to this occurrence of the problem.",
             "example" : "There was an error processing the request"
+          }
+        }
+      },
+      "TemplateResource" : {
+        "required" : [ "description", "templateExampleUrl", "templateId" ],
+        "type" : "object",
+        "properties" : {
+          "templateId" : {
+            "type" : "string",
+            "description" : "templateId, to use when requiring generation of a notice with the selected template"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "Template description"
+          },
+          "templateExampleUrl" : {
+            "type" : "string",
+            "description" : "Template example url"
           }
         }
       },

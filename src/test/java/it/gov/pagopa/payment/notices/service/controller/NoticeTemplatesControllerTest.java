@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -42,6 +43,60 @@ class NoticeTemplatesControllerTest {
     }
 
     @Test
+    void getTemplatesShouldReturnDataOn200() throws Exception {
+        when(noticeTemplateService.getTemplates())
+                .thenReturn(Collections.emptyList());
+        String url = "/notices/templates";
+        mvc.perform(get(url)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        verify(noticeTemplateService).getTemplates();
+    }
+
+    @Test
+    void getFolderStatusShouldReturn500OnTemplateNotFoundException() throws Exception {
+        when(noticeTemplateService.getTemplates())
+                .thenAnswer(item -> {
+                    throw new AppException(AppError.TEMPLATE_TABLE_CLIENT_ERROR);
+                });
+        String url = "/notices/templates";
+        mvc.perform(get(url)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError())
+                .andExpect(content().contentType("application/json"));
+        verify(noticeTemplateService).getTemplates();
+    }
+
+    @Test
+    void getTemplatesStatusShouldReturn503OnUnavailableTemplateClient() throws Exception {
+        when(noticeTemplateService.getTemplates())
+                .thenAnswer(item -> {
+                    throw new AppException(AppError.TEMPLATE_CLIENT_UNAVAILABLE);
+                });
+        String url = "/notices/templates";
+        mvc.perform(get(url)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError())
+                .andExpect(content().contentType("application/json"));
+        verify(noticeTemplateService).getTemplates();
+    }
+
+    @Test
+    void getTemplatesShouldReturn500aOnGenericException() throws Exception {
+        when(noticeTemplateService.getTemplates())
+                .thenAnswer(item -> {
+                    throw new RuntimeException();
+                });
+        String url = "/notices/templates";
+        mvc.perform(get(url)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError())
+                .andExpect(content().contentType("application/json"));
+        verify(noticeTemplateService).getTemplates();
+    }
+
+    @Test
     void getTemplateShouldReturnDataOn200() throws Exception {
         File tempDirectory = Files.createTempDirectory("test").toFile();
         File file = Files.createTempFile(tempDirectory.toPath(), "test", ".zip").toFile();
@@ -56,7 +111,7 @@ class NoticeTemplatesControllerTest {
     }
 
     @Test
-    void getFolderStatusShouldReturnDataOn400() throws Exception {
+    void getFolderStatusShouldReturn400OnTemplateNotFoundException() throws Exception {
         when(noticeTemplateService.getTemplate(any()))
                 .thenAnswer(item -> {
                     throw new AppException(AppError.TEMPLATE_NOT_FOUND);
@@ -70,7 +125,7 @@ class NoticeTemplatesControllerTest {
     }
 
     @Test
-    void getFolderStatusShouldReturnDataOn503() throws Exception {
+    void getTemplateStatusShouldReturn503OnUnavailableTemplateClient() throws Exception {
         when(noticeTemplateService.getTemplate(any()))
                 .thenAnswer(item -> {
                     throw new AppException(AppError.TEMPLATE_CLIENT_UNAVAILABLE);
@@ -84,7 +139,7 @@ class NoticeTemplatesControllerTest {
     }
 
     @Test
-    void getFolderStatusShouldReturnDataOn500() throws Exception {
+    void getTemplateShouldReturn500aOnGenericException() throws Exception {
         when(noticeTemplateService.getTemplate(any()))
                 .thenAnswer(item -> {
                     throw new RuntimeException();
