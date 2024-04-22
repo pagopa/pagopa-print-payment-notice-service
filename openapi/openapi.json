@@ -16,7 +16,7 @@
         "tags" : [ "Notice Generation Request APIs" ],
         "summary" : "getFolderStatus",
         "description" : "Return generation request status for a folder of notices",
-        "operationId" : "getFolderStatus_1",
+        "operationId" : "getFolderStatus",
         "parameters" : [ {
           "name" : "folder_id",
           "in" : "path",
@@ -157,9 +157,9 @@
     "/notices/generate-massive" : {
       "post" : {
         "tags" : [ "Notice Generation Request APIs" ],
-        "summary" : "generateMassiveNotice",
+        "summary" : "generateNoticeMassiveRequest",
         "description" : "Insert massive notice generation request and returns folderId for reference an future recovery",
-        "operationId" : "getFolderStatus",
+        "operationId" : "generateNoticeMassiveRequest",
         "parameters" : [ {
           "name" : "X-User-Id",
           "in" : "header",

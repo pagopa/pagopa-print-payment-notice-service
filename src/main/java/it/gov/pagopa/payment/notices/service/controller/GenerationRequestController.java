@@ -83,7 +83,7 @@ public class GenerationRequestController {
      *               the folder is executed
      * @return folderId produced when inserting the request
      */
-    @Operation(summary = "generateMassiveNotice",
+    @Operation(summary = "generateNoticeMassiveRequest",
             description = "Insert massive notice generation request and returns folderId for reference an" +
                     " future recovery",
             security = {@SecurityRequirement(name = "ApiKey")})
@@ -107,7 +107,7 @@ public class GenerationRequestController {
                     schema = @Schema(implementation = ProblemJson.class)))
     })
     @PostMapping("/generate-massive")
-    public String getFolderStatus(
+    public String generateNoticeMassiveRequest(
             @Parameter(description = "massive notice generation request data")
             @Valid @NotNull @RequestBody NoticeGenerationMassiveRequest noticeGenerationMassiveRequest,
             @Parameter(description = "userId to use for request status retrieval")
