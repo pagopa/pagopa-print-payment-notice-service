@@ -2,7 +2,7 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "print-payment-notices-service",
-    "description" : "@project.description@",
+    "description" : "PagoPA Print Payment Notices Service",
     "termsOfService" : "https://www.pagopa.gov.it/",
     "version" : "0.0.0"
   },
@@ -171,7 +171,7 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "OK",
+            "description" : "Return template data",
             "headers" : {
               "X-Request-Id" : {
                 "description" : "This header identifies the call",
@@ -254,7 +254,25 @@
             }
           },
           "500" : {
-            "description" : "Service unavailable",
+            "description" : "Service error",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service or template storage unavailable",
             "headers" : {
               "X-Request-Id" : {
                 "description" : "This header identifies the call",

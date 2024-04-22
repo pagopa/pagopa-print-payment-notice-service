@@ -71,7 +71,11 @@ public class NoticeTemplatesController {
             @ApiResponse(responseCode = "429",
                     description = "Too many requests", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "500",
-                    description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    description = "Service error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "503",
+                    description = "Service or template storage unavailable",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ProblemJson.class)))
     })
     @GetMapping("/{template_id}")

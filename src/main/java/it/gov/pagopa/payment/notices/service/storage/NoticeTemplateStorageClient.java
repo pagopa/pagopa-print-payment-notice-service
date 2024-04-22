@@ -103,7 +103,7 @@ public class NoticeTemplateStorageClient {
             }
             return filePath.toFile().getAbsolutePath();
         } catch (IOException e) {
-            throw new AppException(AppError.TEMPLATE_CLIENT_ERROR);
+            throw new AppException(AppError.TEMPLATE_CLIENT_ERROR, e);
         }
     }
 
