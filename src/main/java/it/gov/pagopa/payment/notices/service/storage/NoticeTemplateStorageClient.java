@@ -76,7 +76,7 @@ public class NoticeTemplateStorageClient {
                     Context.NONE);
             return new File(filePath);
         } catch (BlobStorageException blobStorageException) {
-            throw new AppException(AppError.TEMPLATE_NOT_FOUND);
+            throw new AppException(AppError.TEMPLATE_NOT_FOUND, blobStorageException);
         }
     }
 
