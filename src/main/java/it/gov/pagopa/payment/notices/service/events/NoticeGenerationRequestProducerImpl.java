@@ -1,6 +1,7 @@
 package it.gov.pagopa.payment.notices.service.events;
 
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestEH;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,12 +22,15 @@ public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequ
     }
 
     /** Declared just to let know Spring to connect the producer at startup */
+    @Slf4j
     @Configuration
     static class NoticeGenerationRequestProducerConfig {
+
         @Bean
-        public Supplier<Flux<Message<NoticeGenerationRequestEH>>> noticeGenerationRequest() {
+        public Supplier<Flux<Message<NoticeGenerationRequestEH>>> noticeGeneration() {
             return Flux::empty;
         }
+
     }
 
     @Override

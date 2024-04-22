@@ -1,6 +1,7 @@
 package it.gov.pagopa.payment.notices.service.util;
 
 import it.gov.pagopa.payment.notices.service.exception.Aes256Exception;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -31,13 +32,7 @@ public class Aes256Utils {
 
     private static final int AES_UNEXPECTED_ERROR = 701;
 
-
-    /**
-     * Hide from public usage.
-     */
-    private Aes256Utils() {
-    }
-
+    @Autowired
     public Aes256Utils(
             @Value("${aes.secret.key}") String aesSecretKey,
             @Value("${aes.salt}") String aesSalt) {

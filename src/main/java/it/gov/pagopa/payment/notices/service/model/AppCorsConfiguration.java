@@ -20,4 +20,5 @@ public class AppCorsConfiguration {
 
   private String[] origins;
   private String[] methods;
+
 }

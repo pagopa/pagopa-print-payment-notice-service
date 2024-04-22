@@ -19,6 +19,7 @@ import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
 import it.gov.pagopa.payment.notices.service.util.Aes256Utils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -26,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @see it.gov.pagopa.payment.notices.service.service.NoticeGenerationService
+ */
 @Service
 @Slf4j
 public class NoticeGenerationServiceImpl implements NoticeGenerationService {
@@ -79,24 +83,12 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                         .status(PaymentGenerationRequestStatus.INSERTED)
                         .createdAt(Instant.now())
                         .items(new ArrayList<>())
+                        .userId(userId)
                         .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
                         .requestDate(Instant.now())
                     .build()).getId();
 
-            noticeGenerationMassiveRequest.getNotices().parallelStream().forEach(noticeGenerationRequestItem -> {
-                try {
-                    if (!noticeGenerationRequestProducer.noticeGeneration(
-                            NoticeGenerationRequestEH.builder()
-                                    .noticeData(noticeGenerationRequestItem)
-                                    .folderId(folderId)
-                                    .build())
-                    ) {
-                        saveErrorEvent(folderId, noticeGenerationRequestItem);
-                    }
-                } catch (Exception e) {
-                    saveErrorEvent(folderId, noticeGenerationRequestItem);
-                }
-            });
+            sendNotices(noticeGenerationMassiveRequest, folderId);
 
             return folderId;
 
@@ -105,6 +97,24 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             throw new AppException(AppError.ERROR_ON_MASSIVE_GENERATION_REQUEST);
         }
 
+    }
+
+    @Async
+    private void sendNotices(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String folderId) {
+        noticeGenerationMassiveRequest.getNotices().parallelStream().forEach(noticeGenerationRequestItem -> {
+            try {
+                if (!noticeGenerationRequestProducer.noticeGeneration(
+                        NoticeGenerationRequestEH.builder()
+                                .noticeData(noticeGenerationRequestItem)
+                                .folderId(folderId)
+                                .build())
+                ) {
+                    saveErrorEvent(folderId, noticeGenerationRequestItem);
+                }
+            } catch (Exception e) {
+                saveErrorEvent(folderId, noticeGenerationRequestItem);
+            }
+        });
     }
 
     private void saveErrorEvent(String folderId, NoticeGenerationRequestItem noticeGenerationRequestItem) {

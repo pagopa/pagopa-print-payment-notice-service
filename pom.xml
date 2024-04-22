@@ -68,37 +68,37 @@
       <artifactId>caffeine</artifactId>
     </dependency>
 
-      <!-- OpenAPI -->
-      <dependency>
-          <groupId>org.springdoc</groupId>
-          <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-          <version>2.3.0</version>
-      </dependency>
+    <!-- OpenAPI -->
+    <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>2.3.0</version>
+    </dependency>
 
 
-      <!-- Swagger -->
-      <dependency>
-          <groupId>io.swagger</groupId>
-          <artifactId>swagger-annotations</artifactId>
-          <version>1.6.12</version>
-      </dependency>
+    <!-- Swagger -->
+    <dependency>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-annotations</artifactId>
+        <version>1.6.12</version>
+    </dependency>
 
-      <!-- Database -->
-      <dependency>
-          <groupId>org.hibernate.orm</groupId>
-          <artifactId>hibernate-core</artifactId>
-          <version>6.4.0.Final</version>
-      </dependency>
-      <dependency>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-data-mongodb</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>de.flapdoodle.embed</groupId>
-          <artifactId>de.flapdoodle.embed.mongo</artifactId>
-          <version>4.12.2</version>
-          <scope>test</scope>
-      </dependency>
+    <!-- Database -->
+    <dependency>
+        <groupId>org.hibernate.orm</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>6.4.0.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-mongodb</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>de.flapdoodle.embed</groupId>
+        <artifactId>de.flapdoodle.embed.mongo</artifactId>
+        <version>4.12.2</version>
+        <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework.cloud</groupId>
