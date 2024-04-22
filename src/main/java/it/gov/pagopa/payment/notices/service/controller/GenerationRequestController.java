@@ -73,9 +73,42 @@ public class GenerationRequestController {
         return noticeGenerationService.getFolderStatus(folderId, userId);
     }
 
-
+    /**
+     * Generate the request of massive notice generation using input data, sending data through the EH channel
+     * to kickstart notice generation in an async manner. Any error will be saved into notice generation request
+     * error
+     * @param noticeGenerationMassiveRequest generation request data, containing a list of notice data and templates
+     *                                       to use
+     * @param userId userId requiring the generation. the request will refer to this user when recovery of data regarding
+     *               the folder is executed
+     * @return folderId produced when inserting the request
+     */
+    @Operation(summary = "generateMassiveNotice",
+            description = "Insert massive notice generation request and returns folderId for reference an" +
+                    " future recovery",
+            security = {@SecurityRequirement(name = "ApiKey")})
+    @OpenApiTableMetadata(readWriteIntense = OpenApiTableMetadata.ReadWrite.WRITE,
+            external = true, internal = false)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "Unauthorized", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "403",
+                    description = "Forbidden", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "429",
+                    description = "Too many requests", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "500",
+                    description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class)))
+    })
     @PostMapping("/generate-massive")
     public String getFolderStatus(
+            @Parameter(description = "massive notice generation request data")
             @Valid @NotNull @RequestBody NoticeGenerationMassiveRequest noticeGenerationMassiveRequest,
             @Parameter(description = "userId to use for request status retrieval")
             @RequestHeader("X-User-Id") String userId) {
