@@ -1,1 +1,97 @@
-{}
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "print-payment-notices-service",
+    "description" : "PagoPA Print Payment Notices Service",
+    "termsOfService" : "https://www.pagopa.gov.it/",
+    "version" : "0.0.0"
+  },
+  "servers" : [ {
+    "url" : "http://localhost",
+    "description" : "Generated server url"
+  } ],
+  "paths" : {
+    "/notices/folder/{folder_id}/status" : {
+      "get" : {
+        "tags" : [ "Notice Generation Request APIs" ],
+        "operationId" : "getFolderStatus",
+        "parameters" : [ {
+          "name" : "folder_id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "X-User-Id",
+          "in" : "header",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GetGenerationRequestStatusResource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "X-Request-Id",
+        "in" : "header",
+        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+        "schema" : {
+          "type" : "string"
+        }
+      } ]
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "GetGenerationRequestStatusResource" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "enum" : [ "INSERTED", "PROCESSING", "FAILED", "PROCESSED" ]
+          },
+          "processedNotices" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "noticesInError" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "ApiKey" : {
+        "type" : "apiKey",
+        "description" : "The API key to access this function app.",
+        "name" : "Ocp-Apim-Subscription-Key",
+        "in" : "header"
+      }
+    }
+  }
+}
