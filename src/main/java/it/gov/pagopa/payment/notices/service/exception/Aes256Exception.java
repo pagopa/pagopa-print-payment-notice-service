@@ -3,10 +3,10 @@ package it.gov.pagopa.payment.notices.service.exception;
 import lombok.Getter;
 
 /**
- * Thrown in case an error occur when encrypting or decrypting a BizEvent
+ * Thrown in case an error occur when encrypting or decrypting Notice Data
  */
 @Getter
-public class Aes256Exception extends Exception{
+public class Aes256Exception extends Exception {
     private final int statusCode;
 
     /**
