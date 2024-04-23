@@ -102,7 +102,7 @@ public class NoticeTemplateStorageClient {
                 throw new IllegalArgumentException("Invalid filename");
             }
             return filePath.toFile().getAbsolutePath();
-        } catch (IOException e) {
+        } catch (IllegalArgumentException | IOException e) {
             throw new AppException(AppError.TEMPLATE_CLIENT_ERROR, e);
         }
     }

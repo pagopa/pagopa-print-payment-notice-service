@@ -97,4 +97,16 @@ class NoticeTemplatesControllerTest {
         verify(noticeTemplateService).getTemplate("error");
     }
 
+    @Test
+    void getFolderStatusShouldReturnKOOn500ForMissingFile() throws Exception {
+        when(noticeTemplateService.getTemplate(any()))
+                .thenReturn(null);
+        String url = "/notices/templates/error";
+        mvc.perform(get(url)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError())
+                .andExpect(content().contentType("application/json"));
+        verify(noticeTemplateService).getTemplate("error");
+    }
+
 }
