@@ -1,10 +1,8 @@
 package it.gov.pagopa.payment.notices.service.storage;
 
-import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 import com.azure.data.tables.TableClient;
 import com.azure.data.tables.TableClientBuilder;
-import com.azure.data.tables.models.TableEntity;
 import com.azure.data.tables.models.TableServiceException;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
@@ -18,6 +16,7 @@ import it.gov.pagopa.payment.notices.service.model.TemplateResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -59,14 +58,21 @@ public class NoticeTemplateStorageClient {
     }
     public NoticeTemplateStorageClient(
             Boolean enabled,
+            TableClient tableClient,
             BlobContainerClient blobContainerClient) {
         if (Boolean.TRUE.equals(enabled)) {
+            this.tableClient = tableClient;
              this.blobContainerClient = blobContainerClient;
              this.maxRetry=3;
              this.timeout=10;
         }
     }
 
+    /**
+     * Recovers the template list data available for notice generation from
+     * Azure Table Storage
+     * @return template data
+     */
     public List<TemplateResource> getTemplates() {
 
         if (tableClient == null) {
