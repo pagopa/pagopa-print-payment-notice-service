@@ -13,8 +13,8 @@
     <groupId>it.gov.pagopa</groupId>
     <artifactId>print-payment-notices-service</artifactId>
     <version>0.0.0</version>
-    <name>pagopa-print-payment-notice-service</name>
-    <description>PagoPA Print Payment Notices Service</description>
+    <name>Print Payment Notices - Service</name>
+    <description>Microservice to expose the APIs for Print Payment Notices</description>
 
     <properties>
         <java.version>17</java.version>
@@ -51,7 +51,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.azure.spring</groupId>
+            <artifactId>spring-cloud-azure-starter-storage-blob</artifactId>
+            <version>4.2.0</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
