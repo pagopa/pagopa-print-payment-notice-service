@@ -15,6 +15,8 @@ public class CreditorInstitution {
     @NotNull
     @NotEmpty
     private String fullName;
+
+    @Schema(description = "CI organization unit managing the payment ")
     private String organization;
 
     @Schema(description = "CI info", requiredMode = Schema.RequiredMode.REQUIRED)

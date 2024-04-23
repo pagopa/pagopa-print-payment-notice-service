@@ -100,7 +100,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     }
 
     @Async
-    private void sendNotices(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String folderId) {
+    public void sendNotices(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String folderId) {
         noticeGenerationMassiveRequest.getNotices().parallelStream().forEach(noticeGenerationRequestItem -> {
             try {
                 if (!noticeGenerationRequestProducer.noticeGeneration(
