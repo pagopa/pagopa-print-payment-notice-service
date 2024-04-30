@@ -32,7 +32,13 @@ public class Notice {
     @NotEmpty
     private String code;
 
+    @Schema(description = "Poste auth code")
+    private String posteAuth;
+
+    @Schema(description = "Poste Document Type")
+    private String posteDocumentType;
+
     @Schema(description = "Notice installments (if present)")
-    private List<Installments> installments;
+    private List<InstallmentData> installments;
 
 }
