@@ -46,7 +46,7 @@ public class NoticeTemplateStorageClient {
             @Value("${spring.cloud.azure.storage.blob.templates.tableName}") String tableName,
             @Value("${spring.cloud.azure.storage.blob.templates.retry}") Integer maxRetry,
             @Value("${spring.cloud.azure.storage.blob.templates.timeout}") Integer timeout) {
-        if (Boolean.TRUE.toString().equals(enabled)) {
+        if(Boolean.TRUE.toString().equals(enabled)) {
             BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
                     .connectionString(connectionString).buildClient();
             blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
@@ -56,35 +56,37 @@ public class NoticeTemplateStorageClient {
             this.timeout = timeout;
         }
     }
+
     public NoticeTemplateStorageClient(
             Boolean enabled,
             TableClient tableClient,
             BlobContainerClient blobContainerClient) {
-        if (Boolean.TRUE.equals(enabled)) {
+        if(Boolean.TRUE.equals(enabled)) {
             this.tableClient = tableClient;
-             this.blobContainerClient = blobContainerClient;
-             this.maxRetry=3;
-             this.timeout=10;
+            this.blobContainerClient = blobContainerClient;
+            this.maxRetry = 3;
+            this.timeout = 10;
         }
     }
 
     /**
      * Recovers the template list data available for notice generation from
      * Azure Table Storage
+     *
      * @return template data
      */
     public List<TemplateResource> getTemplates() {
 
-        if (tableClient == null) {
+        if(tableClient == null) {
             throw new AppException(AppError.TEMPLATE_CLIENT_UNAVAILABLE);
         }
 
         try {
             return tableClient.listEntities().stream().map(item -> TemplateResource.builder()
-                   .templateId(String.valueOf(item.getProperty("templateId")))
-                   .description(String.valueOf(item.getProperty("description")))
-                   .templateExampleUrl(String.valueOf(item.getProperty("templateExampleUrl")))
-                   .build()).toList();
+                    .templateId(String.valueOf(item.getProperty("templateId")))
+                    .description(String.valueOf(item.getProperty("description")))
+                    .templateExampleUrl(String.valueOf(item.getProperty("templateExampleUrl")))
+                    .build()).toList();
         } catch (TableServiceException tableServiceException) {
             throw new AppException(AppError.TEMPLATE_TABLE_CLIENT_ERROR, tableServiceException);
         }
@@ -100,16 +102,16 @@ public class NoticeTemplateStorageClient {
      */
     public File getTemplate(String templateId) {
 
-        if (blobContainerClient == null) {
+        if(blobContainerClient == null) {
             throw new AppException(AppError.TEMPLATE_CLIENT_UNAVAILABLE);
         }
         String filePath = createTempDirectory(templateId);
         try {
             blobContainerClient.getBlobClient(templateId.concat("/template.zip"))
                     .downloadToFileWithResponse(
-                    getBlobDownloadToFileOptions(filePath),
-                    Duration.ofSeconds(timeout),
-                    Context.NONE);
+                            getBlobDownloadToFileOptions(filePath),
+                            Duration.ofSeconds(timeout),
+                            Context.NONE);
             return new File(filePath);
         } catch (BlobStorageException blobStorageException) {
             throw new AppException(AppError.TEMPLATE_NOT_FOUND, blobStorageException);
@@ -134,7 +136,7 @@ public class NoticeTemplateStorageClient {
             Path tempDirectory = Files.createTempDirectory(workingDirectory.toPath(), "notice-generation-service")
                     .normalize().toAbsolutePath();
             Path filePath = tempDirectory.resolve(templateId + ".zip").normalize().toAbsolutePath();
-            if (!filePath.startsWith(tempDirectory + File.separator)) {
+            if(!filePath.startsWith(tempDirectory + File.separator)) {
                 throw new IllegalArgumentException("Invalid filename");
             }
             return filePath.toFile().getAbsolutePath();
@@ -145,7 +147,7 @@ public class NoticeTemplateStorageClient {
 
     private File createWorkingDirectory() throws IOException {
         File workingDirectory = new File("temp");
-        if (!workingDirectory.exists()) {
+        if(!workingDirectory.exists()) {
             Files.createDirectory(workingDirectory.toPath());
         }
         return workingDirectory;

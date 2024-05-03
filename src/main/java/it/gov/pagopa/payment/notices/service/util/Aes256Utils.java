@@ -19,18 +19,14 @@ import java.util.Base64;
 @Component
 public class Aes256Utils {
 
-    private String aesSecretKey;
-
-    private String aesSalt;
-
-    private static final int KEY_LENGTH = 256;
-    private static final int ITERATION_COUNT = 65536;
     public static final String PBKDF_2_WITH_HMAC_SHA_256 = "PBKDF2WithHmacSHA256";
     public static final String AES_CBC_PKCS_5_PADDING = "AES/CBC/PKCS5Padding";
-
     public static final String ALGORITHM = "AES";
-
+    private static final int KEY_LENGTH = 256;
+    private static final int ITERATION_COUNT = 65536;
     private static final int AES_UNEXPECTED_ERROR = 701;
+    private final String aesSecretKey;
+    private final String aesSalt;
 
     @Autowired
     public Aes256Utils(

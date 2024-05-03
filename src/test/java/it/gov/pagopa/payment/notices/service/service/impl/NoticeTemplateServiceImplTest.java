@@ -37,7 +37,7 @@ class NoticeTemplateServiceImplTest {
     }
 
     @Test
-    public void shouldReturnMappedTemplatesDataOnSuccess() throws IOException {
+    void shouldReturnMappedTemplatesDataOnSuccess() throws IOException {
         when(noticeTemplateStorageClient.getTemplates()).thenReturn(Collections.singletonList(
                 TemplateResource.builder().templateId("templateId").build()
         ));
@@ -47,7 +47,7 @@ class NoticeTemplateServiceImplTest {
     }
 
     @Test
-    public void shouldReturnKOOnException() {
+    void shouldReturnKOOnException() {
         when(noticeTemplateStorageClient.getTemplate("missingTemplate"))
                 .thenThrow(new AppException(AppError.TEMPLATE_NOT_FOUND));
         AppException appException = assertThrows(AppException.class,
@@ -57,7 +57,7 @@ class NoticeTemplateServiceImplTest {
     }
 
     @Test
-    public void shouldReturnTableClientClientOnException() {
+    void shouldReturnTableClientClientOnException() {
         when(noticeTemplateStorageClient.getTemplates())
                 .thenThrow(new AppException(AppError.TEMPLATE_TABLE_CLIENT_ERROR));
         AppException appException = assertThrows(AppException.class,
@@ -67,7 +67,7 @@ class NoticeTemplateServiceImplTest {
     }
 
     @Test
-    public void shouldReturnDataOnValidTemplateRequest() throws IOException {
+    void shouldReturnDataOnValidTemplateRequest() throws IOException {
         File tempDirectory = Files.createTempDirectory("test").toFile();
         File file = Files.createTempFile(tempDirectory.toPath(), "test", ".zip").toFile();
         when(noticeTemplateService.getTemplate(any()))
@@ -82,7 +82,7 @@ class NoticeTemplateServiceImplTest {
     }
 
     @Test
-    public void shouldReturnMissingStorageClientOnException() {
+    void shouldReturnMissingStorageClientOnException() {
         when(noticeTemplateStorageClient.getTemplate("missingClient"))
                 .thenThrow(new AppException(AppError.TEMPLATE_CLIENT_UNAVAILABLE));
         AppException appException = assertThrows(AppException.class,

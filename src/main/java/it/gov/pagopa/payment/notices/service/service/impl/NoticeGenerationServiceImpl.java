@@ -58,7 +58,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public GetGenerationRequestStatusResource getFolderStatus(String folderId, String userId) {
         Optional<PaymentNoticeGenerationRequest> paymentNoticeGenerationRequestOptional =
                 paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId);
-        if (paymentNoticeGenerationRequestOptional.isEmpty()) {
+        if(paymentNoticeGenerationRequestOptional.isEmpty()) {
             throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
         }
         List<String> errors = paymentGenerationRequestErrorRepository.findErrors(folderId)
@@ -79,14 +79,14 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         try {
             String folderId =
                     paymentGenerationRequestRepository.save(
-                    PaymentNoticeGenerationRequest.builder()
-                        .status(PaymentGenerationRequestStatus.INSERTED)
-                        .createdAt(Instant.now())
-                        .items(new ArrayList<>())
-                        .userId(userId)
-                        .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
-                        .requestDate(Instant.now())
-                    .build()).getId();
+                            PaymentNoticeGenerationRequest.builder()
+                                    .status(PaymentGenerationRequestStatus.INSERTED)
+                                    .createdAt(Instant.now())
+                                    .items(new ArrayList<>())
+                                    .userId(userId)
+                                    .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
+                                    .requestDate(Instant.now())
+                                    .build()).getId();
 
             sendNotices(noticeGenerationMassiveRequest, folderId);
 
@@ -103,7 +103,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public void sendNotices(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String folderId) {
         noticeGenerationMassiveRequest.getNotices().parallelStream().forEach(noticeGenerationRequestItem -> {
             try {
-                if (!noticeGenerationRequestProducer.noticeGeneration(
+                if(!noticeGenerationRequestProducer.noticeGeneration(
                         NoticeGenerationRequestEH.builder()
                                 .noticeData(noticeGenerationRequestItem)
                                 .folderId(folderId)
@@ -133,7 +133,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         } catch (JsonProcessingException | Aes256Exception e) {
             log.error(
                     "Unable to save notice data into error repository for notice with folder " + folderId +
-                    " and noticeId " + noticeGenerationRequestItem.getData().getNotice().getCode()
+                            " and noticeId " + noticeGenerationRequestItem.getData().getNotice().getCode()
             );
         }
     }

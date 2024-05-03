@@ -11,20 +11,20 @@ import org.springframework.web.servlet.view.RedirectView;
 @Validated
 public class HomeController {
 
-  @Value("${server.servlet.context-path}")
-  String basePath;
+    @Value("${server.servlet.context-path}")
+    String basePath;
 
 
-  /**
-   * @return redirect to Swagger page documentation
-   */
-  @Hidden
-  @GetMapping("")
-  public RedirectView home() {
-    if (!basePath.endsWith("/")) {
-      basePath += "/";
+    /**
+     * @return redirect to Swagger page documentation
+     */
+    @Hidden
+    @GetMapping("")
+    public RedirectView home() {
+        if(!basePath.endsWith("/")) {
+            basePath += "/";
+        }
+        return new RedirectView(basePath + "swagger-ui.html");
     }
-    return new RedirectView(basePath + "swagger-ui.html");
-  }
 
 }

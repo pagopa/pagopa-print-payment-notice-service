@@ -12,7 +12,7 @@ public class Aes256Exception extends Exception {
     /**
      * Constructs new exception with provided message
      *
-     * @param message Detail message
+     * @param message    Detail message
      * @param statusCode status code
      */
     public Aes256Exception(String message, int statusCode) {
@@ -23,9 +23,9 @@ public class Aes256Exception extends Exception {
     /**
      * Constructs new exception with provided message
      *
-     * @param message Detail message
+     * @param message    Detail message
      * @param statusCode status code
-     * @param cause Exception causing the constructed one
+     * @param cause      Exception causing the constructed one
      */
     public Aes256Exception(String message, int statusCode, Throwable cause) {
         super(message, cause);

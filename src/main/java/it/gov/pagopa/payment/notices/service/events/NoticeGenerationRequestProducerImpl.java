@@ -21,7 +21,20 @@ public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequ
         this.streamBridge = streamBridge;
     }
 
-    /** Declared just to let know Spring to connect the producer at startup */
+    public static Message<NoticeGenerationRequestEH> buildMessage(
+            NoticeGenerationRequestEH noticeGenerationRequestEH) {
+        return MessageBuilder.withPayload(noticeGenerationRequestEH).build();
+    }
+
+    @Override
+    public boolean noticeGeneration(NoticeGenerationRequestEH noticeGenerationRequestEH) {
+        return streamBridge.send("noticeGeneration-out-0",
+                buildMessage(noticeGenerationRequestEH));
+    }
+
+    /**
+     * Declared just to let know Spring to connect the producer at startup
+     */
     @Slf4j
     @Configuration
     static class NoticeGenerationRequestProducerConfig {
@@ -31,17 +44,6 @@ public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequ
             return Flux::empty;
         }
 
-    }
-
-    @Override
-    public boolean noticeGeneration(NoticeGenerationRequestEH noticeGenerationRequestEH) {
-        return streamBridge.send("noticeGeneration-out-0",
-                buildMessage(noticeGenerationRequestEH));
-    }
-
-    public static Message<NoticeGenerationRequestEH> buildMessage(
-            NoticeGenerationRequestEH noticeGenerationRequestEH){
-        return MessageBuilder.withPayload(noticeGenerationRequestEH).build();
     }
 
 }

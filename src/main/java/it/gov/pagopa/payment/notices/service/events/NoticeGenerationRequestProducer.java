@@ -10,6 +10,7 @@ public interface NoticeGenerationRequestProducer {
 
     /**
      * Send notige generation request through EH
+     *
      * @param noticeGenerationRequestEH data to send
      * @return boolean referring if the insertion on the sending channel was successfully
      */

@@ -9,10 +9,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
 import it.gov.pagopa.payment.notices.service.model.ProblemJson;
 import it.gov.pagopa.payment.notices.service.model.TemplateResource;
-import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
 import it.gov.pagopa.payment.notices.service.service.NoticeTemplateService;
 import it.gov.pagopa.payment.notices.service.util.OpenApiTableMetadata;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +21,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -49,6 +50,7 @@ public class NoticeTemplatesController {
 
     /**
      * Retrieve available notice templates.
+     *
      * @return list of available templates inside the storage
      */
     @Operation(summary = "getTemplates",
@@ -87,6 +89,7 @@ public class NoticeTemplatesController {
 
     /**
      * Retrieve notice template zip, if available inside the template storage.
+     *
      * @param templateId templateId to use for recovery
      * @return template zipped data
      */
@@ -117,7 +120,7 @@ public class NoticeTemplatesController {
             @ApiResponse(responseCode = "503",
                     description = "Service or template storage unavailable",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ProblemJson.class)))
+                            schema = @Schema(implementation = ProblemJson.class)))
     })
     @GetMapping("/{template_id}")
     public ResponseEntity<Resource> getTemplate(

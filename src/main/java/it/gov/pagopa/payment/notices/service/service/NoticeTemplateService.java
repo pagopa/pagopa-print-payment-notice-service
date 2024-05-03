@@ -12,12 +12,14 @@ public interface NoticeTemplateService {
 
     /**
      * Retrieve list of available templates
+     *
      * @return list of templates available for notice generation
      */
     List<TemplateResource> getTemplates();
 
     /**
      * Recover the template file referring to the provided templateId
+     *
      * @param templateId id to be used to retrieve the template
      * @return template zipped file
      */

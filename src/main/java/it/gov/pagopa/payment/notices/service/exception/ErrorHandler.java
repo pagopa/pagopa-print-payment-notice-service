@@ -1,12 +1,6 @@
 package it.gov.pagopa.payment.notices.service.exception;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import feign.FeignException;
 import it.gov.pagopa.payment.notices.service.model.ProblemJson;
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
@@ -24,7 +18,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * All Exceptions are handled by this class
@@ -135,7 +130,6 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
-
 
 
     /**
