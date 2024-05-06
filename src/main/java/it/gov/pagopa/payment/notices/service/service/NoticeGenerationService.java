@@ -2,6 +2,9 @@ package it.gov.pagopa.payment.notices.service.service;
 
 import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
+import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
+
+import java.io.File;
 
 /**
  * Service interface for notice generation
@@ -31,4 +34,7 @@ public interface NoticeGenerationService {
      * @return folderId produced when inserting the request
      */
     String generateMassive(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId);
+
+    File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId);
+
 }

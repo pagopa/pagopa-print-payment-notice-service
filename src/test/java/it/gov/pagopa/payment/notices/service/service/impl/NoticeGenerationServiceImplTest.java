@@ -1,6 +1,7 @@
 package it.gov.pagopa.payment.notices.service.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.gov.pagopa.payment.notices.service.client.NoticeGenerationClient;
 import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationRequest;
 import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationRequestError;
 import it.gov.pagopa.payment.notices.service.events.NoticeGenerationRequestProducer;
@@ -45,6 +46,9 @@ class NoticeGenerationServiceImplTest {
     @Spy
     private ObjectMapper objectMapper;
 
+    @Mock
+    NoticeGenerationClient noticeGenerationClient;
+
     private NoticeGenerationServiceImpl noticeGenerationService;
 
     @BeforeEach
@@ -55,7 +59,8 @@ class NoticeGenerationServiceImplTest {
         noticeGenerationService = new NoticeGenerationServiceImpl(
                 paymentGenerationRequestRepository,
                 paymentGenerationRequestErrorRepository,
-                noticeGenerationRequestProducer, objectMapper, new Aes256Utils("test","test"));
+                noticeGenerationRequestProducer, objectMapper, new Aes256Utils("test","test"),
+                noticeGenerationClient);
     }
 
     @Test

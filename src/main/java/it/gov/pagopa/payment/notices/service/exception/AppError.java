@@ -26,7 +26,9 @@ public enum AppError {
     ERROR_ON_MASSIVE_GENERATION_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,
             "Exception on Massive Generation Request",
             "Encountered a blocking exception on the massive generation request"),
-
+    ERROR_ON_GENERATION_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,
+            "Exception on Generation Request",
+            "Encountered a blocking exception on the generation request"),
     UNKNOWN(null, null, null);
 
 
