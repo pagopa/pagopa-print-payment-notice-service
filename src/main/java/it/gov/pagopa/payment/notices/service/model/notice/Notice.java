@@ -32,6 +32,9 @@ public class Notice {
     @NotEmpty
     private String code;
 
+    @Schema(description = "Notice Installments")
+    private List<InstallmentData> installments;
+
     @Schema(description = "Poste auth code")
     private String posteAuth;
 

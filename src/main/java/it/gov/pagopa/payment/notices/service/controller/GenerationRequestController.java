@@ -82,6 +82,9 @@ public class GenerationRequestController {
             @Parameter(description = "templateId to use for retrieval")
             @Valid @NotNull @RequestBody NoticeGenerationRequestItem noticeGenerationRequestItem,
             @RequestHeader("X-User-Id") String userId) {
+        if (folderId != null && userId == null) {
+            throw new AppException(AppError.BAD_REQUEST);
+        }
         File file = noticeGenerationService.generateNotice(noticeGenerationRequestItem, folderId, userId);
         try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             HttpHeaders headers = new HttpHeaders();
@@ -132,8 +135,8 @@ public class GenerationRequestController {
     })
     @GetMapping("/folder/{folder_id}/status")
     public GetGenerationRequestStatusResource getFolderStatus(
-            @Parameter(description = "folderId to use for request status retrieval") @PathVariable("folder_id") String folderId,
-            @Parameter(description = "userId to use for request status retrieval") @RequestHeader("X-User-Id") String userId) {
+            @Valid @NotNull @Parameter(description = "folderId to use for request status retrieval") @PathVariable("folder_id") String folderId,
+            @Valid @NotNull @Parameter(description = "userId to use for request status retrieval") @RequestHeader("X-User-Id") String userId) {
         return noticeGenerationService.getFolderStatus(folderId, userId);
     }
 
@@ -175,7 +178,7 @@ public class GenerationRequestController {
             @Parameter(description = "massive notice generation request data")
             @Valid @NotNull @RequestBody NoticeGenerationMassiveRequest noticeGenerationMassiveRequest,
             @Parameter(description = "userId to use for request status retrieval")
-            @RequestHeader("X-User-Id") String userId) {
+            @Valid @NotNull @RequestHeader("X-User-Id") String userId) {
         return noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, userId);
     }
 

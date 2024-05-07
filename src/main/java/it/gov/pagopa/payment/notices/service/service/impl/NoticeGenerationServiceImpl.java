@@ -118,10 +118,12 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId) {
         try {
 
-            Optional<PaymentNoticeGenerationRequest> paymentNoticeGenerationRequestOptional =
-                    paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId);
-            if(paymentNoticeGenerationRequestOptional.isEmpty()) {
-                throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
+            if (folderId != null && userId != null) {
+                Optional<PaymentNoticeGenerationRequest> paymentNoticeGenerationRequestOptional =
+                        paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId);
+                if (paymentNoticeGenerationRequestOptional.isEmpty()) {
+                    throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
+                }
             }
 
             File workingDirectory = createWorkingDirectory();
