@@ -61,7 +61,7 @@ main() {
     fi;
 
     if [ "$action" == "dec" ]; then
-      sops --decrypt --azure-kv "$azure_kv_url" --input-type dotenv --output-type dotenv ./"$filepath".encrypted > ./"$filepath"
+      sops --decrypt --azure-kv "$azure_kv_url" --input-type dotenv --output-type dotenv ./"$filepath" > "$(echo "./$filepath" | sed 's/\.encrypted$//')"
     fi;
 
     echo 'done'
