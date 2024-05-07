@@ -78,6 +78,7 @@ microservice-chart:
     OTEL_METRICS_EXPORTER: otlp
     OTEL_LOGS_EXPORTER: none
     OTEL_TRACES_SAMPLER: "always_on"
+    NOTICE_GENERATION_REST_ENDPOINT: "<TO_ADD>"
     KAFKA_BROKER: "pagopa-d-printit-evh-ns01.servicebus.windows.net:9092"
   envSecret:
     # required
@@ -86,6 +87,7 @@ microservice-chart:
     MONGODB_CONNECTION_URI: 'notices-mongo-connection-string'
     TEMPLATE_STORAGE_CONN_STRING: 'templates-storage-account-connection-string'
     KAFKA_SASL_JAAS_CONFIG: 'ehub-d-notice-connection-string'
+    NOTICE_GENERATION_SUBSCRIPTION_KEY: 'notice-generation-sub-key'
   keyvault:
     name: "pagopa-d-itn-printit-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
