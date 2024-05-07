@@ -72,7 +72,7 @@ from `./docker` directory
 Start the springboot application with these commands:
 
 ``` bash
-sh sops.sh d d ./src/main/resources/application-local.properties
+sh sops.sh dec dev ./src/main/resources/application-local.properties.encrypted
 mvn spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
