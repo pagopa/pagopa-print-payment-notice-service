@@ -29,7 +29,7 @@ microservice-chart:
       - 8080
   ingress:
     create: true
-    host: "itnuat.printit.internal.uat.platform.pagopa.it"
+    host: "printit.itn.internal.uat.platform.pagopa.it"
     path: /pagopa-print-payment-notice-service/(.*)
     servicePort: 8080
   serviceAccount:
@@ -86,7 +86,7 @@ microservice-chart:
     OTEL_EXPORTER_OTLP_HEADERS: elastic-apm-secret-token
     MONGODB_CONNECTION_URI: 'notices-mongo-connection-string'
     TEMPLATE_STORAGE_CONN_STRING: 'templates-storage-account-connection-string'
-    KAFKA_SASL_JAAS_CONFIG: 'ehub-u-notice-connection-string'
+    KAFKA_SASL_JAAS_CONFIG: 'ehub-u-notice-jaas-config'
     AES_SECRET_KEY: 'aes-key'
     AES_SALT: 'aes-salt'
   keyvault:
