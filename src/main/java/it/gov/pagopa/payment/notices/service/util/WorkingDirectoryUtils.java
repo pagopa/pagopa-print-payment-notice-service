@@ -7,6 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+/**
+ * Utils methods for working directory
+ */
 @Slf4j
 public class WorkingDirectoryUtils {
 
