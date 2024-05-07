@@ -52,9 +52,9 @@ main() {
     validate_environment "$environment"
     validate_filepath "$filepath"
 
-    env_short=$(echo $environment | cut -c1)
+    env_short=$(echo "$environment" | cut -c1)
 
-    azure_kv_url=$(az keyvault key show --name pagopa-"$env_short"-printit-sops-key --vault-name pagopa-$env_short-itn-printit-kv --query key.kid | sed 's/"//g')
+    azure_kv_url=$(az keyvault key show --name pagopa-"$env_short"-printit-sops-key --vault-name pagopa-"$env_short"-itn-printit-kv --query key.kid | sed 's/"//g')
 
     if [ "$action" == "enc" ]; then
       sops --encrypt --azure-kv "$azure_kv_url" --input-type dotenv --output-type  dotenv ./"$filepath" > ./"$filepath".encrypted
