@@ -78,8 +78,8 @@ microservice-chart:
     OTEL_METRICS_EXPORTER: otlp
     OTEL_LOGS_EXPORTER: none
     OTEL_TRACES_SAMPLER: "always_on"
-    KAFKA_BROKER: "pagopa-p-itn-core-evh-meucci.servicebus.windows.net:9092"
-    KAFKA_NOTICE_GENERATION_TOPIC: pagopa-p-itn-printit-notice-evt-rx
+    KAFKA_BROKER: "pagopa-p-itn-core-evh-meucci.servicebus.windows.net:9093"
+    KAFKA_NOTICE_GENERATION_TOPIC: pagopa-printit-evh
   envSecret:
     # required
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'app-insight-connection-string'
