@@ -1,6 +1,7 @@
 package it.gov.pagopa.payment.notices.service.service;
 
 import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
+import it.gov.pagopa.payment.notices.service.model.GetSignedUrlResource;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
 
@@ -45,5 +46,7 @@ public interface NoticeGenerationService {
      * @return generated notice
      */
     File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId);
+
+    GetSignedUrlResource getFileSignedUrl(String folderId, String fileId, String userId);
 
 }
