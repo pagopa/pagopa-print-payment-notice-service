@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
 import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
+import it.gov.pagopa.payment.notices.service.model.GetSignedUrlResource;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
 import it.gov.pagopa.payment.notices.service.model.notice.*;
@@ -206,6 +207,33 @@ class GenerationRequestControllerTest {
                 )
                 .andExpect(status().is5xxServerError());
         verify(noticeGenerationService).generateNotice(any(),any(), any());
+    }
+
+    @Test
+    void getSignedUrlShouldReturnDataOnOk() throws Exception {
+        when(noticeGenerationService.getFileSignedUrl(any(),any(), any()))
+                .thenReturn(GetSignedUrlResource.builder().signedUrl("test").build());
+        String url = "/notices/folderId/file/fileId";
+        mvc.perform(get(url)
+                        .header("X-User-Id", "test")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        verify(noticeGenerationService).getFileSignedUrl(any(),any(), any());
+    }
+
+    @Test
+    void getSignedUrlShouldReturnKOonErrorFile() throws Exception {
+        when(noticeGenerationService.getFileSignedUrl(any(),any(), any()))
+                .thenThrow(new AppException(AppError.INTERNAL_SERVER_ERROR));
+        String url = "/notices/folderId/file/fileId";
+        mvc.perform(get(url)
+                        .header("X-User-Id", "test")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().is5xxServerError());
+        verify(noticeGenerationService).getFileSignedUrl(any(),any(), any());
     }
 
     private static NoticeGenerationRequestItem getNoticeGenerationRequestItem() {

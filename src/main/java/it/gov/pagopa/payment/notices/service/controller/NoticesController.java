@@ -10,10 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
-import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
-import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
-import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
-import it.gov.pagopa.payment.notices.service.model.ProblemJson;
+import it.gov.pagopa.payment.notices.service.model.*;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
 import it.gov.pagopa.payment.notices.service.util.Constants;
 import it.gov.pagopa.payment.notices.service.util.OpenApiTableMetadata;
@@ -30,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
 import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.clearTempDirectory;
 
@@ -40,10 +38,10 @@ import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.c
 @RequestMapping(value = "/notices", produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
 @Tag(name = "Notice Generation Request APIs")
-public class GenerationRequestController {
+public class NoticesController {
     private final NoticeGenerationService noticeGenerationService;
 
-    public GenerationRequestController(NoticeGenerationService noticeGenerationService) {
+    public NoticesController(NoticeGenerationService noticeGenerationService) {
         this.noticeGenerationService = noticeGenerationService;
     }
 
@@ -184,6 +182,50 @@ public class GenerationRequestController {
             @Parameter(description = "userId to use for request status retrieval")
             @Valid @NotNull @RequestHeader(Constants.X_USER_ID) String userId) {
         return noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, userId);
+    }
+
+    /**
+     * Retrieve notice template zip, if available inside the template storage.
+     *
+     * @param templateId templateId to use for recovery
+     * @return template zipped data
+     */
+    @Operation(summary = "getTemplate",
+            description = "Return templates",
+            security = {@SecurityRequirement(name = "ApiKey")})
+    @OpenApiTableMetadata(readWriteIntense = OpenApiTableMetadata.ReadWrite.READ,
+            cacheable = true, external = true, internal = false)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Return file signed url",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = GetSignedUrlResource.class)
+                    )),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "Unauthorized", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "403",
+                    description = "Forbidden", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "404", description = "Template not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "429",
+                    description = "Too many requests", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "500",
+                    description = "Service error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "503",
+                    description = "Service or template storage unavailable",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class)))
+    })
+    @GetMapping("/{folderId}/file/{fileId}")
+    public GetSignedUrlResource getTemplate(
+            @Valid @NotNull @Parameter(description = "folderId to use for request retrieval") @PathVariable("folderId") String folderId,
+            @Valid @NotNull @Parameter(description = "userId to use for request retrieval") @RequestHeader("X-User-Id") String userId,
+            @Valid @NotNull @Parameter(description = "fileId to use for request retrieval") @PathVariable("fileId") String fileId) {
+        return noticeGenerationService.getFileSignedUrl(folderId, fileId, userId);
     }
 
 }
