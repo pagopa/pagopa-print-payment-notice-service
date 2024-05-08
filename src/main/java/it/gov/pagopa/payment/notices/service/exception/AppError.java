@@ -29,6 +29,16 @@ public enum AppError {
     ERROR_ON_GENERATION_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,
             "Exception on Generation Request",
             "Encountered a blocking exception on the generation request"),
+
+    COULD_NOT_GET_FILE_URL_ERROR(HttpStatus.NOT_FOUND,"Couldn't get file url",
+            "Encountered an error recovering file url"),
+    NOTICE_CLIENT_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE,
+            "Notice Storage Not Available",
+            "Notice Storage client temporarily not available"),
+
+    ERROR_ON_GET_FILE_URL_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,"Error occurred while attempting to get file url",
+            "Error occurred while attempting to get file url"),
+
     UNKNOWN(null, null, null);
 
 
