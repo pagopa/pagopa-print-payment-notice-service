@@ -57,6 +57,7 @@ jobs:
           resource_group: ${{ vars.CLUSTER_RESOURCE_GROUP }}
           app_name: ${{ env.APP_NAME }}
           helm_upgrade_options: "--debug"
+          timeout: "10m0s"
 
   cleanup_runner:
     name: Cleanup Runner
@@ -115,5 +116,5 @@ jobs:
           export ARM_TENANT_ID=$(az account show --query tenantId --output tsv)
           export ARM_USE_OIDC=true
           export ARM_ACCESS_KEY=$(az storage account keys list --resource-group io-infra-rg --account-name pagopainfraterraform${{inputs.environment}} --query '[0].value' -o tsv)
-          bash ./terraform.sh init weu-${{ inputs.environment }}
-          bash ./terraform.sh apply weu-${{ inputs.environment }} -auto-approve
+          bash ./terraform.sh init itn-${{ inputs.environment }}
+          bash ./terraform.sh apply itn-${{ inputs.environment }} -auto-approve
