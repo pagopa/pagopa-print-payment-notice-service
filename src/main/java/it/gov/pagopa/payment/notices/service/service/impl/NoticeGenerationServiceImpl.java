@@ -132,20 +132,18 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             Path tempDirectory = Files.createTempDirectory(workingDirectory.toPath(), "notice-generation-service")
                     .normalize().toAbsolutePath();
 
-            try {
-                Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem);
 
-                try (InputStream inputStream = generationResponse.body().asInputStream()) {
-                    File targetFile = File.createTempFile("tempFile", ".pdf", tempDirectory.toFile());
-                    FileUtils.copyInputStreamToFile(inputStream, targetFile);
-                    return targetFile;
-                }
+            Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem);
 
-            } catch (FeignException feignException) {
-                log.error(feignException.getMessage(), feignException);
-                throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR);
+            try (InputStream inputStream = generationResponse.body().asInputStream()) {
+                File targetFile = File.createTempFile("tempFile", ".pdf", tempDirectory.toFile());
+                FileUtils.copyInputStreamToFile(inputStream, targetFile);
+                return targetFile;
             }
 
+        } catch (FeignException feignException) {
+            log.error(feignException.getMessage(), feignException);
+            throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new AppException(AppError.ERROR_ON_GENERATION_REQUEST);
