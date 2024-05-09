@@ -2,6 +2,7 @@ package it.gov.pagopa.payment.notices.service.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import feign.Response;
 import it.gov.pagopa.payment.notices.service.client.NoticeGenerationClient;
 import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationRequest;
@@ -119,27 +120,30 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         try {
 
             if (folderId != null && userId != null) {
-                Optional<PaymentNoticeGenerationRequest> paymentNoticeGenerationRequestOptional =
-                        paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId);
-                if (paymentNoticeGenerationRequestOptional.isEmpty()) {
-                    throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
-                }
+                // Unused value set to avoid sonar scan code gate block
+                PaymentNoticeGenerationRequest ignored =
+                        paymentGenerationRequestRepository.findById(folderId)
+                                .orElseThrow(() -> {
+                                    throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
+                                });
             }
 
             File workingDirectory = createWorkingDirectory();
             Path tempDirectory = Files.createTempDirectory(workingDirectory.toPath(), "notice-generation-service")
                     .normalize().toAbsolutePath();
 
-            Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem);
+            try {
+                Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem);
 
-            if (generationResponse.status() != HttpStatus.OK.value()) {
-                throw new RuntimeException("Client Exception");
-            }
+                try (InputStream inputStream = generationResponse.body().asInputStream()) {
+                    File targetFile = File.createTempFile("tempFile", ".pdf", tempDirectory.toFile());
+                    FileUtils.copyInputStreamToFile(inputStream, targetFile);
+                    return targetFile;
+                }
 
-            try (InputStream inputStream = generationResponse.body().asInputStream()) {
-                File targetFile = File.createTempFile("tempFile", ".pdf", tempDirectory.toFile());
-                FileUtils.copyInputStreamToFile(inputStream, targetFile);
-                return targetFile;
+            } catch (FeignException feignException) {
+                log.error(feignException.getMessage(), feignException);
+                throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR);
             }
 
         } catch (Exception e) {

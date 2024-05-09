@@ -29,6 +29,10 @@ public enum AppError {
     ERROR_ON_GENERATION_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,
             "Exception on Generation Request",
             "Encountered a blocking exception on the generation request"),
+
+    NOTICE_GEN_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,
+            "Exception on generation client", "Exception on generation client"),
+
     UNKNOWN(null, null, null);
 
 
