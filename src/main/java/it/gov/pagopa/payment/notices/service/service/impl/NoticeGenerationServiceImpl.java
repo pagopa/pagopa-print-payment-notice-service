@@ -23,7 +23,6 @@ import it.gov.pagopa.payment.notices.service.util.Aes256Utils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -119,10 +118,10 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId) {
         try {
 
-            if (folderId != null && userId != null) {
+            if(folderId != null && userId != null) {
                 // Unused value set to avoid sonar scan code gate block
                 PaymentNoticeGenerationRequest ignored =
-                        paymentGenerationRequestRepository.findByIdAndUserId(folderId,userId)
+                        paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId)
                                 .orElseThrow(() -> {
                                     throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
                                 });
@@ -143,7 +142,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
         } catch (FeignException feignException) {
             log.error(feignException.getMessage(), feignException);
-            throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR);
+            throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR, feignException);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new AppException(AppError.ERROR_ON_GENERATION_REQUEST);
