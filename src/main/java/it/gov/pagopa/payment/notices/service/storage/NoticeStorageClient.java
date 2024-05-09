@@ -1,39 +1,19 @@
 package it.gov.pagopa.payment.notices.service.storage;
 
 import com.azure.core.credential.TokenCredential;
-import com.azure.core.util.ClientOptions;
-import com.azure.core.util.Context;
-import com.azure.data.tables.TableClient;
-import com.azure.data.tables.TableClientBuilder;
-import com.azure.data.tables.models.TableServiceException;
-import com.azure.identity.ClientSecretCredentialBuilder;
-import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.identity.ManagedIdentityCredentialBuilder;
 import com.azure.storage.blob.*;
 import com.azure.storage.blob.models.BlobStorageException;
-import com.azure.storage.blob.models.DownloadRetryOptions;
 import com.azure.storage.blob.models.UserDelegationKey;
-import com.azure.storage.blob.options.BlobDownloadToFileOptions;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
-import it.gov.pagopa.payment.notices.service.model.TemplateResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-
-import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.createWorkingDirectory;
 
 @Component
 public class NoticeStorageClient {
@@ -46,18 +26,15 @@ public class NoticeStorageClient {
     public NoticeStorageClient(
             @Value("${spring.cloud.azure.storage.blob.notices.enabled}") String enabled,
             @Value("${spring.cloud.azure.storage.blob.notices.endpoint}") String endpoint,
-            @Value("${spring.cloud.azure.storage.blob.notices.tenantId}") String tenantId,
             @Value("${spring.cloud.azure.storage.blob.notices.clientId}") String clientId,
-            @Value("${spring.cloud.azure.storage.blob.notices.clientSecret}") String clientSecret,
             @Value("${spring.cloud.azure.storage.blob.notices.containerName}") String containerName) {
         if(Boolean.TRUE.toString().equals(enabled)) {
-            TokenCredential clientSecretCredential = new ClientSecretCredentialBuilder()
-                    .tenantId(tenantId)
+            TokenCredential tokenCredential = new ManagedIdentityCredentialBuilder()
                     .clientId(clientId)
-                    .clientSecret(clientSecret)
                     .build();
             blobServiceClient = new BlobServiceClientBuilder()
-                    .endpoint(endpoint).credential(clientSecretCredential).buildClient();
+                    .endpoint(endpoint)
+                    .credential(tokenCredential).buildClient();
             blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
         }
     }
@@ -90,7 +67,7 @@ public class NoticeStorageClient {
                 .setReadPermission(true);
 
         BlobClient blobClient = blobContainerClient.getBlobClient(
-                String.join("/",folderId,fileId));
+                String.join("/", folderId, fileId));
         BlobServiceSasSignatureValues sasSignatureValues = new BlobServiceSasSignatureValues
                 (expiryTime, sasPermission)
                 .setStartTime(OffsetDateTime.now().minusMinutes(5));

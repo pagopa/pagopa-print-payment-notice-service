@@ -120,10 +120,10 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId) {
         try {
 
-            if (folderId != null && userId != null) {
+            if(folderId != null && userId != null) {
                 Optional<PaymentNoticeGenerationRequest> paymentNoticeGenerationRequestOptional =
                         paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId);
-                if (paymentNoticeGenerationRequestOptional.isEmpty()) {
+                if(paymentNoticeGenerationRequestOptional.isEmpty()) {
                     throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
                 }
             }
@@ -134,7 +134,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
             Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem);
 
-            if (generationResponse.status() != HttpStatus.OK.value()) {
+            if(generationResponse.status() != HttpStatus.OK.value()) {
                 throw new RuntimeException("Client Exception");
             }
 
@@ -153,11 +153,11 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     @Override
     public GetSignedUrlResource getFileSignedUrl(String folderId, String fileId, String userId) {
 
-        Optional<PaymentNoticeGenerationRequest> paymentNoticeGenerationRequestOptional =
-                paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId);
-        if (paymentNoticeGenerationRequestOptional.isEmpty()) {
-            throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
-        }
+//        Optional<PaymentNoticeGenerationRequest> paymentNoticeGenerationRequestOptional =
+//                paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId);
+//        if (paymentNoticeGenerationRequestOptional.isEmpty()) {
+//            throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
+//        }
 
         try {
             return GetSignedUrlResource.builder()
