@@ -78,7 +78,7 @@ microservice-chart:
     OTEL_METRICS_EXPORTER: otlp
     OTEL_LOGS_EXPORTER: none
     OTEL_TRACES_SAMPLER: "always_on"
-    NOTICE_GENERATION_REST_ENDPOINT: "<TO_ADD>"
+    NOTICE_GENERATION_REST_ENDPOINT: "https://api.uat.platform.pagopa.it/print-payment-notice-service/v1"
     KAFKA_BROKER: "pagopa-u-itn-core-evh-meucci.servicebus.windows.net:9092"
     KAFKA_NOTICE_GENERATION_TOPIC: pagopa-printit-evh
   envSecret:
