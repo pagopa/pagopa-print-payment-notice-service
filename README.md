@@ -1,31 +1,45 @@
-# Template for Java Spring Microservice project
+# Print Payment Notice - Service
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=TODO-set-your-id&metric=alert_status)](https://sonarcloud.io/dashboard?id=TODO-set-your-id)
-[![Integration Tests](https://github.com/pagopa/<TODO-repo>/actions/workflows/integration_test.yml/badge.svg?branch=main)](https://github.com/pagopa/<TODO-repo>/actions/workflows/integration_test.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-print-payment-notice-service&metric=alert_status)](https://sonarcloud.io/dashboard?id=pagopa_pagopa-print-payment-notice-service)
+[![Integration Tests](https://github.com/pagopa/pagopa-print-payment-notice-service/actions/workflows/integration_test.yml/badge.svg?branch=main)](https://github.com/pagopa/pagopa-print-payment-notice-service/actions/workflows/integration_test.yml)
 
-TODO: add a description
+This µ-service exposes the REST APIs and handles the requests for "Stampa Avvisi".
 
-TODO: generate a index with this tool: https://ecotrust-canada.github.io/markdown-toc/
-
-TODO: resolve all the TODOs in this template
+- [Print Payment Notice - Service](#print-payment-notice---service)
+    * [Api Documentation 📖](#api-documentation---)
+    * [Technology Stack](#technology-stack)
+    * [Start Project Locally 🚀](#start-project-locally---)
+        + [Prerequisites](#prerequisites)
+        + [Run docker container](#run-docker-container)
+    * [Develop Locally 💻](#develop-locally---)
+        + [Prerequisites](#prerequisites-1)
+        + [Run the project](#run-the-project)
+        + [Spring Profiles](#spring-profiles)
+        + [Testing 🧪](#testing---)
+            - [Unit testing](#unit-testing)
+            - [Integration testing](#integration-testing)
+            - [Performance testing](#performance-testing)
+    * [Contributors 👥](#contributors---)
+        + [Maintainers](#maintainers)
 
 ---
 
 ## Api Documentation 📖
 
-See the [OpenApi 3 here.](https://editor.swagger.io/?url=https://raw.githubusercontent.com/pagopa/<TODO-repo>/main/openapi/openapi.json)
+See
+the [OpenApi 3 here.](https://editor.swagger.io/?url=https://raw.githubusercontent.com/pagopa/pagopa-print-payment-notice-service/main/openapi/openapi.json)
 
 ---
 
 ## Technology Stack
 
-- Java 11
-- Spring Boot
+- Java 17
+- Spring Boot 3
 - Spring Web
 - Hibernate
 - JPA
-- ...
-- TODO
+- Mongo
+- Spring Cloud
 
 ---
 
@@ -51,13 +65,16 @@ from `./docker` directory
 
 - git
 - maven
-- jdk-11
+- jdk-17
 
 ### Run the project
 
-Start the springboot application with this command:
+Start the springboot application with these commands:
 
-`mvn spring-boot:run -Dspring-boot.run.profiles=local`
+``` bash
+sh sops.sh dec dev ./src/main/resources/application-local.properties.encrypted
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+```
 
 ### Spring Profiles
 
@@ -91,6 +108,6 @@ install [k6](https://k6.io/) and then from `./performance-test/src`
 
 Made with ❤️ by PagoPa S.p.A.
 
-### Mainteiners
+### Maintainers
 
 See `CODEOWNERS` file

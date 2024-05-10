@@ -1,10 +1,10 @@
 microservice-chart:
   namespace: "printit"
   nameOverride: ""
-  fullnameOverride: ""
+  fullnameOverride: "print-payment-notice-service"
   image:
     repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
-    tag: "0.0.2"
+    tag: "0.1.0"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -29,7 +29,7 @@ microservice-chart:
       - 8080
   ingress:
     create: true
-    host: "itndev.printit.internal.dev.platform.pagopa.it"
+    host: "printit.itn.internal.dev.platform.pagopa.it"
     path: /pagopa-print-payment-notice-service/(.*)
     servicePort: 8080
   serviceAccount:
@@ -78,15 +78,18 @@ microservice-chart:
     OTEL_METRICS_EXPORTER: otlp
     OTEL_LOGS_EXPORTER: none
     OTEL_TRACES_SAMPLER: "always_on"
-    NOTICE_GENERATION_REST_ENDPOINT: "<TO_ADD>"
-    KAFKA_BROKER: "pagopa-d-printit-evh-ns01.servicebus.windows.net:9092"
+    NOTICE_GENERATION_REST_ENDPOINT: "https://api.dev.platform.pagopa.it/print-payment-notice-service/v1"
+    KAFKA_BROKER: "pagopa-d-itn-core-evh-meucci.servicebus.windows.net:9093"
+    KAFKA_NOTICE_GENERATION_TOPIC: pagopa-printit-evh
   envSecret:
     # required
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'app-insight-connection-string'
     OTEL_EXPORTER_OTLP_HEADERS: elastic-apm-secret-token
     MONGODB_CONNECTION_URI: 'notices-mongo-connection-string'
     TEMPLATE_STORAGE_CONN_STRING: 'templates-storage-account-connection-string'
-    KAFKA_SASL_JAAS_CONFIG: 'ehub-d-notice-connection-string'
+    KAFKA_SASL_JAAS_CONFIG: 'ehub-d-notice-jaas-config'
+    AES_SECRET_KEY: 'aes-key'
+    AES_SALT: 'aes-salt'
     NOTICE_GENERATION_SUBSCRIPTION_KEY: 'notice-generation-sub-key'
   keyvault:
     name: "pagopa-d-itn-printit-kv"
