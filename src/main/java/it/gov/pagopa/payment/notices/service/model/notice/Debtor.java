@@ -3,8 +3,12 @@ package it.gov.pagopa.payment.notices.service.model.notice;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.ToString;
+import lombok.*;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Debtor {
 
     @ToString.Exclude

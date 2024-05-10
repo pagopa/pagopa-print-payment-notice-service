@@ -6,6 +6,7 @@ import it.gov.pagopa.payment.notices.service.exception.AppException;
 import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
+import it.gov.pagopa.payment.notices.service.model.notice.*;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,13 +19,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -36,6 +38,9 @@ class GenerationRequestControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @MockBean
     private NoticeGenerationService noticeGenerationService;
@@ -149,6 +154,90 @@ class GenerationRequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
 
+    }
+
+    @Test
+    void generateNoticeShouldReturnFileOnOk() throws Exception {
+        File tempDirectory = Files.createTempDirectory("test").toFile();
+        File file = Files.createTempFile(tempDirectory.toPath(), "test", ".zip").toFile();
+        when(noticeGenerationService.generateNotice(any(),any(), any()))
+                .thenReturn(file);
+        String url = "/notices/generate";
+        mvc.perform(post(url)
+                        .param("folderId", "test")
+                        .header("X-User-Id", "test")
+                        .content(objectMapper.writeValueAsString(
+                                getNoticeGenerationRequestItem()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM));
+        verify(noticeGenerationService).generateNotice(any(),any(), any());
+    }
+
+    @Test
+    void generateNoticeShouldReturnBadRequestOnMissingFolder() throws Exception {
+        File tempDirectory = Files.createTempDirectory("test").toFile();
+        File file = Files.createTempFile(tempDirectory.toPath(), "test", ".zip").toFile();
+        when(noticeGenerationService.generateNotice(any(),any(), any()))
+                .thenReturn(file);
+        String url = "/notices/generate";
+        mvc.perform(post(url)
+                        .content(objectMapper.writeValueAsString(
+                                getNoticeGenerationRequestItem()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest());
+        verifyNoInteractions(noticeGenerationService);
+    }
+
+    @Test
+    void generateNoticeShouldReturnKOonErrorFile() throws Exception {
+        when(noticeGenerationService.generateNotice(any(),any(), any()))
+                .thenReturn(null);
+        String url = "/notices/generate";
+        mvc.perform(post(url)
+                        .param("folderId", "test")
+                        .header("X-User-Id", "test")
+                        .content(objectMapper.writeValueAsString(
+                                getNoticeGenerationRequestItem()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().is5xxServerError());
+        verify(noticeGenerationService).generateNotice(any(),any(), any());
+    }
+
+    private static NoticeGenerationRequestItem getNoticeGenerationRequestItem() {
+        return NoticeGenerationRequestItem.builder()
+                .templateId("template")
+                .data(NoticeRequestData.builder()
+                        .notice(Notice.builder()
+                                .code("code")
+                                .dueDate("24/10/2024")
+                                .subject("subject")
+                                .paymentAmount(100L)
+                                .installments(Collections.singletonList(
+                                        InstallmentData.builder()
+                                                .amount(100L)
+                                                .code("codeRate")
+                                                .dueDate("24/10/2024")
+                                                .build()
+                                ))
+                                .build())
+                        .creditorInstitution(CreditorInstitution.builder()
+                                .taxCode("taxCode")
+                                .build())
+                        .debtor(Debtor.builder()
+                                .taxCode("taxCode")
+                                .address("address")
+                                .city("city")
+                                .buildingNumber("101")
+                                .postalCode("00135")
+                                .province("RM")
+                                .fullName("Test Name")
+                                .build())
+                        .build())
+                .build();
     }
 
 }
