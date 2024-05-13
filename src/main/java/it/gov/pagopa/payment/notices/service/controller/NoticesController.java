@@ -83,7 +83,7 @@ public class NoticesController {
             @Valid @NotNull @RequestBody NoticeGenerationRequestItem noticeGenerationRequestItem,
             @RequestHeader(value = Constants.X_USER_ID, required = false) String userId) {
         if(folderId != null && userId == null) {
-            throw new AppException(AppError.BAD_REQUEST);
+            throw new AppException(AppError.BAD_REQUEST, "Invalid Data");
         }
         File file = noticeGenerationService.generateNotice(noticeGenerationRequestItem, folderId, userId);
         try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
@@ -187,11 +187,12 @@ public class NoticesController {
     /**
      * Retrieve notice template zip, if available inside the template storage.
      *
-     * @param templateId templateId to use for recovery
+     * @param folderId folderId to use for recovery
+     * @param fileId fileId to use for recovery
      * @return template zipped data
      */
-    @Operation(summary = "getTemplate",
-            description = "Return templates",
+    @Operation(summary = "getSignedUrlResource",
+            description = "Return file signedUrl",
             security = {@SecurityRequirement(name = "ApiKey")})
     @OpenApiTableMetadata(readWriteIntense = OpenApiTableMetadata.ReadWrite.READ,
             cacheable = true, external = true, internal = false)
@@ -221,7 +222,7 @@ public class NoticesController {
                             schema = @Schema(implementation = ProblemJson.class)))
     })
     @GetMapping("/{folderId}/file/{fileId}")
-    public GetSignedUrlResource getTemplate(
+    public GetSignedUrlResource getSignedUrlResource(
             @Valid @NotNull @Parameter(description = "folderId to use for request retrieval") @PathVariable("folderId") String folderId,
             @Valid @NotNull @Parameter(description = "userId to use for request retrieval") @RequestHeader("X-User-Id") String userId,
             @Valid @NotNull @Parameter(description = "fileId to use for request retrieval") @PathVariable("fileId") String fileId) {
