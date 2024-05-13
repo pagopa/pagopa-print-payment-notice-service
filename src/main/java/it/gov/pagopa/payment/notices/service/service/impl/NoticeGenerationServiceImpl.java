@@ -90,7 +90,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new AppException(AppError.ERROR_ON_MASSIVE_GENERATION_REQUEST);
+            throw new AppException(AppError.ERROR_ON_MASSIVE_GENERATION_REQUEST, e);
         }
 
     }
@@ -99,11 +99,14 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId) {
         try {
 
-            findFolderIfExists(folderId, userId);
+            if(folderId != null && userId != null) {
+                findFolderIfExists(folderId, userId);
+            }
 
             File workingDirectory = createWorkingDirectory();
             Path tempDirectory = Files.createTempDirectory(workingDirectory.toPath(), "notice-generation-service")
-                    .normalize().toAbsolutePath();
+                    .normalize()
+                    .toAbsolutePath();
 
             try (Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem)) {
                 if(generationResponse.status() != HttpStatus.OK.value()) {
@@ -120,7 +123,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new AppException(AppError.ERROR_ON_GENERATION_REQUEST);
+            throw new AppException(AppError.ERROR_ON_GENERATION_REQUEST, e);
         }
     }
 
