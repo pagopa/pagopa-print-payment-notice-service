@@ -17,10 +17,11 @@ import it.gov.pagopa.payment.notices.service.model.notice.Notice;
 import it.gov.pagopa.payment.notices.service.model.notice.NoticeRequestData;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestErrorRepository;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestRepository;
-import it.gov.pagopa.payment.notices.service.util.Aes256Utils;
+import it.gov.pagopa.payment.notices.service.service.AsyncService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
@@ -50,6 +51,10 @@ class NoticeGenerationServiceImplTest {
     private NoticeGenerationRequestProducer noticeGenerationRequestProducer;
     @Spy
     private ObjectMapper objectMapper;
+
+    @InjectMocks
+    private AsyncService asyncService;
+
     private NoticeGenerationServiceImpl noticeGenerationService;
 
     @BeforeEach
@@ -60,7 +65,7 @@ class NoticeGenerationServiceImplTest {
         noticeGenerationService = new NoticeGenerationServiceImpl(
                 paymentGenerationRequestRepository,
                 paymentGenerationRequestErrorRepository,
-                noticeGenerationRequestProducer, objectMapper, new Aes256Utils("test", "test"),
+                asyncService,
                 noticeGenerationClient);
     }
 
