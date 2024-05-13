@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum AppError {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", "Something was wrong"),
-    BAD_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR, "Bad Request", "%s"),
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, "Bad Request", "%s"),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "Unauthorized", "Error during authentication"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "Forbidden", "This method is forbidden"),
     RESPONSE_NOT_READABLE(HttpStatus.BAD_GATEWAY, "Response Not Readable", "The response body is not readable"),
@@ -26,6 +26,12 @@ public enum AppError {
     ERROR_ON_MASSIVE_GENERATION_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,
             "Exception on Massive Generation Request",
             "Encountered a blocking exception on the massive generation request"),
+    ERROR_ON_GENERATION_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,
+            "Exception on Generation Request",
+            "Encountered a blocking exception on the generation request"),
+
+    NOTICE_GEN_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,
+            "Exception on generation client", "Exception on generation client"),
 
     UNKNOWN(null, null, null);
 

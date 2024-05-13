@@ -30,12 +30,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class NoticeTemplateStorageClientTest {
 
-    private BlobContainerClient blobContainerClient;
-
     private static BlobClient blobClientMock;
-
     private static TableClient tableClientMock;
-
+    private BlobContainerClient blobContainerClient;
     private NoticeTemplateStorageClient noticeTemplateStorageClient;
 
     @BeforeEach
@@ -52,10 +49,10 @@ class NoticeTemplateStorageClientTest {
 
     @Test
     void shouldReturnTemplates() {
-        TableEntity tableEntity = new TableEntity("test","test");
-        tableEntity.addProperty("templateId","test");
-        tableEntity.addProperty("description","test");
-        tableEntity.addProperty("templateExampleUrl","testUrl");
+        TableEntity tableEntity = new TableEntity("test", "test");
+        tableEntity.addProperty("templateId", "test");
+        tableEntity.addProperty("description", "test");
+        tableEntity.addProperty("templateExampleUrl", "testUrl");
         PagedIterable pagedIterable = Mockito.mock(PagedIterable.class);
         doReturn(Collections.singletonList(tableEntity).stream()).when(pagedIterable).stream();
         doReturn(pagedIterable).when(tableClientMock).listEntities();
@@ -89,16 +86,14 @@ class NoticeTemplateStorageClientTest {
 
     @Test
     void shouldReturnExceptionOnMissingClient() {
-        assertThrows(AppException.class, () ->
-                new NoticeTemplateStorageClient(false, null, null)
-                        .getTemplate("testFile"));
+        var templateClient = new NoticeTemplateStorageClient(false, null, null);
+        assertThrows(AppException.class, () -> templateClient.getTemplate("testFile"));
     }
 
     @Test
     void shouldReturnExceptionOnMissingClientForGetTemplates() {
-        assertThrows(AppException.class, () ->
-                new NoticeTemplateStorageClient(false, null, null)
-                        .getTemplates());
+        var templateClient = new NoticeTemplateStorageClient(false, null, null);
+        assertThrows(AppException.class, templateClient::getTemplates);
     }
 
     @Test
