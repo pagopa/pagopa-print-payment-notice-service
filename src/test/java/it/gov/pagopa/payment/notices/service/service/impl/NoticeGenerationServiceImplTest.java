@@ -55,9 +55,6 @@ class NoticeGenerationServiceImplTest {
     private ObjectMapper objectMapper;
 
     @Mock
-    NoticeGenerationClient noticeGenerationClient;
-
-    @Mock
     NoticeStorageClient noticeStorageClient;
 
     private NoticeGenerationServiceImpl noticeGenerationService;
