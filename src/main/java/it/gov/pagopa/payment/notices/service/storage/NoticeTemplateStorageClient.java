@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.createWorkingDirectory;
+
 @Component
 public class NoticeTemplateStorageClient {
 
@@ -143,14 +145,6 @@ public class NoticeTemplateStorageClient {
         } catch (IllegalArgumentException | IOException e) {
             throw new AppException(AppError.TEMPLATE_CLIENT_ERROR, e);
         }
-    }
-
-    private File createWorkingDirectory() throws IOException {
-        File workingDirectory = new File("temp");
-        if(!workingDirectory.exists()) {
-            Files.createDirectory(workingDirectory.toPath());
-        }
-        return workingDirectory;
     }
 
 }

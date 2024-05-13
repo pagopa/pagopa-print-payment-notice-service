@@ -1,6 +1,9 @@
 package it.gov.pagopa.payment.notices.service.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.Request;
+import feign.Response;
+import it.gov.pagopa.payment.notices.service.client.NoticeGenerationClient;
 import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationRequest;
 import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationRequestError;
 import it.gov.pagopa.payment.notices.service.events.NoticeGenerationRequestProducer;
@@ -23,7 +26,14 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,6 +55,9 @@ class NoticeGenerationServiceImplTest {
     @Spy
     private ObjectMapper objectMapper;
 
+    @Mock
+    NoticeGenerationClient noticeGenerationClient;
+
     private NoticeGenerationServiceImpl noticeGenerationService;
 
     @BeforeEach
@@ -55,7 +68,8 @@ class NoticeGenerationServiceImplTest {
         noticeGenerationService = new NoticeGenerationServiceImpl(
                 paymentGenerationRequestRepository,
                 paymentGenerationRequestErrorRepository,
-                noticeGenerationRequestProducer, objectMapper, new Aes256Utils("test","test"));
+                noticeGenerationRequestProducer, objectMapper, new Aes256Utils("test","test"),
+                noticeGenerationClient);
     }
 
     @Test
@@ -176,6 +190,29 @@ class NoticeGenerationServiceImplTest {
         verify(paymentGenerationRequestRepository).save(any());
         verify(noticeGenerationRequestProducer).noticeGeneration(any());
         verify(paymentGenerationRequestErrorRepository).save(any());
+    }
+
+    @Test
+    void shouldReturnDataOnValidNoticeGenerationRequest() throws IOException {
+        when(noticeGenerationClient.generateNotice(any(), any()))
+                .thenReturn(Response.builder().status(200)
+                        .request(Request.create(
+                        Request.HttpMethod.GET,"test",new HashMap<>(),
+                        "".getBytes(), Charset.defaultCharset(),null))
+                        .body("".getBytes()).build());
+        File returnFile = noticeGenerationService.generateNotice(NoticeGenerationRequestItem.builder().build(),
+                null, null);
+        assertNotNull(returnFile);
+        verify(noticeGenerationClient).generateNotice(any(),any());
+        verifyNoInteractions(paymentGenerationRequestRepository);
+    }
+
+    @Test
+    void shouldReturnExceptionOnMissingFolderRequest() throws IOException {
+        assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(NoticeGenerationRequestItem.builder().build(),
+                "test", "test"));
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        verifyNoInteractions(noticeGenerationClient);
     }
 
 }
