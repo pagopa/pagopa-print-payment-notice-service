@@ -176,13 +176,14 @@ class GenerationRequestControllerTest {
     }
 
     @Test
-    void generateNoticeShouldReturnBadRequestOnMissingFolder() throws Exception {
+    void generateNoticeShouldReturnBadRequestOnMissingUserForFolder() throws Exception {
         File tempDirectory = Files.createTempDirectory("test").toFile();
         File file = Files.createTempFile(tempDirectory.toPath(), "test", ".zip").toFile();
         when(noticeGenerationService.generateNotice(any(),any(), any()))
                 .thenReturn(file);
         String url = "/notices/generate";
         mvc.perform(post(url)
+                        .param("folderId", "test")
                         .content(objectMapper.writeValueAsString(
                                 getNoticeGenerationRequestItem()))
                         .contentType(MediaType.APPLICATION_JSON)
