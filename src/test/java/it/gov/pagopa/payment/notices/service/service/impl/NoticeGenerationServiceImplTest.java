@@ -27,11 +27,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
@@ -44,20 +41,15 @@ import static org.mockito.Mockito.*;
 class NoticeGenerationServiceImplTest {
 
     @Mock
+    NoticeGenerationClient noticeGenerationClient;
+    @Mock
     private PaymentGenerationRequestRepository paymentGenerationRequestRepository;
-
     @Mock
     private PaymentGenerationRequestErrorRepository paymentGenerationRequestErrorRepository;
-
     @Mock
     private NoticeGenerationRequestProducer noticeGenerationRequestProducer;
-
     @Spy
     private ObjectMapper objectMapper;
-
-    @Mock
-    NoticeGenerationClient noticeGenerationClient;
-
     private NoticeGenerationServiceImpl noticeGenerationService;
 
     @BeforeEach
@@ -68,19 +60,19 @@ class NoticeGenerationServiceImplTest {
         noticeGenerationService = new NoticeGenerationServiceImpl(
                 paymentGenerationRequestRepository,
                 paymentGenerationRequestErrorRepository,
-                noticeGenerationRequestProducer, objectMapper, new Aes256Utils("test","test"),
+                noticeGenerationRequestProducer, objectMapper, new Aes256Utils("test", "test"),
                 noticeGenerationClient);
     }
 
     @Test
     void getFolderStatusShouldReturnResourceWhenOk() {
-        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any()))
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
                 .thenReturn(
                         Optional.of(
-                            PaymentNoticeGenerationRequest.builder()
-                                .status(PaymentGenerationRequestStatus.INSERTED)
-                                .items(Collections.emptyList())
-                                .build()
+                                PaymentNoticeGenerationRequest.builder()
+                                        .status(PaymentGenerationRequestStatus.INSERTED)
+                                        .items(Collections.emptyList())
+                                        .build()
                         )
                 );
         when(paymentGenerationRequestErrorRepository.findErrors(any()))
@@ -92,42 +84,42 @@ class NoticeGenerationServiceImplTest {
                         )
                 );
         GetGenerationRequestStatusResource getGenerationRequestStatusResource =
-                assertDoesNotThrow(() -> noticeGenerationService.getFolderStatus("folderId","userId"));
+                assertDoesNotThrow(() -> noticeGenerationService.getFolderStatus("folderId", "userId"));
         assertNotNull(getGenerationRequestStatusResource);
-        assertEquals(PaymentGenerationRequestStatus.INSERTED,getGenerationRequestStatusResource.getStatus());
+        assertEquals(PaymentGenerationRequestStatus.INSERTED, getGenerationRequestStatusResource.getStatus());
         assertEquals(0, getGenerationRequestStatusResource.getProcessedNotices().size());
         assertEquals(1, getGenerationRequestStatusResource.getNoticesInError().size());
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         verify(paymentGenerationRequestErrorRepository).findErrors(any());
     }
 
     @Test
     void getFolderStatusShouldReturnNotFoundWhenMissingFolder() {
-        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any()))
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
                 .thenReturn(
                         Optional.empty()
                 );
         assertThrows(AppException.class, () ->
-                noticeGenerationService.getFolderStatus("folderId","userId"));
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+                noticeGenerationService.getFolderStatus("folderId", "userId"));
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         verifyNoInteractions(paymentGenerationRequestErrorRepository);
     }
 
     @Test
     void getFolderStatusShouldReturnExceptionWhenUnexpectedErrorOnRepository() {
-        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any()))
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
                 .thenAnswer(item -> {
                     throw new RuntimeException();
                 });
         assertThrows(RuntimeException.class, () ->
-                noticeGenerationService.getFolderStatus("folderId","userId"));
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+                noticeGenerationService.getFolderStatus("folderId", "userId"));
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         verifyNoInteractions(paymentGenerationRequestErrorRepository);
     }
 
     @Test
     void getFolderStatusShouldReturnExceptionWhenUnexpectedExceptionOnErrorRepository() {
-        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any()))
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
                 .thenReturn(
                         Optional.of(
                                 PaymentNoticeGenerationRequest.builder()
@@ -141,8 +133,8 @@ class NoticeGenerationServiceImplTest {
                     throw new RuntimeException();
                 });
         assertThrows(RuntimeException.class, () ->
-                noticeGenerationService.getFolderStatus("folderId","userId"));
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+                noticeGenerationService.getFolderStatus("folderId", "userId"));
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         verify(paymentGenerationRequestErrorRepository).findErrors(any());
     }
 
@@ -151,9 +143,9 @@ class NoticeGenerationServiceImplTest {
         NoticeGenerationRequestItem noticeGenerationRequestItem = NoticeGenerationRequestItem.builder()
                 .templateId("testTemplate")
                 .data(NoticeRequestData.builder().notice(
-                        Notice.builder().code("testCode")
-                                .build()
-                      ).build()
+                                Notice.builder().code("testCode")
+                                        .build()
+                        ).build()
                 ).build();
         NoticeGenerationMassiveRequest noticeGenerationMassiveRequest =
                 NoticeGenerationMassiveRequest.builder().notices(
@@ -197,21 +189,21 @@ class NoticeGenerationServiceImplTest {
         when(noticeGenerationClient.generateNotice(any(), any()))
                 .thenReturn(Response.builder().status(200)
                         .request(Request.create(
-                        Request.HttpMethod.GET,"test",new HashMap<>(),
-                        "".getBytes(), Charset.defaultCharset(),null))
+                                Request.HttpMethod.GET, "test", new HashMap<>(),
+                                "".getBytes(), Charset.defaultCharset(), null))
                         .body("".getBytes()).build());
         File returnFile = noticeGenerationService.generateNotice(NoticeGenerationRequestItem.builder().build(),
                 null, null);
         assertNotNull(returnFile);
-        verify(noticeGenerationClient).generateNotice(any(),any());
+        verify(noticeGenerationClient).generateNotice(any(), any());
         verifyNoInteractions(paymentGenerationRequestRepository);
     }
 
     @Test
     void shouldReturnExceptionOnMissingFolderRequest() throws IOException {
-        assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(NoticeGenerationRequestItem.builder().build(),
-                "test", "test"));
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        NoticeGenerationRequestItem generationRequestItem = NoticeGenerationRequestItem.builder().build();
+        assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(generationRequestItem, "test", "test"));
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         verifyNoInteractions(noticeGenerationClient);
     }
 

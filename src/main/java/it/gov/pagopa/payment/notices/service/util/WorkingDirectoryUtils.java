@@ -1,5 +1,6 @@
 package it.gov.pagopa.payment.notices.service.util;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
@@ -11,11 +12,12 @@ import java.nio.file.Files;
  * Utils methods for working directory
  */
 @Slf4j
+@NoArgsConstructor
 public class WorkingDirectoryUtils {
 
     public static File createWorkingDirectory() throws IOException {
         File workingDirectory = new File("temp");
-        if (!workingDirectory.exists()) {
+        if(!workingDirectory.exists()) {
             Files.createDirectory(workingDirectory.toPath());
         }
         return workingDirectory;

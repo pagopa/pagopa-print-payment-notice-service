@@ -15,6 +15,7 @@ import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveReques
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
 import it.gov.pagopa.payment.notices.service.model.ProblemJson;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
+import it.gov.pagopa.payment.notices.service.util.Constants;
 import it.gov.pagopa.payment.notices.service.util.OpenApiTableMetadata;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -69,7 +70,8 @@ public class GenerationRequestController {
                     description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ProblemJson.class)))
     })
-    /**
+
+    /*
      * POST method to generate a single notice, if a folderId is provided the content will be saved inside the provided
      * folder
      * @param folderId optional parameter to use if the content generates has to be saved
@@ -81,8 +83,8 @@ public class GenerationRequestController {
             @RequestParam(value = "folderId", required = false) String folderId,
             @Parameter(description = "templateId to use for retrieval")
             @Valid @NotNull @RequestBody NoticeGenerationRequestItem noticeGenerationRequestItem,
-            @RequestHeader("X-User-Id") String userId) {
-        if (folderId != null && userId == null) {
+            @RequestHeader(value = Constants.X_USER_ID, required = false) String userId) {
+        if(folderId != null && userId == null) {
             throw new AppException(AppError.BAD_REQUEST);
         }
         File file = noticeGenerationService.generateNotice(noticeGenerationRequestItem, folderId, userId);
@@ -104,8 +106,9 @@ public class GenerationRequestController {
      * Retrieve generation request folder status, including error and processed items. The folder
      * status will be returned only if the userId matches the allowed pairing with the folderId used
      * as input
+     *
      * @param folderId folderId to retrieve generation status
-     * @param userId userId contained in the X-User-Id to be used for data retrieval
+     * @param userId   userId contained in the X-User-Id to be used for data retrieval
      * @return instance of GetGenerationRequestStatusResource containing a folder status
      */
     @Operation(summary = "getFolderStatus",
@@ -136,7 +139,7 @@ public class GenerationRequestController {
     @GetMapping("/folder/{folder_id}/status")
     public GetGenerationRequestStatusResource getFolderStatus(
             @Valid @NotNull @Parameter(description = "folderId to use for request status retrieval") @PathVariable("folder_id") String folderId,
-            @Valid @NotNull @Parameter(description = "userId to use for request status retrieval") @RequestHeader("X-User-Id") String userId) {
+            @Valid @NotNull @Parameter(description = "userId to use for request status retrieval") @RequestHeader(Constants.X_USER_ID) String userId) {
         return noticeGenerationService.getFolderStatus(folderId, userId);
     }
 
@@ -144,10 +147,11 @@ public class GenerationRequestController {
      * Generate the request of massive notice generation using input data, sending data through the EH channel
      * to kickstart notice generation in an async manner. Any error will be saved into notice generation request
      * error
+     *
      * @param noticeGenerationMassiveRequest generation request data, containing a list of notice data and templates
      *                                       to use
-     * @param userId userId requiring the generation. the request will refer to this user when recovery of data regarding
-     *               the folder is executed
+     * @param userId                         userId requiring the generation. the request will refer to this user when recovery of data regarding
+     *                                       the folder is executed
      * @return folderId produced when inserting the request
      */
     @Operation(summary = "generateNoticeMassiveRequest",
@@ -178,7 +182,7 @@ public class GenerationRequestController {
             @Parameter(description = "massive notice generation request data")
             @Valid @NotNull @RequestBody NoticeGenerationMassiveRequest noticeGenerationMassiveRequest,
             @Parameter(description = "userId to use for request status retrieval")
-            @Valid @NotNull @RequestHeader("X-User-Id") String userId) {
+            @Valid @NotNull @RequestHeader(Constants.X_USER_ID) String userId) {
         return noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, userId);
     }
 

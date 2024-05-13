@@ -2,7 +2,6 @@ package it.gov.pagopa.payment.notices.service.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import feign.FeignException;
 import feign.Response;
 import it.gov.pagopa.payment.notices.service.client.NoticeGenerationClient;
 import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationRequest;
@@ -23,6 +22,7 @@ import it.gov.pagopa.payment.notices.service.util.Aes256Utils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static it.gov.pagopa.payment.notices.service.util.CommonUtility.sanitizeLogParam;
 import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.createWorkingDirectory;
 
 /**
@@ -119,30 +120,26 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         try {
 
             if(folderId != null && userId != null) {
-                // Unused value set to avoid sonar scan code gate block
-                PaymentNoticeGenerationRequest ignored =
-                        paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId)
-                                .orElseThrow(() -> {
-                                    throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
-                                });
+                paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId)
+                        .orElseThrow(() -> new AppException(AppError.FOLDER_NOT_AVAILABLE));
             }
 
             File workingDirectory = createWorkingDirectory();
             Path tempDirectory = Files.createTempDirectory(workingDirectory.toPath(), "notice-generation-service")
                     .normalize().toAbsolutePath();
 
+            try (Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem)) {
+                if(generationResponse.status() != HttpStatus.OK.value()) {
+                    throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR);
+                }
 
-            Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem);
-
-            try (InputStream inputStream = generationResponse.body().asInputStream()) {
-                File targetFile = File.createTempFile("tempFile", ".pdf", tempDirectory.toFile());
-                FileUtils.copyInputStreamToFile(inputStream, targetFile);
-                return targetFile;
+                try (InputStream inputStream = generationResponse.body().asInputStream()) {
+                    File targetFile = File.createTempFile("tempFile", ".pdf", tempDirectory.toFile());
+                    FileUtils.copyInputStreamToFile(inputStream, targetFile);
+                    return targetFile;
+                }
             }
 
-        } catch (FeignException feignException) {
-            log.error(feignException.getMessage(), feignException);
-            throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR, feignException);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new AppException(AppError.ERROR_ON_GENERATION_REQUEST);
@@ -183,7 +180,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         } catch (JsonProcessingException | Aes256Exception e) {
             log.error(
                     "Unable to save notice data into error repository for notice with folder " + folderId +
-                            " and noticeId " + noticeGenerationRequestItem.getData().getNotice().getCode()
+                            " and noticeId " + sanitizeLogParam(noticeGenerationRequestItem.getData().getNotice().getCode())
             );
         }
     }
