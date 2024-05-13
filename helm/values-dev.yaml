@@ -10,14 +10,14 @@ microservice-chart:
     httpGet:
       path: /actuator/health/liveness
       port: 8080
-    initialDelaySeconds: 90
+    initialDelaySeconds: 150
     failureThreshold: 6
     periodSeconds: 10
   readinessProbe:
     httpGet:
       path: /actuator/health/readiness
       port: 8080
-    initialDelaySeconds: 90
+    initialDelaySeconds: 150
     failureThreshold: 6
     periodSeconds: 10
   deployment:
@@ -41,8 +41,8 @@ microservice-chart:
     seccompProfile:
       type: RuntimeDefault
   securityContext:
-    allowPrivilegeEscalation: false
     readOnlyRootFilesystem: false
+    allowPrivilegeEscalation: false
     capabilities:
       drop:
         - all
@@ -56,9 +56,9 @@ microservice-chart:
   autoscaling:
     enable: true
     minReplica: 1
-    maxReplica: 10
-    pollingInterval: 10 # seconds
-    cooldownPeriod: 50 # seconds
+    maxReplica: 1
+    pollingInterval: 30 # seconds
+    cooldownPeriod: 300 # seconds
     triggers:
       - type: cpu
         metadata:
