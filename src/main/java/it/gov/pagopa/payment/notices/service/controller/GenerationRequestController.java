@@ -85,7 +85,7 @@ public class GenerationRequestController {
             @Valid @NotNull @RequestBody NoticeGenerationRequestItem noticeGenerationRequestItem,
             @RequestHeader(value = Constants.X_USER_ID, required = false) String userId) {
         if(folderId != null && userId == null) {
-            throw new AppException(AppError.BAD_REQUEST);
+            throw new AppException(AppError.BAD_REQUEST, "Invalid Data");
         }
         File file = noticeGenerationService.generateNotice(noticeGenerationRequestItem, folderId, userId);
         try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
