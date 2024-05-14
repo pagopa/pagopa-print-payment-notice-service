@@ -108,7 +108,8 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         try {
 
             if(folderId != null && userId != null) {
-                paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId)
+                PaymentNoticeGenerationRequest ignored = paymentGenerationRequestRepository
+                        .findByIdAndUserId(folderId, userId)
                         .orElseThrow(() -> new AppException(AppError.FOLDER_NOT_AVAILABLE));
             }
 
