@@ -1,5 +1,6 @@
 package it.gov.pagopa.payment.notices.service.util;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -12,7 +13,7 @@ import java.nio.file.Files;
  * Utils methods for working directory
  */
 @Slf4j
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class WorkingDirectoryUtils {
 
     public static File createWorkingDirectory() throws IOException {

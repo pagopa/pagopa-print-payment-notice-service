@@ -20,14 +20,14 @@ import it.gov.pagopa.payment.notices.service.model.notice.NoticeRequestData;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestErrorRepository;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestRepository;
 import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
+import it.gov.pagopa.payment.notices.service.service.AsyncService;
 import it.gov.pagopa.payment.notices.service.util.Aes256Utils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.InjectMocks;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,19 +40,28 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {NoticeGenerationServiceImpl.class, AsyncService.class})
 class NoticeGenerationServiceImplTest {
 
-    @Mock
+    @MockBean
     NoticeGenerationClient noticeGenerationClient;
-    @Mock
+    @MockBean
     private PaymentGenerationRequestRepository paymentGenerationRequestRepository;
-    @Mock
+    @MockBean
     private PaymentGenerationRequestErrorRepository paymentGenerationRequestErrorRepository;
-    @Mock
+    @MockBean
     private NoticeGenerationRequestProducer noticeGenerationRequestProducer;
-    @Spy
+    @SpyBean
     private ObjectMapper objectMapper;
+    @SpyBean
+    private Aes256Utils aes256Utils;
+
+    @Autowired
+    @InjectMocks
+    private AsyncService asyncService;
+
+    @Autowired
+    @InjectMocks
 
     @Mock
     NoticeStorageClient noticeStorageClient;
