@@ -18,6 +18,8 @@ import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
 import it.gov.pagopa.payment.notices.service.model.TemplateResource;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -97,11 +99,7 @@ public class NoticeStorageClient {
 
         try {
             String sasToken = blobClient.generateUserDelegationSas(sasSignatureValues, userDelegationKey);
-            return new BlobClientBuilder()
-                    .endpoint(blobClient.getBlobUrl())
-                    .blobName(fileId)
-                    .sasToken(sasToken)
-                    .buildClient().getBlobUrl();
+            return StringUtils.joinWith("?", blobClient.getBlobUrl(), sasToken);
         } catch (BlobStorageException blobStorageException) {
             throw new AppException(AppError.COULD_NOT_GET_FILE_URL_ERROR, blobStorageException);
         }
