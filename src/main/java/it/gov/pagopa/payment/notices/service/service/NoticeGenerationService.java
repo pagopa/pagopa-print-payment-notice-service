@@ -63,4 +63,12 @@ public interface NoticeGenerationService {
      * @param userId user id to use for permission check
      */
     void deleteFolder(String folderId, String userId);
+
+    /**
+     * Return a folder signed url
+     * @param folderId folder id to use for folder retrieval
+     * @param userId user id to use for permission check
+     * @return instance of GetSignedUrlResource containing a signed url
+     */
+    GetSignedUrlResource getFolderSignedUrl(String folderId, String userId);
 }

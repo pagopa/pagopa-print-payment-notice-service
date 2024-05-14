@@ -15,7 +15,7 @@
       "delete" : {
         "tags" : [ "Notice Generation Request APIs" ],
         "summary" : "deleteFolder",
-        "description" : "Return file signedUrl",
+        "description" : "Delete selected folder, if allowed",
         "operationId" : "deleteFolder",
         "parameters" : [ {
           "name" : "folderId",
@@ -864,7 +864,7 @@
         }
       } ]
     },
-    "/notices/{folderId}/file/{fileId}" : {
+    "/notices/{folderId}/file/{fileId}/url" : {
       "get" : {
         "tags" : [ "Notice Generation Request APIs" ],
         "summary" : "getSignedUrlResource",
@@ -898,6 +898,167 @@
         "responses" : {
           "200" : {
             "description" : "Return file signed url",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GetSignedUrlResource"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Folder or file not found",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "Too many requests",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Service error",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "503" : {
+            "description" : "Service or notice storage unavailable",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "ApiKey" : [ ]
+        } ]
+      },
+      "parameters" : [ {
+        "name" : "X-Request-Id",
+        "in" : "header",
+        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+        "schema" : {
+          "type" : "string"
+        }
+      } ]
+    },
+    "/notices/{folderId}/url" : {
+      "get" : {
+        "tags" : [ "Notice Generation Request APIs" ],
+        "summary" : "getFolderSignedUrlResource",
+        "description" : "Return compressed folder file signedUrl",
+        "operationId" : "getFolderSignedUrlResource",
+        "parameters" : [ {
+          "name" : "folderId",
+          "in" : "path",
+          "description" : "folderId to use for request retrieval",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "X-User-Id",
+          "in" : "header",
+          "description" : "userId to use for request retrieval",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Return folder signed url",
             "headers" : {
               "X-Request-Id" : {
                 "description" : "This header identifies the call",
