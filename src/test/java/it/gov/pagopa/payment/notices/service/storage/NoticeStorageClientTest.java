@@ -62,6 +62,22 @@ class NoticeStorageClientTest {
                         .getFileSignedUrl("testFile",""));
     }
 
+    @Test
+    void deleteShouldReturnKO() {
+        when(blobContainerClient.listBlobs(any(),any())).thenAnswer(item -> {
+            throw new BlobStorageException("test", null, null);
+        });
+        assertThrows(AppException.class, () ->noticeStorageClient
+                .deleteFolder("folderId"));
+    }
+
+    @Test
+    void shouldReturnExceptionOnMissingClientForDelete() {
+        assertThrows(AppException.class, () ->
+                new NoticeStorageClient(false, null, null)
+                        .deleteFolder("testFile"));
+    }
+
 
 
 }

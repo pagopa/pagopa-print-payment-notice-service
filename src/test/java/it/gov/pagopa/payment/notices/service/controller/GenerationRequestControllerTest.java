@@ -28,8 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -234,6 +233,18 @@ class GenerationRequestControllerTest {
                 )
                 .andExpect(status().is5xxServerError());
         verify(noticeGenerationService).getFileSignedUrl(any(),any(), any());
+    }
+
+    @Test
+    void deleteShouldReturnDataOnOk() throws Exception {
+        String url = "/notices/folder/folderId";
+        mvc.perform(delete(url)
+                        .header("X-User-Id", "test")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        verify(noticeGenerationService).deleteFolder(any(),any());
     }
 
     private static NoticeGenerationRequestItem getNoticeGenerationRequestItem() {

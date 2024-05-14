@@ -185,11 +185,11 @@ public class NoticesController {
     }
 
     /**
-     * Retrieve notice template zip, if available inside the template storage.
+     * Retrieve the signed url for a file.
      *
      * @param folderId folderId to use for recovery
      * @param fileId fileId to use for recovery
-     * @return template zipped data
+     * @return signed url for file
      */
     @Operation(summary = "getSignedUrlResource",
             description = "Return file signedUrl",
@@ -208,7 +208,7 @@ public class NoticesController {
                     description = "Unauthorized", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "403",
                     description = "Forbidden", content = @Content(schema = @Schema())),
-            @ApiResponse(responseCode = "404", description = "Template not found",
+            @ApiResponse(responseCode = "404", description = "Folder or file not found",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ProblemJson.class))),
             @ApiResponse(responseCode = "429",
@@ -217,7 +217,7 @@ public class NoticesController {
                     description = "Service error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ProblemJson.class))),
             @ApiResponse(responseCode = "503",
-                    description = "Service or template storage unavailable",
+                    description = "Service or notice storage unavailable",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ProblemJson.class)))
     })
@@ -228,5 +228,46 @@ public class NoticesController {
             @Valid @NotNull @Parameter(description = "fileId to use for request retrieval") @PathVariable("fileId") String fileId) {
         return noticeGenerationService.getFileSignedUrl(folderId, fileId, userId);
     }
+
+    /**
+     * Delete a folder related to a generation request
+     *
+     * @param folderId folderId to use for deletion
+     * @param userId userId to use for permission check
+     */
+    @Operation(summary = "deleteFolder",
+            description = "Return file signedUrl",
+            security = {@SecurityRequirement(name = "ApiKey")})
+    @OpenApiTableMetadata(readWriteIntense = OpenApiTableMetadata.ReadWrite.READ,
+            cacheable = true, external = true, internal = false)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Folder Deleted"),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "Unauthorized", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "403",
+                    description = "Forbidden", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "404", description = "Folder not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "429",
+                    description = "Too many requests", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "500",
+                    description = "Service error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "503",
+                    description = "Service or notice storage unavailable",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class)))
+    })
+    @GetMapping("folder/{folderId}")
+    public void deleteFolder(
+            @Valid @NotNull @Parameter(description = "folderId to use for request retrieval") @PathVariable("folderId") String folderId,
+            @Valid @NotNull @Parameter(description = "userId to use for request retrieval") @RequestHeader("X-User-Id") String userId) {
+        noticeGenerationService.deleteFolder(folderId, userId);
+    }
+
 
 }
