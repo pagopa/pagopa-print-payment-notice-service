@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.createWorkingDirectory;
 
@@ -158,24 +159,5 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             throw new AppException(AppError.ERROR_ON_GET_FILE_URL_REQUEST);
         }
     }
-
-    @Async
-    public void sendNotices(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String folderId) {
-        noticeGenerationMassiveRequest.getNotices().parallelStream().forEach(noticeGenerationRequestItem -> {
-            try {
-                if(!noticeGenerationRequestProducer.noticeGeneration(
-                        NoticeGenerationRequestEH.builder()
-                                .noticeData(noticeGenerationRequestItem)
-                                .folderId(folderId)
-                                .build())
-                ) {
-                    saveErrorEvent(folderId, noticeGenerationRequestItem);
-                }
-            } catch (Exception e) {
-                saveErrorEvent(folderId, noticeGenerationRequestItem);
-            }
-        });
-    }
-
 
 }

@@ -22,8 +22,11 @@ import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequest
 import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
 import it.gov.pagopa.payment.notices.service.service.AsyncService;
 import it.gov.pagopa.payment.notices.service.util.Aes256Utils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -56,15 +59,12 @@ class NoticeGenerationServiceImplTest {
     @SpyBean
     private Aes256Utils aes256Utils;
 
+    @MockBean
+    NoticeStorageClient noticeStorageClient;
+
     @Autowired
     @InjectMocks
     private AsyncService asyncService;
-
-    @Autowired
-    @InjectMocks
-
-    @Mock
-    NoticeStorageClient noticeStorageClient;
 
     private NoticeGenerationServiceImpl noticeGenerationService;
 
@@ -76,8 +76,8 @@ class NoticeGenerationServiceImplTest {
         noticeGenerationService = new NoticeGenerationServiceImpl(
                 paymentGenerationRequestRepository,
                 paymentGenerationRequestErrorRepository,
-                noticeGenerationRequestProducer, objectMapper, new Aes256Utils("test", "test"),
-                noticeGenerationClient, noticeStorageClient);
+                asyncService, noticeGenerationClient
+                , noticeStorageClient);
     }
 
     @Test
