@@ -242,8 +242,7 @@ class GenerationRequestControllerTest {
                         .header("X-User-Id", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(status().isOk());
         verify(noticeGenerationService).deleteFolder(any(),any());
     }
 

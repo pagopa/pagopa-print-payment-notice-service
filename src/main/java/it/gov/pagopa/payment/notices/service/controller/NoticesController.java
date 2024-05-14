@@ -262,7 +262,7 @@ public class NoticesController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ProblemJson.class)))
     })
-    @GetMapping("folder/{folderId}")
+    @DeleteMapping("/folder/{folderId}")
     public void deleteFolder(
             @Valid @NotNull @Parameter(description = "folderId to use for request retrieval") @PathVariable("folderId") String folderId,
             @Valid @NotNull @Parameter(description = "userId to use for request retrieval") @RequestHeader("X-User-Id") String userId) {
