@@ -11,6 +11,60 @@
     "description" : "Generated server url"
   } ],
   "paths" : {
+    "/institutions/data" : {
+      "post" : {
+        "tags" : [ "Institutions Data APIs" ],
+        "operationId" : "updateInstitutions",
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "required" : [ "institutions-data" ],
+                "type" : "object",
+                "properties" : {
+                  "institutions-data" : {
+                    "$ref" : "#/components/schemas/UploadData"
+                  }
+                }
+              }
+            },
+            "application/octet-stream" : {
+              "schema" : {
+                "required" : [ "institutions-data" ],
+                "type" : "object",
+                "properties" : {
+                  "institutions-data" : {
+                    "$ref" : "#/components/schemas/UploadData"
+                  }
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "X-Request-Id",
+        "in" : "header",
+        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+        "schema" : {
+          "type" : "string"
+        }
+      } ]
+    },
     "/notices/folder/{folderId}" : {
       "delete" : {
         "tags" : [ "Notice Generation Request APIs" ],
@@ -1373,6 +1427,44 @@
           }
         },
         "description" : "massive notice generation request data"
+      },
+      "UploadData" : {
+        "required" : [ "cbill", "fullName", "info", "taxCode", "webChannel" ],
+        "type" : "object",
+        "properties" : {
+          "taxCode" : {
+            "type" : "string",
+            "description" : "CI tax code"
+          },
+          "fullName" : {
+            "type" : "string",
+            "description" : "CI full name"
+          },
+          "organization" : {
+            "type" : "string",
+            "description" : "CI organization unit managing the payment "
+          },
+          "info" : {
+            "type" : "string",
+            "description" : "CI info"
+          },
+          "webChannel" : {
+            "type" : "boolean",
+            "description" : "Boolean to refer if it has a web channel"
+          },
+          "physicalChannel" : {
+            "type" : "string",
+            "description" : "CI physical channel data"
+          },
+          "cbill" : {
+            "type" : "string",
+            "description" : "CI cbill"
+          },
+          "posteAccountNumber" : {
+            "type" : "string",
+            "description" : "Poste account number"
+          }
+        }
       },
       "GetSignedUrlResource" : {
         "type" : "object",

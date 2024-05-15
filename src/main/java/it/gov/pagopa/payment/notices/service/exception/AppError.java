@@ -51,7 +51,17 @@ public enum AppError {
 
     ERROR_ON_GET_FOLDER_URL_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,
             "Error recovering folder Signed Url",
-            "Error occure while attempting to retrieve folder signed url"),
+            "Error occured while attempting to retrieve folder signed url"),
+    INSTITUTION_DATA_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Error uploading institution data",
+            "Error occured while attempting to upload institution data"),
+
+    LOGO_FILE_INPUT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Error managing logo input",
+            "Exception has been thrown while managing the logo file passed as input," +
+                    " could not create either the working directory or the file"),
+
+     INSTITUTION_CLIENT_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE,
+            "Institution Storage Not Available",
+            "Institution Storage client temporarily not available"),
     UNKNOWN(null, null, null);
 
 

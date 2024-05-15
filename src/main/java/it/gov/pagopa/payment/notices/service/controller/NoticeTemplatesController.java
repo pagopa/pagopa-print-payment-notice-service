@@ -32,6 +32,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
+import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.clearTempDirectory;
+
 /**
  * Rest Controller containing APIs for generation request management
  */
@@ -137,14 +139,6 @@ public class NoticeTemplatesController {
             throw new RuntimeException(e);
         } finally {
             clearTempDirectory(file.toPath().getParent());
-        }
-    }
-
-    private void clearTempDirectory(java.nio.file.Path workingDirPath) {
-        try {
-            FileUtils.deleteDirectory(workingDirPath.toFile());
-        } catch (IOException e) {
-            log.warn("Unable to clear working directory", e);
         }
     }
 
