@@ -147,6 +147,16 @@ jobs:
               previous_tag_name: latest.data.tag_name
             });
             
+            
+            
+             var releaseNotes = await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: newLatest.data.id,
+              make_latest: true,
+              prerelease: PRERELEASE           
+            });
+            
             console.log(releaseNotes);
             
              var newLatest = await github.rest.repos.getReleaseByTag({
@@ -156,14 +166,6 @@ jobs:
             });   
             
             console.log(newLatest);
-            
-             var releaseNotes = await github.rest.repos.updateRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: newLatest.data.id,
-              make_latest: true,
-              prerelease: PRERELEASE           
-            });
 
 
 #  image:
