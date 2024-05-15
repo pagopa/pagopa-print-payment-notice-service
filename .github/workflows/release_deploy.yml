@@ -103,7 +103,7 @@ jobs:
 
   release:
     name: Create a New Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latestƒ√
     needs: [ setup ]
     outputs:
       version: ${{ steps.release.outputs.version }}
@@ -115,57 +115,47 @@ jobs:
           semver: ${{ needs.setup.outputs.semver }}
           github_token: ${{ secrets.BOT_TOKEN_GITHUB }}
           beta: ${{ inputs.beta }}
-          prerelease: true
+          prerelease: ${{ github.ref_name != 'main' }}
           skip_ci: false
-
       - name: Generate Release Notes
         id: generate_notes
         uses: actions/github-script@v5
         env:
-          NEW_TAG: ${{ steps.release.outputs.version }}
-          PRERELEASE: ${{ inputs.environment != 'prod' }}
+          TAG: ${{ steps.release.outputs.version }}
+          ENV: ${{ inputs.environment }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { NEW_TAG, PRERELEASE } = process.env
+            const { TAG, ENV } = process.env
 
-            console.log(NEW_TAG, PRERELEASE);
-            
+            console.log(TAG, ENV);
             console.log(context);
-            
-            var latest = await github.rest.repos.getLatestRelease({
+
+            var startingRelease = await github.rest.repos.getReleaseByTag({
               owner: context.repo.owner,
               repo: context.repo.repo,
-            });
-            
-            console.log(latest);
-            
+              tag: ENV,
+            }); 
+            console.log(startingRelease);
+
             var releaseNotes = await github.rest.repos.generateReleaseNotes({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tag_name: NEW_TAG,
-              previous_tag_name: latest.data.tag_name
+              tag_name: TAG,
+              previous_tag_name: ENV
             });
-            
-            
-            
-             var releaseNotes = await github.rest.repos.updateRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: newLatest.data.id,
-              make_latest: true,
-              prerelease: PRERELEASE           
-            });
-            
             console.log(releaseNotes);
-            
-             var newLatest = await github.rest.repos.getReleaseByTag({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag: NEW_TAG,
-            });   
-            
-            console.log(newLatest);
+
+
+      - name: Tag ${{inputs.environment}}
+        run: |
+          git config --local user.email "pagopa-github-bot@pagopa.it"
+          git config --local user.name "pagopa-github-bot"
+          git pull
+          git tag -d ${{inputs.environment}}               
+          git push origin :refs/tags/ ${{inputs.environment}}     
+          git tag ${{inputs.environment}}         
+          git push origin ${{inputs.environment}}               
 
 
 #  image:
