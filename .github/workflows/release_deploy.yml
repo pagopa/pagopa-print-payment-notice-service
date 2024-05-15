@@ -148,7 +148,7 @@ jobs:
             
             console.log(releaseNotes);
             
-             var  = await github.repos.getReleaseByTag({
+             var newLatest = await github.repos.getReleaseByTag({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag: NEW_TAG,
