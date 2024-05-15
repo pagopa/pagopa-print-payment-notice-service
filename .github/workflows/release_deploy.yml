@@ -122,11 +122,14 @@ jobs:
         id: generate_notes
         uses: actions/github-script@v5
         env:
-          NEW_TAG: ${{steps.release.version}}
+          NEW_TAG: ${{ steps.release.version }}
+          PRERELEASE: ${{ inputs.environment != 'prod' }}
         with:
           script: |
-            const { NEW_TAG } = process.env
+            const { NEW_TAG, PRERELEASE } = process.env
 
+            console.log(NEW_TAG, PRERELEASE);
+                      
             console.log(context);
             
             var latest = await github.repos.getLatestRelease({
@@ -158,10 +161,10 @@ jobs:
               repo: context.repo.repo,
               release_id: newLatest.data.id,
               make_latest: true
-              prerelease: false           
+              prerelease: PRERELEASE           
             });
   
-
+  
   image:
     needs: [ setup, release ]
     name: Build and Push Docker Image
