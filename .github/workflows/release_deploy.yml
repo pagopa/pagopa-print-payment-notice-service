@@ -160,7 +160,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: newLatest.data.id,
-              make_latest: true
+              make_latest: true,
               prerelease: PRERELEASE           
             });
 
