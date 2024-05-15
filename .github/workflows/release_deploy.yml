@@ -132,14 +132,14 @@ jobs:
             
             console.log(context);
             
-            var latest = await github.repos.getLatestRelease({
+            var latest = await github.rest.repos.getLatestRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
             });
             
             console.log(latest);
             
-            var releaseNotes = await github.repos.generateReleaseNotes({
+            var releaseNotes = await github.rest.repos.generateReleaseNotes({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: NEW_TAG,
@@ -148,7 +148,7 @@ jobs:
             
             console.log(releaseNotes);
             
-             var newLatest = await github.repos.getReleaseByTag({
+             var newLatest = await github.rest.repos.getReleaseByTag({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag: NEW_TAG,
@@ -156,7 +156,7 @@ jobs:
             
             console.log(newLatest);
             
-             var releaseNotes = await github.repos.updateRelease({
+             var releaseNotes = await github.rest.repos.updateRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: newLatest.data.id,
