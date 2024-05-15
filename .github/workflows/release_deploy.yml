@@ -143,7 +143,21 @@ jobs:
               tag_name: TAG,
               previous_tag_name: startingRelease.data.tag_name
             });
-            console.log(releaseNotes);             
+            console.log(releaseNotes);   
+            
+            var targetRelease = await github.rest.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: TAG,
+            });
+            console.log(targetRelease); 
+            
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: targetRelease.data.id,
+              body: releaseNotes.data.body
+            });
 
 
 #  image:
