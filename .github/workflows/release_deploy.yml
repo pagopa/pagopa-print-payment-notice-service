@@ -122,7 +122,7 @@ jobs:
         id: generate_notes
         uses: actions/github-script@v5
         env:
-          NEW_TAG: ${{ steps.release.version }}
+          NEW_TAG: ${{ steps.release.outputs.version }}
           PRERELEASE: ${{ inputs.environment != 'prod' }}
         with:
           script: |
