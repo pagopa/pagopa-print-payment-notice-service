@@ -125,6 +125,7 @@ jobs:
           NEW_TAG: ${{ steps.release.outputs.version }}
           PRERELEASE: ${{ inputs.environment != 'prod' }}
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { NEW_TAG, PRERELEASE } = process.env
 
