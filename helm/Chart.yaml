@@ -2,8 +2,8 @@ apiVersion: v2
 name: pagopa-print-payment-notice-service
 description: Microservice that handles services for notice print
 type: application
-version: 0.10.0
-appVersion: 0.0.3-3-gha
+version: 0.11.0
+appVersion: 0.0.3-4-gha
 dependencies:
   - name: microservice-chart
     version: 5.9.0
