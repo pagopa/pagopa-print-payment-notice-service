@@ -115,12 +115,13 @@ jobs:
           prerelease: true
           skip_ci: false
 
-      - name: Generate Release Notes
+      - name: Generate Release Notes for Latest
         id: generate_notes
+        if: ${{inputs.version != 'pre_release' }}
         uses: actions/github-script@v5
         env:
           TAG: ${{ steps.release.outputs.version }}
-          PRERELEASE: ${{inputs.version == 'pre_release' }}
+          PRERELEASE: false
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
