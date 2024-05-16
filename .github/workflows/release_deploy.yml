@@ -112,7 +112,7 @@ jobs:
           semver: ${{ needs.setup.outputs.semver }}
           github_token: ${{ secrets.BOT_TOKEN_GITHUB }}
           beta: ${{ inputs.beta }}
-          prerelease: ${{inputs.version == 'pre_release' }}
+          prerelease: true
           skip_ci: false
 
       - name: Generate Release Notes
@@ -120,13 +120,13 @@ jobs:
         uses: actions/github-script@v5
         env:
           TAG: ${{ steps.release.outputs.version }}
+          PRERELEASE: ${{inputs.version == 'pre_release' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { TAG, ENV } = process.env
+            const { TAG, PRERELEASE } = process.env
 
-            console.log(TAG, ENV);
-            console.log(context);
+            console.log(TAG, PRERELEASE);
 
             var startingRelease = await github.rest.repos.getLatestRelease({
               owner: context.repo.owner,
@@ -153,7 +153,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: targetRelease.data.id,
-              body: releaseNotes.data.body
+              body: releaseNotes.data.body,
+              prerelease: PRERELEASE
             });
 
   image:
