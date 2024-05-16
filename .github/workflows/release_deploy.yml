@@ -18,13 +18,6 @@ on:
           - dev
           - uat
           - prod
-      version:
-        required: false
-        type: choice
-        description: Select the version
-        options:
-          - pre_release
-          - stable
       beta:
         required: false
         type: boolean
@@ -118,7 +111,7 @@ jobs:
 
       - name: Generate Release Notes for Latest
         id: generate_notes
-        if: ${{inputs.version != 'pre_release' }}
+        if: ${{ needs.setup.outputs.environment == 'prod' }}
         uses: actions/github-script@v5
         env:
           TAG: ${{ steps.release.outputs.version }}
