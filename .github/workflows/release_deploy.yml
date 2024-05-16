@@ -23,11 +23,8 @@ on:
         type: choice
         description: Select the version
         options:
-          - patch
-          - skip_or_promote
-          - new_release
-          - breaking_change
-
+          - pre_release
+          - stable
       beta:
         required: false
         type: boolean
@@ -73,18 +70,18 @@ jobs:
       - if: ${{ (github.event.pull_request.merged && contains(github.event.pull_request.labels.*.name, 'major')) }}
         run: echo "SEMVER=major" >> $GITHUB_ENV
 
-      # force semver if dev, !=main or skip release
-      - if: ${{ inputs.version == 'new_release' }}
-        run: echo "SEMVER=minor" >> $GITHUB_ENV
-
-      - if: ${{ inputs.version == 'breaking_change' }}
-        run: echo "SEMVER=major" >> $GITHUB_ENV
-
-      - if: ${{ github.ref_name != 'main' }}
-        run: echo "SEMVER=buildNumber" >> $GITHUB_ENV
-
-      - if: ${{ inputs.version == 'skip_or_promote' }}
-        run: echo "SEMVER=skip" >> $GITHUB_ENV
+      #      # force semver if dev, !=main or skip release
+      #      - if: ${{ inputs.version == 'new_release' }}
+      #        run: echo "SEMVER=minor" >> $GITHUB_ENV
+      #
+      #      - if: ${{ inputs.version == 'breaking_change' }}
+      #        run: echo "SEMVER=major" >> $GITHUB_ENV
+      #
+      #      - if: ${{ github.ref_name != 'main' }}
+      #        run: echo "SEMVER=buildNumber" >> $GITHUB_ENV
+      #
+      #      - if: ${{ inputs.version == 'skip_or_promote' }}
+      #        run: echo "SEMVER=skip" >> $GITHUB_ENV
 
       - id: get_semver
         name: Set Output
@@ -115,7 +112,7 @@ jobs:
           semver: ${{ needs.setup.outputs.semver }}
           github_token: ${{ secrets.BOT_TOKEN_GITHUB }}
           beta: ${{ inputs.beta }}
-          prerelease: ${{inputs.environment != 'prod' }}
+          prerelease: ${{inputs.version == 'pre_release' }}
           skip_ci: false
 
       - name: Generate Release Notes
