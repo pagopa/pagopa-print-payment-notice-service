@@ -241,7 +241,7 @@ class GenerationRequestControllerTest {
     void getSignedUrlShouldReturnDataOnOk() throws Exception {
         when(noticeGenerationService.getFileSignedUrl(any(), any(), any()))
                 .thenReturn(GetSignedUrlResource.builder().signedUrl("test").build());
-        String url = "/notices/folderId/file/fileId";
+        String url = "/notices/folderId/file/fileId/url";
         mvc.perform(get(url)
                         .header("X-User-Id", "test")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -255,7 +255,7 @@ class GenerationRequestControllerTest {
     void getSignedUrlShouldReturnKOonErrorFile() throws Exception {
         when(noticeGenerationService.getFileSignedUrl(any(), any(), any()))
                 .thenThrow(new AppException(AppError.INTERNAL_SERVER_ERROR));
-        String url = "/notices/folderId/file/fileId";
+        String url = "/notices/folderId/file/fileId/url";
         mvc.perform(get(url)
                         .header("X-User-Id", "test")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -273,6 +273,33 @@ class GenerationRequestControllerTest {
                 )
                 .andExpect(status().isOk());
         verify(noticeGenerationService).deleteFolder(any(),any());
+    }
+
+    @Test
+    void getFolderUrlShouldReturnDataOnOk() throws Exception {
+        when(noticeGenerationService.getFolderSignedUrl(any(), any()))
+                .thenReturn(GetSignedUrlResource.builder().signedUrl("test").build());
+        String url = "/notices/folderId/url";
+        mvc.perform(get(url)
+                        .header("X-User-Id", "test")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        verify(noticeGenerationService).getFolderSignedUrl(any(), any());
+    }
+
+    @Test
+    void getFolderSignedUrlShouldReturnKOonErrorFile() throws Exception {
+        when(noticeGenerationService.getFolderSignedUrl(any(), any()))
+                .thenThrow(new AppException(AppError.INTERNAL_SERVER_ERROR));
+        String url = "/notices/folderId/url";
+        mvc.perform(get(url)
+                        .header("X-User-Id", "test")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().is5xxServerError());
+        verify(noticeGenerationService).getFolderSignedUrl(any(), any());
     }
 
 }

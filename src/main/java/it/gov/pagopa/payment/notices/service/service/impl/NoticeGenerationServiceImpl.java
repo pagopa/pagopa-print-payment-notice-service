@@ -20,6 +20,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -148,6 +149,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             log.error(e.getMessage(), e);
             throw new AppException(AppError.ERROR_ON_GET_FILE_URL_REQUEST);
         }
+
     }
 
     @Override
@@ -165,6 +167,28 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         }
 
     }
+
+    @Override
+    public GetSignedUrlResource getFolderSignedUrl(String folderId, String userId) {
+
+        PaymentNoticeGenerationRequest paymentNoticeGenerationRequest = findFolderIfExists(folderId, userId);
+        if (!PaymentGenerationRequestStatus.PROCESSED.equals(paymentNoticeGenerationRequest.getStatus())) {
+            throw new AppException(AppError.NOTICE_REQUEST_YET_TO_PROCESS);
+        }
+
+        try {
+            return GetSignedUrlResource.builder()
+                    .signedUrl(noticeStorageClient.getFileSignedUrl(folderId, folderId.concat(".zip")))
+                    .build();
+        } catch (AppException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new AppException(AppError.ERROR_ON_GET_FOLDER_URL_REQUEST);
+        }
+
+    }
+
 
     private PaymentNoticeGenerationRequest findFolderIfExists(String folderId, String userId) {
         return paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId)

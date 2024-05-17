@@ -44,7 +44,14 @@ public enum AppError {
             "Error occurred while attempting to get file url"),
 
     COULD_NOT_DELETE_FOLDER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,
-            "Error deleting notices" , "Error occured while attempting to delete a folder"),
+            "Error deleting notices" , "Error occurred while attempting to delete a folder"),
+
+    NOTICE_REQUEST_YET_TO_PROCESS(HttpStatus.FORBIDDEN, "Notice request To Be Completed",
+            "The notice request is yet to be completely processed"),
+
+    ERROR_ON_GET_FOLDER_URL_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,
+            "Error recovering folder Signed Url",
+            "Error occure while attempting to retrieve folder signed url"),
     UNKNOWN(null, null, null);
 
 

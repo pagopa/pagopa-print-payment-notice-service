@@ -322,4 +322,56 @@ class NoticeGenerationServiceImplTest {
         verifyNoInteractions(noticeStorageClient);
     }
 
+    @Test
+    void getFolderSignedUrlShouldReturnDataOnSuccess() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any())).thenReturn(
+                Optional.of(PaymentNoticeGenerationRequest.builder()
+                        .status(PaymentGenerationRequestStatus.PROCESSED).build()));
+        when(noticeStorageClient.getFileSignedUrl(any(),any())).thenReturn("signedUrl");
+        GetSignedUrlResource resource = noticeGenerationService
+                .getFolderSignedUrl("test","test");
+        verify(noticeStorageClient).getFileSignedUrl(any(),any());
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        assertNotNull(resource);
+        assertNotNull(resource.getSignedUrl());
+    }
+
+    @Test
+    void getFolderUrlShouldReturnNotFoundWhenMissingFolder() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any()))
+                .thenReturn(
+                        Optional.empty()
+                );
+        assertThrows(AppException.class, () ->
+                noticeGenerationService.getFolderSignedUrl("test","userId"));
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        verifyNoInteractions(noticeStorageClient);
+    }
+
+    @Test
+    void getFolderSignedUrlSholdReturnExceptionOnClientKo() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any())).thenReturn(
+                Optional.of(PaymentNoticeGenerationRequest.builder()
+                        .status(PaymentGenerationRequestStatus.PROCESSED).build()));
+        when(noticeStorageClient.getFileSignedUrl(any(),any())).thenThrow(
+                new AppException(AppError.NOTICE_CLIENT_UNAVAILABLE));
+        assertThrows(AppException.class, () -> noticeGenerationService
+                .getFolderSignedUrl("test","test"));
+        verify(noticeStorageClient).getFileSignedUrl(any(),any());
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+    }
+
+    @Test
+    void getFolderUrlShouldReturnNotFoundWhenFolderYetToComplete() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any()))
+                .thenReturn(
+                        Optional.of(PaymentNoticeGenerationRequest.builder()
+                                .status(PaymentGenerationRequestStatus.PROCESSING).build())
+                );
+        assertThrows(AppException.class, () ->
+                noticeGenerationService.getFolderSignedUrl("test","userId"));
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        verifyNoInteractions(noticeStorageClient);
+    }
+
 }
