@@ -7,16 +7,15 @@ import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationReque
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
 import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
+import it.gov.pagopa.payment.notices.service.model.GetSignedUrlResource;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
-import it.gov.pagopa.payment.notices.service.model.*;
 import it.gov.pagopa.payment.notices.service.model.enums.PaymentGenerationRequestStatus;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestErrorRepository;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestRepository;
 import it.gov.pagopa.payment.notices.service.service.AsyncService;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
 import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
-import it.gov.pagopa.payment.notices.service.util.Aes256Utils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -30,7 +29,6 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.createWorkingDirectory;
 
@@ -108,9 +106,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         try {
 
             if(folderId != null && userId != null) {
-                PaymentNoticeGenerationRequest ignored = paymentGenerationRequestRepository
-                        .findByIdAndUserId(folderId, userId)
-                        .orElseThrow(() -> new AppException(AppError.FOLDER_NOT_AVAILABLE));
+                findFolderIfExists(folderId, userId);
             }
 
             File workingDirectory = createWorkingDirectory();
@@ -137,19 +133,10 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         }
     }
 
-    private PaymentNoticeGenerationRequest findFolderIfExists(String folderId, String userId) {
-        return paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId)
-                .orElseThrow(() -> new AppException(AppError.FOLDER_NOT_AVAILABLE));
-    }
-
     @Override
     public GetSignedUrlResource getFileSignedUrl(String folderId, String fileId, String userId) {
 
-        Optional<PaymentNoticeGenerationRequest> paymentNoticeGenerationRequestOptional =
-                paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId);
-        if(paymentNoticeGenerationRequestOptional.isEmpty()) {
-            throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
-        }
+        findFolderIfExists(folderId, userId);
 
         try {
             return GetSignedUrlResource.builder()
@@ -159,6 +146,11 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             log.error(e.getMessage(), e);
             throw new AppException(AppError.ERROR_ON_GET_FILE_URL_REQUEST);
         }
+    }
+
+    private PaymentNoticeGenerationRequest findFolderIfExists(String folderId, String userId) {
+        return paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId)
+                .orElseThrow(() -> new AppException(AppError.FOLDER_NOT_AVAILABLE));
     }
 
 }

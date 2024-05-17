@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 
 import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.clearTempDirectory;
 
@@ -188,7 +187,7 @@ public class NoticesController {
      * Retrieve notice template zip, if available inside the template storage.
      *
      * @param folderId folderId to use for recovery
-     * @param fileId fileId to use for recovery
+     * @param fileId   fileId to use for recovery
      * @return template zipped data
      */
     @Operation(summary = "getSignedUrlResource",

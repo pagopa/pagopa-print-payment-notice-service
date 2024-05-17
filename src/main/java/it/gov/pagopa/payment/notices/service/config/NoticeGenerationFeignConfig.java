@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import static it.gov.pagopa.payment.notices.service.util.Constants.APIM_SUBSCRIPTION_KEY;
 import static it.gov.pagopa.payment.notices.service.util.Constants.HEADER_REQUEST_ID;
 
-public class NoticeGenerationFeignConfig  {
+public class NoticeGenerationFeignConfig {
 
     @Value("${authorization.notice.generator.subscriptionKey}")
     private String taxonomySubscriptionKey;
