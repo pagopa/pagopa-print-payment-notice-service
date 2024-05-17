@@ -7,6 +7,7 @@ import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationReque
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
 import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
+import it.gov.pagopa.payment.notices.service.model.GetSignedUrlResource;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
 import it.gov.pagopa.payment.notices.service.model.enums.PaymentGenerationRequestStatus;
@@ -14,6 +15,7 @@ import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequest
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestRepository;
 import it.gov.pagopa.payment.notices.service.service.AsyncService;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
+import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -42,15 +44,19 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     private final NoticeGenerationClient noticeGenerationClient;
     private final AsyncService asyncService;
 
+    private final NoticeStorageClient noticeStorageClient;
+
     public NoticeGenerationServiceImpl(
             PaymentGenerationRequestRepository paymentGenerationRequestRepository,
             PaymentGenerationRequestErrorRepository paymentGenerationRequestErrorRepository,
             AsyncService asyncService,
-            NoticeGenerationClient noticeGenerationClient) {
+            NoticeGenerationClient noticeGenerationClient,
+            NoticeStorageClient noticeStorageClient) {
         this.paymentGenerationRequestRepository = paymentGenerationRequestRepository;
         this.paymentGenerationRequestErrorRepository = paymentGenerationRequestErrorRepository;
         this.asyncService = asyncService;
         this.noticeGenerationClient = noticeGenerationClient;
+        this.noticeStorageClient = noticeStorageClient;
     }
 
     @Override
@@ -127,10 +133,24 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         }
     }
 
+    @Override
+    public GetSignedUrlResource getFileSignedUrl(String folderId, String fileId, String userId) {
+
+        findFolderIfExists(folderId, userId);
+
+        try {
+            return GetSignedUrlResource.builder()
+                    .signedUrl(noticeStorageClient.getFileSignedUrl(folderId, fileId))
+                    .build();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new AppException(AppError.ERROR_ON_GET_FILE_URL_REQUEST);
+        }
+    }
+
     private PaymentNoticeGenerationRequest findFolderIfExists(String folderId, String userId) {
         return paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId)
                 .orElseThrow(() -> new AppException(AppError.FOLDER_NOT_AVAILABLE));
     }
-
 
 }
