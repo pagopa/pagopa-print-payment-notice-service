@@ -6,7 +6,9 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.blob.models.BlobListDetails;
 import com.azure.storage.blob.models.BlobStorageException;
+import com.azure.storage.blob.models.ListBlobsOptions;
 import com.azure.storage.blob.models.UserDelegationKey;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
@@ -88,4 +90,20 @@ public class NoticeStorageClient {
 
     }
 
+    public void deleteFolder(String folderId) {
+
+        if(blobContainerClient == null) {
+            throw new AppException(AppError.NOTICE_CLIENT_UNAVAILABLE);
+        }
+
+        try {
+            ListBlobsOptions options = new ListBlobsOptions().setPrefix(folderId)
+                    .setDetails(new BlobListDetails().setRetrieveDeletedBlobs(false).setRetrieveSnapshots(false));
+            blobContainerClient.listBlobs(options, null).iterator()
+                    .forEachRemaining(item -> blobContainerClient.getBlobClient(item.getName()).delete());
+        } catch (BlobStorageException blobStorageException) {
+            throw new AppException(AppError.COULD_NOT_DELETE_FOLDER_ERROR, blobStorageException);
+        }
+
+    }
 }

@@ -255,5 +255,71 @@ class NoticeGenerationServiceImplTest {
         verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
     }
 
+    @Test
+    void deleteShouldReturnNotFoundWhenMissingFolder() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any()))
+                .thenReturn(
+                        Optional.empty()
+                );
+        assertThrows(AppException.class, () ->
+                noticeGenerationService.deleteFolder("test", "test"));
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        verifyNoInteractions(noticeStorageClient);
+    }
+
+    @Test
+    void deleteFolderShouldReturnOk() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
+                .thenReturn(
+                        Optional.of(
+                                PaymentNoticeGenerationRequest.builder()
+                                        .status(PaymentGenerationRequestStatus.INSERTED)
+                                        .items(Collections.emptyList())
+                                        .build()
+                        )
+                );
+        noticeGenerationService.deleteFolder("test", "test");
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        verify(paymentGenerationRequestRepository).deleteById(any());
+        verify(noticeStorageClient).deleteFolder(any());
+    }
+
+    @Test
+    void deleteFolderShouldReturnKoOnBlobException() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
+                .thenReturn(
+                        Optional.of(
+                                PaymentNoticeGenerationRequest.builder()
+                                        .status(PaymentGenerationRequestStatus.INSERTED)
+                                        .items(Collections.emptyList())
+                                        .build()
+                        )
+                );
+        doThrow(new AppException(AppError.COULD_NOT_DELETE_FOLDER_ERROR))
+                .when(noticeStorageClient).deleteFolder(any());
+        assertThrows(AppException.class, () -> noticeGenerationService.deleteFolder("test", "test"));
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        verify(paymentGenerationRequestRepository).deleteById(any());
+        verify(noticeStorageClient).deleteFolder(any());
+    }
+
+    @Test
+    void deleteFolderShouldReturnKoOnRepositoryException() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
+                .thenReturn(
+                        Optional.of(
+                                PaymentNoticeGenerationRequest.builder()
+                                        .status(PaymentGenerationRequestStatus.INSERTED)
+                                        .items(Collections.emptyList())
+                                        .build()
+                        )
+                );
+        doThrow(new RuntimeException("test"))
+                .when(paymentGenerationRequestRepository).deleteById(any());
+        assertThrows(AppException.class, () -> noticeGenerationService.deleteFolder("test", "test"));
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        verify(paymentGenerationRequestRepository).deleteById(any());
+        verifyNoInteractions(noticeStorageClient);
+    }
 
 }

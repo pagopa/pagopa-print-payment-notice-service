@@ -43,6 +43,8 @@ public enum AppError {
     ERROR_ON_GET_FILE_URL_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR, "Error occurred while attempting to get file url",
             "Error occurred while attempting to get file url"),
 
+    COULD_NOT_DELETE_FOLDER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,
+            "Error deleting notices" , "Error occured while attempting to delete a folder"),
     UNKNOWN(null, null, null);
 
 

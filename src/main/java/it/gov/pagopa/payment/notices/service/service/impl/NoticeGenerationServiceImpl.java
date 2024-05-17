@@ -142,10 +142,28 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             return GetSignedUrlResource.builder()
                     .signedUrl(noticeStorageClient.getFileSignedUrl(folderId, fileId))
                     .build();
+        } catch (AppException e) {
+            throw e;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new AppException(AppError.ERROR_ON_GET_FILE_URL_REQUEST);
         }
+    }
+
+    @Override
+    @Transactional
+    public void deleteFolder(String folderId, String userId) {
+        findFolderIfExists(folderId, userId);
+        try {
+            paymentGenerationRequestRepository.deleteById(folderId);
+            noticeStorageClient.deleteFolder(folderId);
+        } catch (AppException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new AppException(AppError.ERROR_ON_GET_FILE_URL_REQUEST);
+        }
+
     }
 
     private PaymentNoticeGenerationRequest findFolderIfExists(String folderId, String userId) {
