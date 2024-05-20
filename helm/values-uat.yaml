@@ -34,9 +34,9 @@ microservice-chart:
     servicePort: 8080
   serviceAccount:
     create: false
-    annotations: {}
+    annotations: { }
     name: ""
-  podAnnotations: {}
+  podAnnotations: { }
   podSecurityContext:
     seccompProfile:
       type: RuntimeDefault
@@ -99,11 +99,15 @@ microservice-chart:
     AES_SECRET_KEY: 'aes-key'
     AES_SALT: 'aes-salt'
     NOTICE_GENERATION_SUBSCRIPTION_KEY: 'notice-generation-sub-key'
+    NOTICE_STORAGE_ENDPOINT: 'notices-storage-account-blob-endpoint'
+    NOTICE_STORAGE_CLIENT_ID: 'blob-storage-pdf-client-id'
+    NOTICE_STORAGE_TENANT_ID: 'tenant-id'
+    NOTICE_STORAGE_CLIENT_SECRET: 'pdf-generator-client-secret'
   keyvault:
     name: "pagopa-u-itn-printit-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
-  nodeSelector: {}
-  tolerations: []
+  nodeSelector: { }
+  tolerations: [ ]
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
@@ -130,5 +134,5 @@ microservice-chart:
         repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
         tag: "0.0.0"
         pullPolicy: Always
-      envConfig: {}
-      envSecret: {}
+      envConfig: { }
+      envSecret: { }
