@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 
+/**
+ * @see it.gov.pagopa.payment.notices.service.service.InstitutionsService
+ */
 @Service
 @Slf4j
 public class InstitutionsServiceImpl implements InstitutionsService {
