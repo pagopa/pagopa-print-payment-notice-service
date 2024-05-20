@@ -19,6 +19,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -51,7 +52,7 @@ public class NoticesController {
     @OpenApiTableMetadata(readWriteIntense = OpenApiTableMetadata.ReadWrite.WRITE,
             external = true, internal = false)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK",
+            @ApiResponse(responseCode = "201", description = "OK",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = "400", description = "Bad Request",
@@ -89,7 +90,8 @@ public class NoticesController {
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_DISPOSITION,
                     "attachment; filename=\"" + file.getName() + ".pdf\"");
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .headers(headers)
                     .body(new ByteArrayResource(inputStream.readAllBytes()));
         } catch (Exception e) {
@@ -232,7 +234,7 @@ public class NoticesController {
      * Delete a folder related to a generation request
      *
      * @param folderId folderId to use for deletion
-     * @param userId userId to use for permission check
+     * @param userId   userId to use for permission check
      */
     @Operation(summary = "deleteFolder",
             description = "Delete selected folder, if allowed",
@@ -271,8 +273,9 @@ public class NoticesController {
 
     /**
      * Return a folder signed url
+     *
      * @param folderId folder id to use for folder retrieval
-     * @param userId user id to use for permission check
+     * @param userId   user id to use for permission check
      * @return instance of GetSignedUrlResource containing a signed url
      */
     @Operation(summary = "getFolderSignedUrlResource",
