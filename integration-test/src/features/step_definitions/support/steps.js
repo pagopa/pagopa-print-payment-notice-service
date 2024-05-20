@@ -15,18 +15,14 @@ Given(/^initial json$/, function (payload) {
 
 When(/^the client send (GET|POST|PUT|DELETE) to (.*)$/, async function (method, url) {
     responseToCheck = await call(method, app_host + url, body);
-    console.log(responseToCheck);
 });
 
 Then(/^check statusCode is (\d+)$/, function (status) {
-    console.log('response', responseToCheck);
     assert.strictEqual(responseToCheck.status, status);
 
 });
 
 Then(/^check response body is$/, function (payload) {
-    console.log(responseToCheck.data)
-
     assert.deepStrictEqual(responseToCheck.data, JSON.parse(payload));
 });
 Then(/^check response is a PDF with size (\d+)$/, function (size) {
