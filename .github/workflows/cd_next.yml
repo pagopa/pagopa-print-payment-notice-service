@@ -1,4 +1,4 @@
-name: CD Pre-Release
+name: CD Next Release
 
 on:
   push:
