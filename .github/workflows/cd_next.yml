@@ -1,4 +1,4 @@
-name: Continuous Deploy in DEV next branch
+name: CD Pre-Release
 
 on:
   push:
