@@ -10,10 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
-import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
-import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
-import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
-import it.gov.pagopa.payment.notices.service.model.ProblemJson;
+import it.gov.pagopa.payment.notices.service.model.*;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
 import it.gov.pagopa.payment.notices.service.util.Constants;
 import it.gov.pagopa.payment.notices.service.util.OpenApiTableMetadata;
@@ -40,10 +37,10 @@ import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.c
 @RequestMapping(value = "/notices", produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
 @Tag(name = "Notice Generation Request APIs")
-public class GenerationRequestController {
+public class NoticesController {
     private final NoticeGenerationService noticeGenerationService;
 
-    public GenerationRequestController(NoticeGenerationService noticeGenerationService) {
+    public NoticesController(NoticeGenerationService noticeGenerationService) {
         this.noticeGenerationService = noticeGenerationService;
     }
 
@@ -184,6 +181,135 @@ public class GenerationRequestController {
             @Parameter(description = "userId to use for request status retrieval")
             @Valid @NotNull @RequestHeader(Constants.X_USER_ID) String userId) {
         return noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, userId);
+    }
+
+    /**
+     * Retrieve the signed url for a file.
+     *
+     * @param folderId folderId to use for recovery
+     * @param fileId   fileId to use for recovery
+     * @return signed url for file
+     */
+    @Operation(summary = "getSignedUrlResource",
+            description = "Return file signedUrl",
+            security = {@SecurityRequirement(name = "ApiKey")})
+    @OpenApiTableMetadata(readWriteIntense = OpenApiTableMetadata.ReadWrite.READ,
+            cacheable = true, external = true, internal = false)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Return file signed url",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = GetSignedUrlResource.class)
+                    )),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "Unauthorized", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "403",
+                    description = "Forbidden", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "404", description = "Folder or file not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "429",
+                    description = "Too many requests", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "500",
+                    description = "Service error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "503",
+                    description = "Service or notice storage unavailable",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class)))
+    })
+    @GetMapping("/{folderId}/file/{fileId}/url")
+    public GetSignedUrlResource getSignedUrlResource(
+            @Valid @NotNull @Parameter(description = "folderId to use for request retrieval") @PathVariable("folderId") String folderId,
+            @Valid @NotNull @Parameter(description = "userId to use for request retrieval") @RequestHeader("X-User-Id") String userId,
+            @Valid @NotNull @Parameter(description = "fileId to use for request retrieval") @PathVariable("fileId") String fileId) {
+        return noticeGenerationService.getFileSignedUrl(folderId, fileId, userId);
+    }
+
+    /**
+     * Delete a folder related to a generation request
+     *
+     * @param folderId folderId to use for deletion
+     * @param userId userId to use for permission check
+     */
+    @Operation(summary = "deleteFolder",
+            description = "Delete selected folder, if allowed",
+            security = {@SecurityRequirement(name = "ApiKey")})
+    @OpenApiTableMetadata(readWriteIntense = OpenApiTableMetadata.ReadWrite.READ,
+            cacheable = true, external = true, internal = false)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Folder Deleted"),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "Unauthorized", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "403",
+                    description = "Forbidden", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "404", description = "Folder not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "429",
+                    description = "Too many requests", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "500",
+                    description = "Service error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "503",
+                    description = "Service or notice storage unavailable",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class)))
+    })
+    @DeleteMapping("/folder/{folderId}")
+    public void deleteFolder(
+            @Valid @NotNull @Parameter(description = "folderId to use for request retrieval") @PathVariable("folderId") String folderId,
+            @Valid @NotNull @Parameter(description = "userId to use for request retrieval") @RequestHeader("X-User-Id") String userId) {
+        noticeGenerationService.deleteFolder(folderId, userId);
+    }
+
+
+    /**
+     * Return a folder signed url
+     * @param folderId folder id to use for folder retrieval
+     * @param userId user id to use for permission check
+     * @return instance of GetSignedUrlResource containing a signed url
+     */
+    @Operation(summary = "getFolderSignedUrlResource",
+            description = "Return compressed folder file signedUrl",
+            security = {@SecurityRequirement(name = "ApiKey")})
+    @OpenApiTableMetadata(readWriteIntense = OpenApiTableMetadata.ReadWrite.READ,
+            cacheable = true, external = true, internal = false)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Return folder signed url",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = GetSignedUrlResource.class)
+                    )),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "Unauthorized", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "403",
+                    description = "Forbidden", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "404", description = "Folder or file not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "429",
+                    description = "Too many requests", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "500",
+                    description = "Service error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "503",
+                    description = "Service or notice storage unavailable",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class)))
+    })
+    @GetMapping("/{folderId}/url")
+    public GetSignedUrlResource getFolderSignedUrlResource(
+            @Valid @NotNull @Parameter(description = "folderId to use for request retrieval") @PathVariable("folderId") String folderId,
+            @Valid @NotNull @Parameter(description = "userId to use for request retrieval") @RequestHeader("X-User-Id") String userId) {
+        return noticeGenerationService.getFolderSignedUrl(folderId, userId);
     }
 
 }

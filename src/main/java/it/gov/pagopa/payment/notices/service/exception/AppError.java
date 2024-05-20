@@ -33,6 +33,25 @@ public enum AppError {
     NOTICE_GEN_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,
             "Exception on generation client", "Exception on generation client"),
 
+
+    COULD_NOT_GET_FILE_URL_ERROR(HttpStatus.NOT_FOUND, "Couldn't get file url",
+            "Encountered an error recovering file url"),
+    NOTICE_CLIENT_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE,
+            "Notice Storage Not Available",
+            "Notice Storage client temporarily not available"),
+
+    ERROR_ON_GET_FILE_URL_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR, "Error occurred while attempting to get file url",
+            "Error occurred while attempting to get file url"),
+
+    COULD_NOT_DELETE_FOLDER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,
+            "Error deleting notices" , "Error occurred while attempting to delete a folder"),
+
+    NOTICE_REQUEST_YET_TO_PROCESS(HttpStatus.FORBIDDEN, "Notice request To Be Completed",
+            "The notice request is yet to be completely processed"),
+
+    ERROR_ON_GET_FOLDER_URL_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,
+            "Error recovering folder Signed Url",
+            "Error occure while attempting to retrieve folder signed url"),
     UNKNOWN(null, null, null);
 
 
