@@ -46,6 +46,7 @@ jobs:
   smoke-test:
     name: Smoke Test
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
       - name: Checkout
         id: checkout
