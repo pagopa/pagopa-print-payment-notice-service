@@ -3,16 +3,13 @@ name: Code Review
 # Controls when the workflow will run
 on:
   pull_request:
-    branches:
-      - main
-      - release
     types:
       - opened
       - synchronize
       - reopened
   push:
     branches:
-      - release
+      - next
       - main
 
 
