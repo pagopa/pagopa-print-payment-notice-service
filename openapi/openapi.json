@@ -23,18 +23,11 @@
                 "type" : "object",
                 "properties" : {
                   "institutions-data" : {
-                    "$ref" : "#/components/schemas/UploadData"
-                  }
-                }
-              }
-            },
-            "application/octet-stream" : {
-              "schema" : {
-                "required" : [ "institutions-data" ],
-                "type" : "object",
-                "properties" : {
-                  "institutions-data" : {
-                    "$ref" : "#/components/schemas/UploadData"
+                    "type" : "string"
+                  },
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary"
                   }
                 }
               }
@@ -1427,44 +1420,6 @@
           }
         },
         "description" : "massive notice generation request data"
-      },
-      "UploadData" : {
-        "required" : [ "cbill", "fullName", "info", "taxCode", "webChannel" ],
-        "type" : "object",
-        "properties" : {
-          "taxCode" : {
-            "type" : "string",
-            "description" : "CI tax code"
-          },
-          "fullName" : {
-            "type" : "string",
-            "description" : "CI full name"
-          },
-          "organization" : {
-            "type" : "string",
-            "description" : "CI organization unit managing the payment "
-          },
-          "info" : {
-            "type" : "string",
-            "description" : "CI info"
-          },
-          "webChannel" : {
-            "type" : "boolean",
-            "description" : "Boolean to refer if it has a web channel"
-          },
-          "physicalChannel" : {
-            "type" : "string",
-            "description" : "CI physical channel data"
-          },
-          "cbill" : {
-            "type" : "string",
-            "description" : "CI cbill"
-          },
-          "posteAccountNumber" : {
-            "type" : "string",
-            "description" : "Poste account number"
-          }
-        }
       },
       "GetSignedUrlResource" : {
         "type" : "object",

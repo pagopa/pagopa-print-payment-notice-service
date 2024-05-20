@@ -1,19 +1,18 @@
 package it.gov.pagopa.payment.notices.service.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
 import it.gov.pagopa.payment.notices.service.model.institutions.UploadData;
 import it.gov.pagopa.payment.notices.service.service.InstitutionsService;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.MediaType;
-import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,25 +29,39 @@ public class InstitutionsController {
 
     private final InstitutionsService institutionsService;
 
-    public InstitutionsController(InstitutionsService institutionsService) {
+    private final ObjectMapper objectMapper;
+
+    private final Validator validator;
+
+    public InstitutionsController(InstitutionsService institutionsService, ObjectMapper objectMapper, Validator validator) {
         this.institutionsService = institutionsService;
+        this.objectMapper = objectMapper;
+        this.validator = validator;
     }
 
     @PostMapping(value = "/data", consumes = {
-            MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
+            MediaType.MULTIPART_FORM_DATA_VALUE})
     public void updateInstitutions(
-            @Valid @NotNull @RequestPart("institutions-data") UploadData institutionsData,
-            @Valid @NotNull @RequestPart("file") FilePart logo
+            @Valid @NotNull @RequestPart("institutions-data") String institutionsDataContent,
+            @RequestParam(value = "file", required = false) MultipartFile logo
     ) {
 
         File logoImage;
         try {
+
+            UploadData institutionsData = objectMapper.readValue(
+                    institutionsDataContent, UploadData.class);
+
+            if (!validator.validate(institutionsData).isEmpty()) {
+                throw new AppException(AppError.BAD_REQUEST, "Validation errors on provided input");
+            }
+
             File workingDir = createWorkingDirectory();
             Path tempDirectory = Files.createTempDirectory(workingDir.toPath(), "notice-service")
                     .normalize()
                     .toAbsolutePath();
             logoImage = File.createTempFile("logo", ".png", tempDirectory.toFile());
-            //logo.transferTo(logoImage);
+            logo.transferTo(logoImage);
             institutionsService.uploadInstitutionsData(institutionsData, logoImage);
         } catch (IOException e) {
             throw new AppException(AppError.LOGO_FILE_INPUT_ERROR, e);
