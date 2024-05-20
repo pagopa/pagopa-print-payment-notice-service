@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: "print-payment-notice-service"
   image:
     repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
-    tag: "0.0.3"
+    tag: "0.3.0"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -46,6 +46,11 @@ microservice-chart:
     capabilities:
       drop:
         - all
+  tmpVolumeMount:
+    create: true
+    mounts:
+      - name: temp
+        mountPath: /temp
   resources:
     requests:
       memory: "512Mi"
@@ -71,16 +76,17 @@ microservice-chart:
     APP_LOGGING_LEVEL: 'DEBUG'
     DEFAULT_LOGGING_LEVEL: 'INFO'
     CORS_CONFIGURATION: '{"origins": ["*"], "methods": ["*"]}'
-    OTEL_SERVICE_NAME: 'print-payment-notice-service-otl'
+    OTEL_SERVICE_NAME: 'print-payment-notice-service'
     OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=uat"
     OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.elastic-system.svc:4317"
     OTEL_TRACES_EXPORTER: otlp
     OTEL_METRICS_EXPORTER: otlp
     OTEL_LOGS_EXPORTER: none
     OTEL_TRACES_SAMPLER: "always_on"
-    NOTICE_GENERATION_REST_ENDPOINT: "https://api.uat.platform.pagopa.it/print-payment-notice-service/v1"
+    NOTICE_GENERATION_REST_ENDPOINT: "https://api.uat.platform.pagopa.it/print-payment-notice-generator/v1"
     KAFKA_BROKER: "pagopa-u-itn-core-evh-meucci.servicebus.windows.net:9092"
     KAFKA_NOTICE_GENERATION_TOPIC: pagopa-printit-evh
+    REST_CLIENT_LOGGER_LEVEL: 'NONE'
   envSecret:
     # required
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'app-insight-connection-string'

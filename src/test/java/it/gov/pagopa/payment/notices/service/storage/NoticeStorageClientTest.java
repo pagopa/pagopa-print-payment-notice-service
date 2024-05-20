@@ -1,6 +1,5 @@
 package it.gov.pagopa.payment.notices.service.storage;
 
-import com.azure.data.tables.TableClient;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
@@ -11,19 +10,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class NoticeStorageClientTest {
 
-    private BlobContainerClient blobContainerClient;
-
     private static BlobClient blobClientMock;
-
     private static BlobServiceClient blobServiceClient;
-
+    private BlobContainerClient blobContainerClient;
     private NoticeStorageClient noticeStorageClient;
 
     @BeforeEach
@@ -41,25 +38,24 @@ class NoticeStorageClientTest {
     @Test
     void getFileSignedUrlShouldReturnOK() {
         when(blobClientMock.getBlobUrl()).thenReturn("http://localhost:8080");
-        when(blobClientMock.generateUserDelegationSas(any(),any())).thenReturn("token");
-        String url = noticeStorageClient.getFileSignedUrl("folderId","fileId");
+        when(blobClientMock.generateUserDelegationSas(any(), any())).thenReturn("token");
+        String url = noticeStorageClient.getFileSignedUrl("folderId", "fileId");
         assertNotNull(url);
     }
 
     @Test
     void getFileSignedUrlShouldReturnKO() {
-        when(blobClientMock.generateUserDelegationSas(any(),any())).thenAnswer(item -> {
+        when(blobClientMock.generateUserDelegationSas(any(), any())).thenAnswer(item -> {
             throw new BlobStorageException("test", null, null);
         });
-        assertThrows(AppException.class, () ->noticeStorageClient
-                .getFileSignedUrl("folderId","fileId"));
+        assertThrows(AppException.class, () -> noticeStorageClient
+                .getFileSignedUrl("folderId", "fileId"));
     }
 
     @Test
     void shouldReturnExceptionOnMissingClient() {
-        assertThrows(AppException.class, () ->
-                new NoticeStorageClient(false, null, null)
-                        .getFileSignedUrl("testFile",""));
+        var noticeClient = new NoticeStorageClient(false, null, null);
+        assertThrows(AppException.class, () -> noticeClient.getFileSignedUrl("testFile", ""));
     }
 
     @Test
@@ -77,7 +73,6 @@ class NoticeStorageClientTest {
                 new NoticeStorageClient(false, null, null)
                         .deleteFolder("testFile"));
     }
-
 
 
 }

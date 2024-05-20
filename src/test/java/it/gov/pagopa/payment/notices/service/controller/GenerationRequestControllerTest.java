@@ -24,8 +24,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -37,13 +35,44 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class GenerationRequestControllerTest {
 
     @Autowired
-    private MockMvc mvc;
-
-    @Autowired
     ObjectMapper objectMapper;
-
+    @Autowired
+    private MockMvc mvc;
     @MockBean
     private NoticeGenerationService noticeGenerationService;
+
+    private static NoticeGenerationRequestItem getNoticeGenerationRequestItem() {
+        return NoticeGenerationRequestItem.builder()
+                .templateId("template")
+                .data(NoticeRequestData.builder()
+                        .notice(Notice.builder()
+                                .code("code")
+                                .dueDate("24/10/2024")
+                                .subject("subject")
+                                .paymentAmount(100L)
+                                .installments(Collections.singletonList(
+                                        InstallmentData.builder()
+                                                .amount(100L)
+                                                .code("codeRate")
+                                                .dueDate("24/10/2024")
+                                                .build()
+                                ))
+                                .build())
+                        .creditorInstitution(CreditorInstitution.builder()
+                                .taxCode("taxCode")
+                                .build())
+                        .debtor(Debtor.builder()
+                                .taxCode("taxCode")
+                                .address("address")
+                                .city("city")
+                                .buildingNumber("101")
+                                .postalCode("00135")
+                                .province("RM")
+                                .fullName("Test Name")
+                                .build())
+                        .build())
+                .build();
+    }
 
     @BeforeEach
     void setUp() {
@@ -52,7 +81,7 @@ class GenerationRequestControllerTest {
 
     @Test
     void getFolderStatusShouldReturnDataOn200() throws Exception {
-        when(noticeGenerationService.getFolderStatus(any(),any()))
+        when(noticeGenerationService.getFolderStatus(any(), any()))
                 .thenReturn(GetGenerationRequestStatusResource.builder().build());
         String url = "/notices/folder/folderTest/status";
         mvc.perform(get(url)
@@ -60,12 +89,12 @@ class GenerationRequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"));
-        verify(noticeGenerationService).getFolderStatus("folderTest","userTest");
+        verify(noticeGenerationService).getFolderStatus("folderTest", "userTest");
     }
 
     @Test
     void getFolderStatusShouldReturnDataOn400() throws Exception {
-        when(noticeGenerationService.getFolderStatus(any(),any()))
+        when(noticeGenerationService.getFolderStatus(any(), any()))
                 .thenAnswer(item -> {
                     throw new AppException(AppError.FOLDER_NOT_AVAILABLE);
                 });
@@ -75,12 +104,12 @@ class GenerationRequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json"));
-        verify(noticeGenerationService).getFolderStatus("folderTest","userTest");
+        verify(noticeGenerationService).getFolderStatus("folderTest", "userTest");
     }
 
     @Test
     void getFolderStatusShouldReturnDataOn500() throws Exception {
-        when(noticeGenerationService.getFolderStatus(any(),any()))
+        when(noticeGenerationService.getFolderStatus(any(), any()))
                 .thenAnswer(item -> {
                     throw new RuntimeException();
                 });
@@ -90,12 +119,12 @@ class GenerationRequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is5xxServerError())
                 .andExpect(content().contentType("application/json"));
-        verify(noticeGenerationService).getFolderStatus("folderTest","userTest");
+        verify(noticeGenerationService).getFolderStatus("folderTest", "userTest");
     }
 
     @Test
     void generateMassiveShouldReturnFolderIdOn200() throws Exception {
-        when(noticeGenerationService.generateMassive(any(),any()))
+        when(noticeGenerationService.generateMassive(any(), any()))
                 .thenReturn("folderTests");
         String url = "/notices/generate-massive";
         String folderId = mvc.perform(post(url)
@@ -112,7 +141,7 @@ class GenerationRequestControllerTest {
                 .andReturn().getResponse().getContentAsString();
         Assertions.assertNotNull(folderId);
         Assertions.assertEquals("folderTests", folderId);
-        verify(noticeGenerationService).generateMassive(any(),any());
+        verify(noticeGenerationService).generateMassive(any(), any());
     }
 
     @Test
@@ -141,7 +170,7 @@ class GenerationRequestControllerTest {
 
     @Test
     void generateMassiveShouldReturn400OnMissingUserId() throws Exception {
-        when(noticeGenerationService.generateMassive(any(),any()))
+        when(noticeGenerationService.generateMassive(any(), any()))
                 .thenReturn("folderTests");
         String url = "/notices/generate-massive";
         mvc.perform(post(url)
@@ -160,7 +189,7 @@ class GenerationRequestControllerTest {
     void generateNoticeShouldReturnFileOnOk() throws Exception {
         File tempDirectory = Files.createTempDirectory("test").toFile();
         File file = Files.createTempFile(tempDirectory.toPath(), "test", ".zip").toFile();
-        when(noticeGenerationService.generateNotice(any(),any(), any()))
+        when(noticeGenerationService.generateNotice(any(), any(), any()))
                 .thenReturn(file);
         String url = "/notices/generate";
         mvc.perform(post(url)
@@ -172,14 +201,14 @@ class GenerationRequestControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM));
-        verify(noticeGenerationService).generateNotice(any(),any(), any());
+        verify(noticeGenerationService).generateNotice(any(), any(), any());
     }
 
     @Test
     void generateNoticeShouldReturnBadRequestOnMissingUserForFolder() throws Exception {
         File tempDirectory = Files.createTempDirectory("test").toFile();
         File file = Files.createTempFile(tempDirectory.toPath(), "test", ".zip").toFile();
-        when(noticeGenerationService.generateNotice(any(),any(), any()))
+        when(noticeGenerationService.generateNotice(any(), any(), any()))
                 .thenReturn(file);
         String url = "/notices/generate";
         mvc.perform(post(url)
@@ -194,7 +223,7 @@ class GenerationRequestControllerTest {
 
     @Test
     void generateNoticeShouldReturnKOonErrorFile() throws Exception {
-        when(noticeGenerationService.generateNotice(any(),any(), any()))
+        when(noticeGenerationService.generateNotice(any(), any(), any()))
                 .thenReturn(null);
         String url = "/notices/generate";
         mvc.perform(post(url)
@@ -205,12 +234,12 @@ class GenerationRequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().is5xxServerError());
-        verify(noticeGenerationService).generateNotice(any(),any(), any());
+        verify(noticeGenerationService).generateNotice(any(), any(), any());
     }
 
     @Test
     void getSignedUrlShouldReturnDataOnOk() throws Exception {
-        when(noticeGenerationService.getFileSignedUrl(any(),any(), any()))
+        when(noticeGenerationService.getFileSignedUrl(any(), any(), any()))
                 .thenReturn(GetSignedUrlResource.builder().signedUrl("test").build());
         String url = "/notices/folderId/file/fileId/url";
         mvc.perform(get(url)
@@ -219,12 +248,12 @@ class GenerationRequestControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-        verify(noticeGenerationService).getFileSignedUrl(any(),any(), any());
+        verify(noticeGenerationService).getFileSignedUrl(any(), any(), any());
     }
 
     @Test
     void getSignedUrlShouldReturnKOonErrorFile() throws Exception {
-        when(noticeGenerationService.getFileSignedUrl(any(),any(), any()))
+        when(noticeGenerationService.getFileSignedUrl(any(), any(), any()))
                 .thenThrow(new AppException(AppError.INTERNAL_SERVER_ERROR));
         String url = "/notices/folderId/file/fileId/url";
         mvc.perform(get(url)
@@ -232,7 +261,7 @@ class GenerationRequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().is5xxServerError());
-        verify(noticeGenerationService).getFileSignedUrl(any(),any(), any());
+        verify(noticeGenerationService).getFileSignedUrl(any(), any(), any());
     }
 
     @Test
@@ -271,39 +300,6 @@ class GenerationRequestControllerTest {
                 )
                 .andExpect(status().is5xxServerError());
         verify(noticeGenerationService).getFolderSignedUrl(any(), any());
-    }
-
-    private static NoticeGenerationRequestItem getNoticeGenerationRequestItem() {
-        return NoticeGenerationRequestItem.builder()
-                .templateId("template")
-                .data(NoticeRequestData.builder()
-                        .notice(Notice.builder()
-                                .code("code")
-                                .dueDate("24/10/2024")
-                                .subject("subject")
-                                .paymentAmount(100L)
-                                .installments(Collections.singletonList(
-                                        InstallmentData.builder()
-                                                .amount(100L)
-                                                .code("codeRate")
-                                                .dueDate("24/10/2024")
-                                                .build()
-                                ))
-                                .build())
-                        .creditorInstitution(CreditorInstitution.builder()
-                                .taxCode("taxCode")
-                                .build())
-                        .debtor(Debtor.builder()
-                                .taxCode("taxCode")
-                                .address("address")
-                                .city("city")
-                                .buildingNumber("101")
-                                .postalCode("00135")
-                                .province("RM")
-                                .fullName("Test Name")
-                                .build())
-                        .build())
-                .build();
     }
 
 }
