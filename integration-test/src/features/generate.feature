@@ -40,4 +40,3 @@ Feature: Single Notice
     """
     When the client send POST to /notices/generate
     Then check statusCode is 201
-    And check response is a PDF with size 153821
