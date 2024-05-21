@@ -42,7 +42,7 @@ jobs:
           cpd_exclusions: "**/model/**,**/entity/*"
           java_version: 17
 
-  smoke-test:
+  smoke_test_cr:
     name: Smoke Test
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
@@ -68,19 +68,7 @@ jobs:
           chmod +x ./run_docker.sh
           ./run_docker.sh local
           
-          echo "message=$(cat ./docker/.env)" >> $GITHUB_OUTPUT 
-
-      - name: Report Status
-        uses: ravsamhq/notify-slack-action@v2
-        with:
-          status: 'success'
-          token: ${{ secrets.GITHUB_TOKEN }}
-          notification_title: 'env'
-          message_format: ${{ steps.cat.outputs.message }}
-          footer: ''
-          icon_success: ':white_check_mark:'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          cat ./docker/.env
 
 #      - name: Run Service on Docker
 #        shell: bash
