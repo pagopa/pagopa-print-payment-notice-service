@@ -68,7 +68,7 @@ jobs:
           chmod +x ./run_docker.sh
           ./run_docker.sh local
           
-          cat ./docker/.env
+          cat .env
 
 #      - name: Run Service on Docker
 #        shell: bash
