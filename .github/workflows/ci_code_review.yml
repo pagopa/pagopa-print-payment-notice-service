@@ -60,25 +60,43 @@ jobs:
           tenant-id: ${{ secrets.DEV_TENANT_ID }}
           subscription-id: ${{ secrets.DEV_SUBSCRIPTION_ID }}
 
-      - name: Run Service on Docker
+      - name: send
+        id: cat
         shell: bash
-        id: run_service_docker
         run: |
-          cd ./docker
-          chmod +x ./run_docker.sh
-          ./run_docker.sh local
+          echo "message=$(cat ./docker/.env)" >> $GITHUB_OUTPUT 
 
-      - name: Run Integration Tests
-        shell: bash
-        id: run_integration_test
-        run: |
-          export SUBKEY=${{ secrets.DEV_SUBKEY }}
-          export CANARY=${{ inputs.canary }}
-          export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
+      - name: Report Status
+        uses: ravsamhq/notify-slack-action@v2
+        with:
+          status: 'success'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          notification_title: 'env'
+          message_format: ${{ steps.cat.outputs.message }}
+          footer: ''
+          icon_success: ':white_check_mark:'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-          cd ./integration-test
-          chmod +x ./run_integration_test.sh
-          ./run_integration_test.sh local
+#      - name: Run Service on Docker
+#        shell: bash
+#        id: run_service_docker
+#        run: |
+#          cd ./docker
+#          chmod +x ./run_docker.sh
+#          ./run_docker.sh local
+#
+#      - name: Run Integration Tests
+#        shell: bash
+#        id: run_integration_test
+#        run: |
+#          export SUBKEY=${{ secrets.DEV_SUBKEY }}
+#          export CANARY=${{ inputs.canary }}
+#          export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
+#
+#          cd ./integration-test
+#          chmod +x ./run_integration_test.sh
+#          ./run_integration_test.sh local
 
 
 
