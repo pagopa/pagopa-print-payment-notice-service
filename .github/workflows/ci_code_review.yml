@@ -60,35 +60,25 @@ jobs:
           tenant-id: ${{ secrets.DEV_TENANT_ID }}
           subscription-id: ${{ secrets.DEV_SUBSCRIPTION_ID }}
 
-      - name: send
-        id: cat
+      - name: Run Service on Docker
         shell: bash
+        id: run_service_docker
         run: |
-          cd ./docker 
+          cd ./docker
           chmod +x ./run_docker.sh
           ./run_docker.sh local
-          
-          cat .env
 
-#      - name: Run Service on Docker
-#        shell: bash
-#        id: run_service_docker
-#        run: |
-#          cd ./docker
-#          chmod +x ./run_docker.sh
-#          ./run_docker.sh local
-#
-#      - name: Run Integration Tests
-#        shell: bash
-#        id: run_integration_test
-#        run: |
-#          export SUBKEY=${{ secrets.DEV_SUBKEY }}
-#          export CANARY=${{ inputs.canary }}
-#          export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
-#
-#          cd ./integration-test
-#          chmod +x ./run_integration_test.sh
-#          ./run_integration_test.sh local
+      - name: Run Integration Tests
+        shell: bash
+        id: run_integration_test
+        run: |
+          export SUBKEY=${{ secrets.DEV_SUBKEY }}
+          export CANARY=${{ inputs.canary }}
+          export CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
+
+          cd ./integration-test
+          chmod +x ./run_integration_test.sh
+          ./run_integration_test.sh local
 
 
 
