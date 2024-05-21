@@ -9,7 +9,6 @@ on:
       - reopened
   push:
     branches:
-      - next
       - main
 
 
@@ -43,9 +42,10 @@ jobs:
           cpd_exclusions: "**/model/**,**/entity/*"
           java_version: 17
 
-  smoke-test:
+  smoke_test_cr:
     name: Smoke Test
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
       - name: Checkout
         id: checkout

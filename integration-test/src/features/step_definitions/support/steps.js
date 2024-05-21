@@ -1,8 +1,8 @@
-const {Given, When, Then} = require('@cucumber/cucumber')
+const {Given, When, Then, setDefaultTimeout} = require('@cucumber/cucumber')
 const assert = require("assert");
 const {call, post} = require("./common");
-const fs = require("fs");
-const pdf2html = require('pdf2html');
+
+setDefaultTimeout(40 * 1000);
 
 const app_host = process.env.APP_HOST;
 
