@@ -35,9 +35,6 @@ public class Notice {
     @Schema(description = "Notice Installments")
     private List<InstallmentData> installments;
 
-    @Schema(description = "Poste auth code")
-    private String posteAuth;
-
     @Schema(description = "Poste Document Type")
     private String posteDocumentType;
 
