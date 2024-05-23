@@ -4,13 +4,136 @@
     "title" : "Print Payment Notices - Service",
     "description" : "Microservice to expose the APIs for Print Payment Notices",
     "termsOfService" : "https://www.pagopa.gov.it/",
-    "version" : "0.0.3-1-fix-generator-call"
+    "version" : "0.3.0"
   },
   "servers" : [ {
     "url" : "http://localhost",
     "description" : "Generated server url"
   } ],
   "paths" : {
+    "/institutions/data" : {
+      "post" : {
+        "tags" : [ "Institutions Data APIs" ],
+        "summary" : "uploadInstitutionData",
+        "description" : "Uploads or updates the provided institution data and logo on the related storage, to be used in the payment notice generation process",
+        "operationId" : "updateInstitutions",
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "required" : [ "institutions-data" ],
+                "type" : "object",
+                "properties" : {
+                  "institutions-data" : {
+                    "type" : "string",
+                    "description" : "String containing the json data to upload "
+                  },
+                  "file" : {
+                    "type" : "string",
+                    "description" : "logo file to upload",
+                    "format" : "binary"
+                  }
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "Too many requests",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Service unavailable",
+            "headers" : {
+              "X-Request-Id" : {
+                "description" : "This header identifies the call",
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "ApiKey" : [ ]
+        } ]
+      },
+      "parameters" : [ {
+        "name" : "X-Request-Id",
+        "in" : "header",
+        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+        "schema" : {
+          "type" : "string"
+        }
+      } ]
+    },
     "/notices/folder/{folderId}" : {
       "delete" : {
         "tags" : [ "Notice Generation Request APIs" ],
@@ -1205,6 +1328,10 @@
           "taxCode" : {
             "type" : "string",
             "description" : "CI tax code"
+          },
+          "posteAuth" : {
+            "type" : "string",
+            "description" : "Poste auth code"
           }
         },
         "description" : "Creditor Institution data"
@@ -1263,7 +1390,7 @@
           },
           "posteDocumentType" : {
             "type" : "string",
-            "description" : "Poste Document Type"
+            "description" : "Installment Poste Document Type"
           }
         },
         "description" : "Notice Installments"
@@ -1298,7 +1425,7 @@
           },
           "posteDocumentType" : {
             "type" : "string",
-            "description" : "Poste Document Type"
+            "description" : "Poste Document Type for main notice"
           }
         },
         "description" : "Notice data"
@@ -1400,7 +1527,7 @@
           "status" : {
             "type" : "string",
             "description" : "Generation request status",
-            "enum" : [ "INSERTED", "PROCESSING", "FAILED", "PROCESSED" ]
+            "enum" : [ "INSERTED", "PROCESSING", "COMPLETING", "FAILED", "PROCESSED", "PROCESSED_WITH_FAILURES" ]
           },
           "processedNotices" : {
             "type" : "array",

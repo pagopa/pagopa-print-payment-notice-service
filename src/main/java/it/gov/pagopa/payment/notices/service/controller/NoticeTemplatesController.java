@@ -14,7 +14,6 @@ import it.gov.pagopa.payment.notices.service.model.TemplateResource;
 import it.gov.pagopa.payment.notices.service.service.NoticeTemplateService;
 import it.gov.pagopa.payment.notices.service.util.OpenApiTableMetadata;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +30,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+
+import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.clearTempDirectory;
 
 /**
  * Rest Controller containing APIs for generation request management
@@ -137,14 +138,6 @@ public class NoticeTemplatesController {
             throw new RuntimeException(e);
         } finally {
             clearTempDirectory(file.toPath().getParent());
-        }
-    }
-
-    private void clearTempDirectory(java.nio.file.Path workingDirPath) {
-        try {
-            FileUtils.deleteDirectory(workingDirPath.toFile());
-        } catch (IOException e) {
-            log.warn("Unable to clear working directory", e);
         }
     }
 
