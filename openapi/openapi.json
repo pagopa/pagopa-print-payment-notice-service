@@ -463,7 +463,7 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "OK",
             "headers" : {
               "X-Request-Id" : {
@@ -1327,6 +1327,10 @@
           "taxCode" : {
             "type" : "string",
             "description" : "CI tax code"
+          },
+          "posteAuth" : {
+            "type" : "string",
+            "description" : "Poste auth code"
           }
         },
         "description" : "Creditor Institution data"
@@ -1383,13 +1387,9 @@
             "type" : "string",
             "description" : "Installment dueDate"
           },
-          "posteAuth" : {
-            "type" : "string",
-            "description" : "Poste auth code"
-          },
           "posteDocumentType" : {
             "type" : "string",
-            "description" : "Poste Document Type"
+            "description" : "Installment Poste Document Type"
           }
         },
         "description" : "Notice Installments"
@@ -1422,13 +1422,9 @@
               "$ref" : "#/components/schemas/InstallmentData"
             }
           },
-          "posteAuth" : {
-            "type" : "string",
-            "description" : "Poste auth code"
-          },
           "posteDocumentType" : {
             "type" : "string",
-            "description" : "Poste Document Type"
+            "description" : "Poste Document Type for main notice"
           }
         },
         "description" : "Notice data"
@@ -1530,7 +1526,7 @@
           "status" : {
             "type" : "string",
             "description" : "Generation request status",
-            "enum" : [ "INSERTED", "PROCESSING", "FAILED", "PROCESSED" ]
+            "enum" : [ "INSERTED", "PROCESSING", "COMPLETING", "FAILED", "PROCESSED", "PROCESSED_WITH_FAILURES" ]
           },
           "processedNotices" : {
             "type" : "array",
