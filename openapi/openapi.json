@@ -474,9 +474,10 @@
               }
             },
             "content" : {
-              "application/json" : {
+              "application/pdf" : {
                 "schema" : {
-                  "type" : "string"
+                  "type" : "string",
+                  "format" : "binary"
                 }
               }
             }

@@ -53,8 +53,8 @@ public class NoticesController {
             external = true, internal = false)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "OK",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = String.class))),
+                    content = @Content(mediaType = MediaType.APPLICATION_PDF_VALUE,
+                            schema = @Schema(implementation = Resource.class))),
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ProblemJson.class))),
