@@ -20,7 +20,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -33,7 +32,7 @@ class InstitutionsControllerTest {
     @MockBean
     private InstitutionsService institutionsService;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
@@ -52,15 +51,15 @@ class InstitutionsControllerTest {
                         .fullName("121212")
                         .organization("test")
                         .physicalChannel("1212")
-                .build();
+                        .build();
         String url = "/institutions/data";
         mvc.perform(multipart(url)
-                        .file("file","".getBytes())
+                        .file("file", "".getBytes())
                         .part(new MockPart("institutions-data",
                                 objectMapper.writeValueAsString(uploadData).getBytes()))
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().isOk());
-        verify(institutionsService).uploadInstitutionsData(any(),any());
+        verify(institutionsService).uploadInstitutionsData(any(), any());
     }
 
     @Test
@@ -77,7 +76,7 @@ class InstitutionsControllerTest {
                         .build();
         String url = "/institutions/data";
         mvc.perform(multipart(url)
-                        .file("file","".getBytes())
+                        .file("file", "".getBytes())
                         .part(new MockPart("institutions-data",
                                 objectMapper.writeValueAsString(uploadData).getBytes()))
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
@@ -102,12 +101,12 @@ class InstitutionsControllerTest {
         }).when(institutionsService).uploadInstitutionsData(any(), any());
         String url = "/institutions/data";
         mvc.perform(multipart(url)
-                        .file("file","".getBytes())
+                        .file("file", "".getBytes())
                         .part(new MockPart("institutions-data",
                                 objectMapper.writeValueAsString(uploadData).getBytes()))
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().is5xxServerError());
-        verify(institutionsService).uploadInstitutionsData(any(),any());
+        verify(institutionsService).uploadInstitutionsData(any(), any());
     }
 
 }

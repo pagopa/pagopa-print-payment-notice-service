@@ -14,7 +14,6 @@ import it.gov.pagopa.payment.notices.service.model.TemplateResource;
 import it.gov.pagopa.payment.notices.service.service.NoticeTemplateService;
 import it.gov.pagopa.payment.notices.service.util.OpenApiTableMetadata;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
