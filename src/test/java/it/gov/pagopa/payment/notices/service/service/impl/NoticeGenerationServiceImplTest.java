@@ -257,13 +257,13 @@ class NoticeGenerationServiceImplTest {
 
     @Test
     void deleteShouldReturnNotFoundWhenMissingFolder() {
-        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any()))
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
                 .thenReturn(
                         Optional.empty()
                 );
         assertThrows(AppException.class, () ->
                 noticeGenerationService.deleteFolder("test", "test"));
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         verifyNoInteractions(noticeStorageClient);
     }
 
@@ -279,7 +279,7 @@ class NoticeGenerationServiceImplTest {
                         )
                 );
         noticeGenerationService.deleteFolder("test", "test");
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         verify(paymentGenerationRequestRepository).deleteById(any());
         verify(noticeStorageClient).deleteFolder(any());
     }
@@ -298,7 +298,7 @@ class NoticeGenerationServiceImplTest {
         doThrow(new AppException(AppError.COULD_NOT_DELETE_FOLDER_ERROR))
                 .when(noticeStorageClient).deleteFolder(any());
         assertThrows(AppException.class, () -> noticeGenerationService.deleteFolder("test", "test"));
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         verify(paymentGenerationRequestRepository).deleteById(any());
         verify(noticeStorageClient).deleteFolder(any());
     }
@@ -317,60 +317,60 @@ class NoticeGenerationServiceImplTest {
         doThrow(new RuntimeException("test"))
                 .when(paymentGenerationRequestRepository).deleteById(any());
         assertThrows(AppException.class, () -> noticeGenerationService.deleteFolder("test", "test"));
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         verify(paymentGenerationRequestRepository).deleteById(any());
         verifyNoInteractions(noticeStorageClient);
     }
 
     @Test
     void getFolderSignedUrlShouldReturnDataOnSuccess() {
-        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any())).thenReturn(
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any())).thenReturn(
                 Optional.of(PaymentNoticeGenerationRequest.builder()
                         .status(PaymentGenerationRequestStatus.PROCESSED).build()));
-        when(noticeStorageClient.getFileSignedUrl(any(),any())).thenReturn("signedUrl");
+        when(noticeStorageClient.getFileSignedUrl(any(), any())).thenReturn("signedUrl");
         GetSignedUrlResource resource = noticeGenerationService
-                .getFolderSignedUrl("test","test");
-        verify(noticeStorageClient).getFileSignedUrl(any(),any());
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+                .getFolderSignedUrl("test", "test");
+        verify(noticeStorageClient).getFileSignedUrl(any(), any());
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         assertNotNull(resource);
         assertNotNull(resource.getSignedUrl());
     }
 
     @Test
     void getFolderUrlShouldReturnNotFoundWhenMissingFolder() {
-        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any()))
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
                 .thenReturn(
                         Optional.empty()
                 );
         assertThrows(AppException.class, () ->
-                noticeGenerationService.getFolderSignedUrl("test","userId"));
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+                noticeGenerationService.getFolderSignedUrl("test", "userId"));
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         verifyNoInteractions(noticeStorageClient);
     }
 
     @Test
     void getFolderSignedUrlSholdReturnExceptionOnClientKo() {
-        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any())).thenReturn(
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any())).thenReturn(
                 Optional.of(PaymentNoticeGenerationRequest.builder()
                         .status(PaymentGenerationRequestStatus.PROCESSED).build()));
-        when(noticeStorageClient.getFileSignedUrl(any(),any())).thenThrow(
+        when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(
                 new AppException(AppError.NOTICE_CLIENT_UNAVAILABLE));
         assertThrows(AppException.class, () -> noticeGenerationService
-                .getFolderSignedUrl("test","test"));
-        verify(noticeStorageClient).getFileSignedUrl(any(),any());
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+                .getFolderSignedUrl("test", "test"));
+        verify(noticeStorageClient).getFileSignedUrl(any(), any());
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
     }
 
     @Test
     void getFolderUrlShouldReturnNotFoundWhenFolderYetToComplete() {
-        when(paymentGenerationRequestRepository.findByIdAndUserId(any(),any()))
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
                 .thenReturn(
                         Optional.of(PaymentNoticeGenerationRequest.builder()
                                 .status(PaymentGenerationRequestStatus.PROCESSING).build())
                 );
         assertThrows(AppException.class, () ->
-                noticeGenerationService.getFolderSignedUrl("test","userId"));
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(),any());
+                noticeGenerationService.getFolderSignedUrl("test", "userId"));
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         verifyNoInteractions(noticeStorageClient);
     }
 

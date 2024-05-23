@@ -2,6 +2,7 @@ name: Code Review
 
 # Controls when the workflow will run
 on:
+  merge_group:
   pull_request:
     types:
       - opened
@@ -42,7 +43,7 @@ jobs:
           cpd_exclusions: "**/model/**,**/entity/*"
           java_version: 17
 
-  smoke_test_cr:
+  smoke_test:
     name: Smoke Test
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'

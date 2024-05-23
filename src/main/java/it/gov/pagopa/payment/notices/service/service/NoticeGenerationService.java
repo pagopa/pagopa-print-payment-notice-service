@@ -50,9 +50,10 @@ public interface NoticeGenerationService {
 
     /**
      * Return a file signed url
+     *
      * @param folderId folder id to use for file retrieval
-     * @param fileId id of the file to retrieve
-     * @param userId user id to use for permission check
+     * @param fileId   id of the file to retrieve
+     * @param userId   user id to use for permission check
      * @return instance of GetSignedUrlResource containing a signed url
      */
     GetSignedUrlResource getFileSignedUrl(String folderId, String fileId, String userId);
@@ -60,15 +61,17 @@ public interface NoticeGenerationService {
     /**
      * Delete a folder using the provided folderId, if allowed, or throw exception if
      * missing or not allowed
+     *
      * @param folderId folderId to use for deletioj
-     * @param userId user id to use for permission check
+     * @param userId   user id to use for permission check
      */
     void deleteFolder(String folderId, String userId);
 
     /**
      * Return a folder signed url
+     *
      * @param folderId folder id to use for folder retrieval
-     * @param userId user id to use for permission check
+     * @param userId   user id to use for permission check
      * @return instance of GetSignedUrlResource containing a signed url
      */
     GetSignedUrlResource getFolderSignedUrl(String folderId, String userId);
