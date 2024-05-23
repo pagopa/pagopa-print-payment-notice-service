@@ -40,4 +40,7 @@ public class CreditorInstitution {
     @Schema(hidden = true, description = "Poste account number")
     private String posteAccountNumber;
 
+    @Schema(description = "Poste auth code")
+    private String posteAuth;
+
 }

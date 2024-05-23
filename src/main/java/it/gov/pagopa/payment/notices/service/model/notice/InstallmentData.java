@@ -18,10 +18,6 @@ public class InstallmentData {
     private Long amount;
     @Schema(description = "Installment dueDate", requiredMode = Schema.RequiredMode.REQUIRED)
     private String dueDate;
-
-    @Schema(description = "Poste auth code")
-    private String posteAuth;
-
     @Schema(description = "Poste Document Type")
     private String posteDocumentType;
 

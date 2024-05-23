@@ -47,6 +47,9 @@ public class UploadData {
     @Schema(description = "Poste account number")
     private String posteAccountNumber;
 
+    @Schema(description = "Poste auth code")
+    private String posteAuth;
+
     @Schema(hidden = true)
     private String logo;
 
