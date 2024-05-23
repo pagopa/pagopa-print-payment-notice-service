@@ -92,9 +92,8 @@ microservice-chart:
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'app-insight-connection-string'
     OTEL_EXPORTER_OTLP_HEADERS: elastic-apm-secret-token
     MONGODB_CONNECTION_URI: 'notices-mongo-connection-string'
-    TEMPLATE_STORAGE_CONN_STRING: 'templates_storage_account_connection_string'
-    INSTITUTION_STORAGE_CONN_STRING: 'institutions_storage_account_connection_string'
-    NOTICE_STORAGE_CONN_STRING: 'notices_storage_account_connection_string'
+    INSTITUTION_STORAGE_CONN_STRING: 'institutions-storage-account-connection-string'
+    NOTICE_STORAGE_CONN_STRING: 'notices-storage-account-connection-string'
     KAFKA_SASL_JAAS_CONFIG: 'ehub-p-notice-jaas-config'
     AES_SECRET_KEY: 'aes-key'
     AES_SALT: 'aes-salt'
