@@ -1,4 +1,4 @@
-package it.gov.pagopa.payment.notices.service.service;
+package it.gov.pagopa.payment.notices.service.service.async;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

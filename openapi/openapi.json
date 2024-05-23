@@ -1387,10 +1387,6 @@
           "dueDate" : {
             "type" : "string",
             "description" : "Installment dueDate"
-          },
-          "posteDocumentType" : {
-            "type" : "string",
-            "description" : "InstallmentPoste Document Type"
           }
         },
         "description" : "Notice Installments"
@@ -1422,10 +1418,6 @@
             "items" : {
               "$ref" : "#/components/schemas/InstallmentData"
             }
-          },
-          "posteDocumentType" : {
-            "type" : "string",
-            "description" : "Poste Document Type for main notice"
           }
         },
         "description" : "Notice data"

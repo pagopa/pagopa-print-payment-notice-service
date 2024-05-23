@@ -18,7 +18,7 @@ import it.gov.pagopa.payment.notices.service.model.notice.Notice;
 import it.gov.pagopa.payment.notices.service.model.notice.NoticeRequestData;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestErrorRepository;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestRepository;
-import it.gov.pagopa.payment.notices.service.service.AsyncService;
+import it.gov.pagopa.payment.notices.service.service.async.AsyncService;
 import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
 import it.gov.pagopa.payment.notices.service.util.Aes256Utils;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,12 +67,14 @@ class NoticeGenerationServiceImplTest {
     public void init() {
         Mockito.reset(
                 paymentGenerationRequestErrorRepository,
-                paymentGenerationRequestRepository, noticeGenerationRequestProducer);
+                paymentGenerationRequestRepository,
+                noticeGenerationRequestProducer);
         noticeGenerationService = new NoticeGenerationServiceImpl(
                 paymentGenerationRequestRepository,
                 paymentGenerationRequestErrorRepository,
-                asyncService, noticeGenerationClient
-                , noticeStorageClient);
+                asyncService,
+                noticeGenerationClient,
+                noticeStorageClient);
     }
 
     @Test
