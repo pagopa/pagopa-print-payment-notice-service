@@ -20,7 +20,6 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -88,6 +87,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                     .items(new ArrayList<>())
                     .userId(userId)
                     .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
+                    .numberOfElementsFailed(0)
                     .requestDate(Instant.now())
                     .build()).getId();
 
