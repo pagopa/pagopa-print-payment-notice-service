@@ -35,7 +35,4 @@ public class Notice {
     @Schema(description = "Notice Installments")
     private List<InstallmentData> installments;
 
-    @Schema(description = "Poste Document Type for main notice")
-    private String posteDocumentType;
-
 }
