@@ -93,10 +93,9 @@ public class InstitutionsController {
         File logoImage;
         try {
 
-            UploadData institutionsData = objectMapper.readValue(
-                    institutionsDataContent, UploadData.class);
+            UploadData institutionsData = objectMapper.readValue(institutionsDataContent, UploadData.class);
 
-            if (!validator.validate(institutionsData).isEmpty()) {
+            if(!validator.validate(institutionsData).isEmpty()) {
                 throw new AppException(AppError.BAD_REQUEST, "Validation errors on provided input");
             }
 

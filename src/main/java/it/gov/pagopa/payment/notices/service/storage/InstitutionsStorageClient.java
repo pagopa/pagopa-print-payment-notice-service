@@ -44,12 +44,13 @@ public class InstitutionsStorageClient {
             this.objectMapper = objectMapper;
         }
     }
+
     public InstitutionsStorageClient(
             Boolean enabled,
             BlobContainerClient blobContainerClient) {
-        if (Boolean.TRUE.equals(enabled)) {
-             this.blobContainerClient = blobContainerClient;
-             this.objectMapper = new ObjectMapper();
+        if(Boolean.TRUE.equals(enabled)) {
+            this.blobContainerClient = blobContainerClient;
+            this.objectMapper = new ObjectMapper();
         }
     }
 

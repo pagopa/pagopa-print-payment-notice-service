@@ -60,7 +60,7 @@ class InstitutionsControllerTest {
                                 objectMapper.writeValueAsString(uploadData).getBytes()))
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().isOk());
-        verify(institutionsService).uploadInstitutionsData(any(),any());
+        verify(institutionsService).uploadInstitutionsData(any(), any());
     }
 
     @Test
@@ -77,7 +77,7 @@ class InstitutionsControllerTest {
                         .build();
         String url = "/institutions/data";
         mvc.perform(multipart(url)
-                        .file("file","".getBytes())
+                        .file("file", "".getBytes())
                         .part(new MockPart("institutions-data",
                                 objectMapper.writeValueAsString(uploadData).getBytes()))
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
@@ -102,12 +102,12 @@ class InstitutionsControllerTest {
         }).when(institutionsService).uploadInstitutionsData(any(), any());
         String url = "/institutions/data";
         mvc.perform(multipart(url)
-                        .file("file","".getBytes())
+                        .file("file", "".getBytes())
                         .part(new MockPart("institutions-data",
                                 objectMapper.writeValueAsString(uploadData).getBytes()))
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().is5xxServerError());
-        verify(institutionsService).uploadInstitutionsData(any(),any());
+        verify(institutionsService).uploadInstitutionsData(any(), any());
     }
 
 }

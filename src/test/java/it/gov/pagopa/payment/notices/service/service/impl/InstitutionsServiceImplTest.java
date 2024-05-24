@@ -3,7 +3,6 @@ package it.gov.pagopa.payment.notices.service.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
-import it.gov.pagopa.payment.notices.service.model.TemplateResource;
 import it.gov.pagopa.payment.notices.service.model.institutions.UploadData;
 import it.gov.pagopa.payment.notices.service.storage.InstitutionsStorageClient;
 import it.gov.pagopa.payment.notices.service.storage.NoticeTemplateStorageClient;
@@ -20,7 +19,9 @@ import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,9 +57,9 @@ class InstitutionsServiceImplTest {
         File tempDirectory = Files.createTempDirectory("test").toFile();
         File file = Files.createTempFile(tempDirectory.toPath(), "test", ".zip").toFile();
         AppException appException = assertThrows(AppException.class,
-                () -> institutionsService.uploadInstitutionsData(UploadData.builder().build(),file));
+                () -> institutionsService.uploadInstitutionsData(UploadData.builder().build(), file));
         assertEquals(AppError.INSTITUTION_DATA_UPLOAD_ERROR.title, appException.getTitle());
-        verify(institutionStorageClient).saveInstitutionsData(any(),any(),any());
+        verify(institutionStorageClient).saveInstitutionsData(any(), any(), any());
     }
 
     @Test

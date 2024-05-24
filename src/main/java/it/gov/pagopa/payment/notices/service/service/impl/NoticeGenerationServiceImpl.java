@@ -13,8 +13,8 @@ import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
 import it.gov.pagopa.payment.notices.service.model.enums.PaymentGenerationRequestStatus;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestErrorRepository;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestRepository;
-import it.gov.pagopa.payment.notices.service.service.AsyncService;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
+import it.gov.pagopa.payment.notices.service.service.async.AsyncService;
 import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -172,7 +172,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public GetSignedUrlResource getFolderSignedUrl(String folderId, String userId) {
 
         PaymentNoticeGenerationRequest paymentNoticeGenerationRequest = findFolderIfExists(folderId, userId);
-        if (!PaymentGenerationRequestStatus.PROCESSED.equals(paymentNoticeGenerationRequest.getStatus())) {
+        if(!PaymentGenerationRequestStatus.PROCESSED.equals(paymentNoticeGenerationRequest.getStatus())) {
             throw new AppException(AppError.NOTICE_REQUEST_YET_TO_PROCESS);
         }
 

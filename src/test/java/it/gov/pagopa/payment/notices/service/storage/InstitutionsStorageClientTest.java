@@ -27,12 +27,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class InstitutionsStorageClientTest {
 
-    private BlobContainerClient blobContainerClient;
-
     private static BlobClient blobClientMock;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
-
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private BlobContainerClient blobContainerClient;
     private InstitutionsStorageClient institutionsStorageClient;
 
     @BeforeEach
