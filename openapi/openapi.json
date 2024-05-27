@@ -1404,6 +1404,16 @@
             "description" : "Notice total amount to pay",
             "format" : "int64"
           },
+          "reducedAmount" : {
+            "type" : "integer",
+            "description" : "Notice reduced amount to pay (used for example in reduced amount for infractions)",
+            "format" : "int64"
+          },
+          "discountedAmount" : {
+            "type" : "integer",
+            "description" : "Notice discounted amount to pay (used for example in discounted amount for infractions)",
+            "format" : "int64"
+          },
           "dueDate" : {
             "type" : "string",
             "description" : "Notice due date"
