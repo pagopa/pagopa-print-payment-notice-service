@@ -39,8 +39,6 @@ class InstitutionsControllerTest {
     @MockBean
     private InstitutionsService institutionsService;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     @BeforeEach
     void setUp() {
         Mockito.reset(institutionsService);
