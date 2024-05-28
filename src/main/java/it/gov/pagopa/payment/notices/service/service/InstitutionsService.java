@@ -19,4 +19,11 @@ public interface InstitutionsService {
      */
     void uploadInstitutionsData(UploadData institutionsData, File logo);
 
+    /**
+     * Retrieving institution data, related to the provided taxCode
+     * @throws it.gov.pagopa.payment.notices.service.exception.AppException
+     * @param taxCode institution data to be used retrieval
+     * @return institution data
+     */
+    UploadData getInstitutionData(String taxCode);
 }

@@ -73,4 +73,39 @@ class InstitutionsStorageClientTest {
         }
     }
 
+    @Test
+    void shouldReturnCreditorInstitutions() throws JsonProcessingException {
+        doReturn(BinaryData.fromBytes(objectMapper.writeValueAsString(
+                UploadData.builder().build()).getBytes()))
+                .when(blobClientMock)
+                .downloadContent();
+        UploadData result = institutionsStorageClient.getInstitutionData("testFile");
+        assertNotNull(result);
+    }
+
+    @Test
+    void shouldReturnExceptionOnReturnData() {
+        doThrow(new BlobStorageException("test", null, null)).when(blobClientMock)
+                .downloadContent();
+        assertThrows(AppException.class, () -> institutionsStorageClient.getInstitutionData("testFile"));
+    }
+
+    @Test
+    void shouldReturnExceptionOnIoError() {
+        doAnswer(item -> {
+            throw new IOException("test");
+        }).when(blobClientMock)
+                .downloadContent();
+        assertThrows(AppException.class, () ->
+                institutionsStorageClient.getInstitutionData("testFile"));
+    }
+
+
+    @Test
+    void shouldReturnExceptionOnMissingClientForDataRetrieve() {
+        assertThrows(AppException.class, () ->
+                new InstitutionsStorageClient(false, null)
+                        .getInstitutionData("testFile"));
+    }
+
 }

@@ -38,4 +38,15 @@ public class InstitutionsServiceImpl implements InstitutionsService {
             throw new AppException(AppError.INSTITUTION_DATA_UPLOAD_ERROR, e);
         }
     }
+
+    @Override
+    public UploadData getInstitutionData(String taxCode) {
+        try {
+            return institutionsStorageClient.getInstitutionData(taxCode);
+        } catch (AppException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new AppException(AppError.INSTITUTION_RETRIEVE_ERROR);
+        }
+    }
 }

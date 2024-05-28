@@ -62,6 +62,16 @@ public enum AppError {
      INSTITUTION_CLIENT_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE,
             "Institution Storage Not Available",
             "Institution Storage client temporarily not available"),
+
+    INSTITUTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Institution Not Found",
+            "Required institution data has not been found on the storage"),
+
+    INSTITUTION_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Parsing Error for Institution Data",
+            "Exception thrown while parsing institution data retrieve from storage"),
+
+    INSTITUTION_RETRIEVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Error while retrieving Institution data",
+            "Unexpected error occurred while retrieving institution data"),
+
     UNKNOWN(null, null, null);
 
 

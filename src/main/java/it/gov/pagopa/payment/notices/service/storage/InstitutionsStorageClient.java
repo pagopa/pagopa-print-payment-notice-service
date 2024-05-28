@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 @Component
@@ -102,6 +103,31 @@ public class InstitutionsStorageClient {
             throw new AppException(AppError.INSTITUTION_DATA_UPLOAD_ERROR, blobStorageException);
         }
 
+    }
+
+    /**
+     * Retrieve the institutionData from the Blob Storage
+     *
+     * @param institutionCode the name of the institution to be retrieved
+     * @return the File with the reference to the downloaded data
+     * @throws AppException thrown for error when retrieving the data
+     */
+    public UploadData getInstitutionData(String institutionCode) {
+        if (blobContainerClient == null) {
+            throw new AppException(AppError.INSTITUTION_CLIENT_UNAVAILABLE);
+        }
+        try {
+            BinaryData jsonData = blobContainerClient.getBlobClient(institutionCode.concat("/data.json"))
+                    .downloadContent();
+            return objectMapper.readValue(jsonData.toBytes(), UploadData.class);
+        } catch (BlobStorageException blobStorageException) {
+            log.error(blobStorageException.getMessage(), blobStorageException);
+            throw new AppException(AppError.INSTITUTION_NOT_FOUND, blobStorageException);
+        } catch (IOException ioException) {
+            log.error(ioException.getMessage(), ioException);
+            throw new AppException(AppError.INSTITUTION_PARSING_ERROR, ioException);
+
+        }
     }
 
 }
