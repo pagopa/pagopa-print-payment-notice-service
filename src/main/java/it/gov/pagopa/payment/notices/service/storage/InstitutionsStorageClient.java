@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.InputStream;
 
 @Component
@@ -37,7 +36,7 @@ public class InstitutionsStorageClient {
             @Value("${spring.cloud.azure.storage.blob.institutions.connection_string}") String connectionString,
             @Value("${spring.cloud.azure.storage.blob.institutions.containerName}") String containerName,
             ObjectMapper objectMapper) {
-        if (Boolean.TRUE.toString().equals(enabled)) {
+        if(Boolean.TRUE.toString().equals(enabled)) {
             BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
                     .connectionString(connectionString).buildClient();
             this.blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);

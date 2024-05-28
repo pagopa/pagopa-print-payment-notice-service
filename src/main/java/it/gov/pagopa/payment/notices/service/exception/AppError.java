@@ -59,7 +59,7 @@ public enum AppError {
             "Exception has been thrown while managing the logo file passed as input," +
                     " could not create either the working directory or the file"),
 
-     INSTITUTION_CLIENT_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE,
+    INSTITUTION_CLIENT_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE,
             "Institution Storage Not Available",
             "Institution Storage client temporarily not available"),
     UNKNOWN(null, null, null);

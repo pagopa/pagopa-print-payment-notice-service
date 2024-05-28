@@ -8,7 +8,9 @@ import it.gov.pagopa.payment.notices.service.storage.InstitutionsStorageClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 
 /**
  * @see it.gov.pagopa.payment.notices.service.service.InstitutionsService
@@ -27,8 +29,8 @@ public class InstitutionsServiceImpl implements InstitutionsService {
     public void uploadInstitutionsData(UploadData institutionsData, File logo) {
         try (BufferedInputStream fis = new BufferedInputStream(new FileInputStream(logo))) {
             boolean result = institutionsStorageClient.saveInstitutionsData(
-                    institutionsData.getTaxCode(),institutionsData,fis);
-            if (!result) {
+                    institutionsData.getTaxCode(), institutionsData, fis);
+            if(!result) {
                 throw new AppException(AppError.INSTITUTION_DATA_UPLOAD_ERROR);
             }
         } catch (AppException e) {
