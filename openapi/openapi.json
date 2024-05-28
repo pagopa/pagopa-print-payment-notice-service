@@ -7,8 +7,18 @@
     "version" : "0.3.0"
   },
   "servers" : [ {
-    "url" : "http://localhost",
-    "description" : "Generated server url"
+    "url" : "http://localhost:8080"
+  }, {
+    "url" : "https://{host}{basePath}",
+    "variables" : {
+      "host" : {
+        "default" : "api.dev.platform.pagopa.it",
+        "enum" : [ "api.dev.platform.pagopa.it", "api.uat.platform.pagopa.it", "api.platform.pagopa.it" ]
+      },
+      "basePath" : {
+        "default" : "/print-payment-notice-service/v1"
+      }
+    }
   } ],
   "paths" : {
     "/institutions/data" : {
@@ -25,8 +35,7 @@
                 "type" : "object",
                 "properties" : {
                   "institutions-data" : {
-                    "type" : "string",
-                    "description" : "String containing the json data to upload "
+                    "$ref" : "#/components/schemas/UploadData"
                   },
                   "file" : {
                     "type" : "string",
@@ -1495,6 +1504,49 @@
           }
         },
         "description" : "massive notice generation request data"
+      },
+      "UploadData" : {
+        "required" : [ "cbill", "fullName", "info", "taxCode", "webChannel" ],
+        "type" : "object",
+        "properties" : {
+          "taxCode" : {
+            "type" : "string",
+            "description" : "CI tax code"
+          },
+          "fullName" : {
+            "type" : "string",
+            "description" : "CI full name"
+          },
+          "organization" : {
+            "type" : "string",
+            "description" : "CI organization unit managing the payment "
+          },
+          "info" : {
+            "type" : "string",
+            "description" : "CI info"
+          },
+          "webChannel" : {
+            "type" : "boolean",
+            "description" : "Boolean to refer if it has a web channel"
+          },
+          "physicalChannel" : {
+            "type" : "string",
+            "description" : "CI physical channel data"
+          },
+          "cbill" : {
+            "type" : "string",
+            "description" : "CI cbill"
+          },
+          "posteAccountNumber" : {
+            "type" : "string",
+            "description" : "Poste account number"
+          },
+          "posteAuth" : {
+            "type" : "string",
+            "description" : "Poste auth code"
+          }
+        },
+        "description" : "String containing the json data to upload ```{\n  \"taxCode\": \"taxCode_c0d56b015673\",\n  \"fullName\": \"fullName_1d32c133a379\",\n  \"organization\": \"organization_b4cb834b1fbc\",\n  \"info\": \"info_f98a8a76ecaf\",\n  \"webChannel\": false,\n  \"physicalChannel\": \"physicalChannel_f0abb45cbc34\",\n  \"cbill\": \"cbill_9c5ff5908c72\",\n  \"posteAccountNumber\": \"posteAccountNumber_2177702a81c2\",\n  \"posteAuth\": \"posteAuth_0271eb69ad85\",\n  \"logo\": \"logo_5b7ad1121067\"\n} ```"
       },
       "GetSignedUrlResource" : {
         "type" : "object",
