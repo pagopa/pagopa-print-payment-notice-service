@@ -28,7 +28,8 @@ public class InstitutionsServiceImpl implements InstitutionsService {
     @Override
     public void uploadInstitutionsData(UploadData institutionsData, File logo) {
         try (BufferedInputStream fis = new BufferedInputStream(new FileInputStream(logo))) {
-            boolean result = institutionsStorageClient.saveInstitutionsData(institutionsData.getTaxCode(), institutionsData, fis);
+            boolean result = institutionsStorageClient.saveInstitutionsData(
+                    institutionsData.getTaxCode(), institutionsData, fis);
             if(!result) {
                 throw new AppException(AppError.INSTITUTION_DATA_UPLOAD_ERROR);
             }

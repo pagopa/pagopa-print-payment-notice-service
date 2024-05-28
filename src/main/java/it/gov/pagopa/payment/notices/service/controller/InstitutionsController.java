@@ -84,8 +84,20 @@ public class InstitutionsController {
     @PostMapping(value = "/data", consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE})
     public void updateInstitutions(
-            @Parameter(description = "String containing the json data to upload ", required = true,
-                    schema = @Schema(contentSchema = UploadData.class))
+            @Parameter(description = "String containing the json data to upload " +
+                    "```{\n" +
+                    "  \"taxCode\": \"ABC345678h\",\n" +
+                    "  \"fullName\": \"Comune di Roma\",\n" +
+                    "  \"organization\": \"organization_unit\",\n" +
+                    "  \"info\": \"info@contacts.it\",\n" +
+                    "  \"webChannel\": false,\n" +
+                    "  \"physicalChannel\": \"physicalChannel_f0abb45cbc34\",\n" +
+                    "  \"cbill\": \"cbill_9c5ff5908c72\",\n" +
+                    "  \"posteAccountNumber\": \"posteAccountNumber_2177702a81c2\",\n" +
+                    "  \"posteAuth\": \"code_poste_auth_332\",\n" +
+                    "} ```",
+                    required = true,
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
             @Valid @NotNull @RequestPart("institutions-data") String institutionsDataContent,
             @Parameter(description = "logo file to upload", required = true)
             @RequestParam(value = "file", required = false) MultipartFile logo
@@ -95,7 +107,6 @@ public class InstitutionsController {
         try {
 
             UploadData institutionsData = objectMapper.readValue(institutionsDataContent, UploadData.class);
-
             if(!validator.validate(institutionsData).isEmpty()) {
                 throw new AppException(AppError.BAD_REQUEST, "Validation errors on provided input");
             }

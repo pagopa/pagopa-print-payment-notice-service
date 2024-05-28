@@ -11,15 +11,11 @@ Feature: Single Notice
               "paymentAmount": 152,
               "dueDate": "24/10/2024",
               "code": "123456789012345688",
-              "posteAuth": "AUT. 08/5 S3/81 53079 08129.07.20211",
-              "posteDocumentType": "876",
               "installments": [
                   {
                       "code": "123456789012345688",
                       "amount": 100,
-                      "dueDate": "24/09/2024",
-                      "posteAuth": "AUT. 08/5 S3/81 53079 08129.07.20211",
-                      "posteDocumentType": "876"
+                      "dueDate": "24/09/2024"
                   }
               ]
           },

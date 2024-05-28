@@ -87,6 +87,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                     .items(new ArrayList<>())
                     .userId(userId)
                     .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
+                    .numberOfElementsFailed(0)
                     .requestDate(Instant.now())
                     .build()).getId();
 

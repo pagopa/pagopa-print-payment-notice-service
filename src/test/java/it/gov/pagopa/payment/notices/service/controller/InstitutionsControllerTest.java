@@ -26,13 +26,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class InstitutionsControllerTest {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private MockMvc mvc;
-
     @MockBean
     private InstitutionsService institutionsService;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
