@@ -1337,10 +1337,6 @@
           "taxCode" : {
             "type" : "string",
             "description" : "CI tax code"
-          },
-          "posteAuth" : {
-            "type" : "string",
-            "description" : "Poste auth code"
           }
         },
         "description" : "Creditor Institution data"
