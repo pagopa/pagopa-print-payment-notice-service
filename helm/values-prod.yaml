@@ -86,6 +86,7 @@ microservice-chart:
     NOTICE_GENERATION_REST_ENDPOINT: "https://api.platform.pagopa.it/print-payment-notice-generator/v1"
     KAFKA_BROKER: "pagopa-p-itn-core-evh-meucci.servicebus.windows.net:9093"
     KAFKA_NOTICE_GENERATION_TOPIC: pagopa-printit-evh
+    NOTICE_STORAGE_ENDPOINT: 'https://pagopapprintitnotices.blob.core.windows.net'
     REST_CLIENT_LOGGER_LEVEL: 'NONE'
   envSecret:
     # required
