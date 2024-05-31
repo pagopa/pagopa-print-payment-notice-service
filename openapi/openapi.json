@@ -1482,14 +1482,20 @@
         "type" : "object",
         "properties" : {
           "taxCode" : {
+            "maxLength" : 16,
+            "minLength" : 0,
             "type" : "string",
             "description" : "Debtor taxCode"
           },
           "fullName" : {
+            "maxLength" : 70,
+            "minLength" : 0,
             "type" : "string",
             "description" : "Debtor full name"
           },
           "address" : {
+            "maxLength" : 140,
+            "minLength" : 0,
             "type" : "string",
             "description" : "Debtor address"
           },
@@ -1537,20 +1543,25 @@
         "type" : "object",
         "properties" : {
           "subject" : {
+            "maxLength" : 90,
+            "minLength" : 0,
             "type" : "string",
             "description" : "Notice subject"
           },
           "paymentAmount" : {
+            "maximum" : 99999999999,
             "type" : "integer",
             "description" : "Notice total amount to pay",
             "format" : "int64"
           },
           "reducedAmount" : {
+            "maximum" : 99999999999,
             "type" : "integer",
             "description" : "Notice reduced amount to pay (used for example in reduced amount for infractions)",
             "format" : "int64"
           },
           "discountedAmount" : {
+            "maximum" : 99999999999,
             "type" : "integer",
             "description" : "Notice discounted amount to pay (used for example in discounted amount for infractions)",
             "format" : "int64"
@@ -1560,10 +1571,14 @@
             "description" : "Notice due date"
           },
           "code" : {
+            "maxLength" : 22,
+            "minLength" : 0,
             "type" : "string",
             "description" : "Notice code"
           },
           "installments" : {
+            "maxItems" : 2147483647,
+            "minItems" : 2,
             "type" : "array",
             "description" : "Notice Installments",
             "items" : {
