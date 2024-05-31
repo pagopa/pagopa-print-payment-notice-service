@@ -29,6 +29,7 @@ import java.io.InputStream;
 public class InstitutionsStorageClient {
 
     private BlobContainerClient blobContainerClient;
+    private BlobContainerClient logoBlobContainerClient;
 
     private ObjectMapper objectMapper;
 
@@ -37,11 +38,14 @@ public class InstitutionsStorageClient {
             @Value("${spring.cloud.azure.storage.blob.institutions.enabled}") String enabled,
             @Value("${spring.cloud.azure.storage.blob.institutions.connection_string}") String connectionString,
             @Value("${spring.cloud.azure.storage.blob.institutions.containerName}") String containerName,
+            @Value("${spring.cloud.azure.storage.blob.institutions.logoContainerName}") String logoContainerName,
             ObjectMapper objectMapper) {
         if (Boolean.TRUE.toString().equals(enabled)) {
             BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
                     .connectionString(connectionString).buildClient();
             this.blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
+            this.logoBlobContainerClient = blobContainerClient.getServiceClient()
+                    .getBlobContainerClient(logoContainerName);
             this.objectMapper = objectMapper;
         }
     }
@@ -51,6 +55,7 @@ public class InstitutionsStorageClient {
             BlobContainerClient blobContainerClient) {
         if(Boolean.TRUE.equals(enabled)) {
             this.blobContainerClient = blobContainerClient;
+            this.logoBlobContainerClient = blobContainerClient;
             this.objectMapper = new ObjectMapper();
         }
     }
@@ -71,7 +76,7 @@ public class InstitutionsStorageClient {
         try {
 
             //Get a reference to a blob
-            BlobClient blobClient = blobContainerClient.getBlobClient(String.join("/", taxCode,
+            BlobClient blobClient = logoBlobContainerClient.getBlobClient(String.join("/", taxCode,
                     "logo.png"));
 
             //Upload the blob
