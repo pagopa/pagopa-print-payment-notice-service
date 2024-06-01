@@ -3,10 +3,10 @@ const assert = require("assert");
 const {call, post, formData} = require("./common");
 const FormData = require("form-data");
 const fs = require("fs");
-const path = require('path');
 const util = require('util');
 const stream = require('stream');
 const pipeline = util.promisify(stream.pipeline);
+const pdf2html = require('pdf2html');
 
 
 setDefaultTimeout(40 * 1000);
@@ -30,9 +30,7 @@ Given(/^the creditor institution in the storage:$/, async function (dataTable) {
         }
     });
 
-    const fs = require('fs');
     let data = new FormData();
-
 
     data.append('institutions-data', JSON.stringify(jsonBody));
     data.append('file', fs.createReadStream(logoPath));
@@ -69,11 +67,22 @@ Then(/^the response should be in PDF format$/, async function () {
 
 });
 
-Then(/^the PDF document should be equal to the reference PDF "([^"]*)"$/, function (pdfName) {
-    const actual = fs.createReadStream('./pdfToCheck.pdf');
-    const expected = fs.createReadStream(`./resources/${pdfName}.pdf`);
+Then(/^the PDF document should be equal to the reference PDF "([^"]*)"$/, async function (pdfName) {
 
-    assert.strictEqual(actual.toString(), expected.toString());
+    let html1 = await pdf2html.html('./pdfToCheck.pdf');
+    let html2 = await pdf2html.html(`./resources/${pdfName}`);
+
+    // we need to remove some metadata (like createDate) to check only the body of the file
+    const timestampPattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/g;
+    const metaPattern = /<meta name="resourceName" content=".*\.pdf"\/>/g;
+
+    html1 = html1.replace(timestampPattern, '');
+    html1 = html1.replace(metaPattern, '');
+
+    html2 = html2.replace(timestampPattern, '');
+    html2 = html2.replace(metaPattern, '');
+
+    assert.equal(html1, html2);
 });
 
 Then(/^check response body is$/, function (payload) {
