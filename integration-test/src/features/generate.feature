@@ -1,42 +1,74 @@
-Feature: Single Notice
+Feature: Single Generation
 
-  Scenario: Creation OK
-    Given initial json
+  Background:
+    Given the creditor institution in the storage:
+      | variableName       | value                                  |
+      | taxCode            | "12345678911"                          |
+      | fullName           | "Comune di Test"                       |
+      | organization       | "Settore di Test"                      |
+      | info               | "Info di Test"                         |
+      | webChannel         | true                                   |
+      | physicalChannel    | "Canale Fisico"                        |
+      | cbill              | "CBI1234"                              |
+      | posteAccountNumber | "232323"                               |
+      | posteAuth          | "AUT. 08/5 S3/81 53079 08129.07.20211" |
+      | logo               | "./resources/logo1.png"                |
+
+  Scenario: All fields with a value
+    When I send a GET request to "/notices/templates"
+    Then the response status should be 200
+    And the response list should contain a template "TemplateSingleInstalment"
+    Given I have the following variables:
+      | variableName               | value                      |
+      | template_id                | "TemplateSingleInstalment" |
+      | Avviso.Oggetto             | "Avviso Pagamento di TEST" |
+      | Avviso.Importo             | 100                        |
+      | Avviso.Data                | "31/12/2024"               |
+      | Avviso.Codice              | "47000000880099905"        |
+      | Avviso.Rata1.Codice        | "inst1"                    |
+      | Avviso.Rata1.Importo       | 150000                     |
+      | Avviso.Rata1.Data          | "31/12/2024"               |
+      | Ente.CF                    | "12345678911"              |
+      | Destinatario.CF            | "FFFCST83A15L113V"         |
+      | Destinatario.NomeCompleto  | "Mario Rossi"              |
+      | Destinatario.Indirizzo     | "Via Roma"                 |
+      | Destinatario.CodicePostale | "00100"                    |
+      | Destinatario.Citta         | "Somewhere"                |
+      | Destinatario.Building      | "15"                       |
+      | Destinatario.Provincia     | "RM"                       |
+    When I send a POST request to "/notices/generate" with body:
     """
       {
-      "templateId": "TemplateSingleInstalment",
-      "data": {
+        "templateId": <template_id>,
+        "data": {
           "notice": {
-              "subject": "Trasporto Scolastico A.S. 2021/2022",
-              "paymentAmount": 152,
-              "dueDate": "24/10/2024",
-              "code": "123456789012345688",
-              "posteAuth": "AUT. 08/5 S3/81 53079 08129.07.20211",
-              "posteDocumentType": "876",
-              "installments": [
-                  {
-                      "code": "123456789012345688",
-                      "amount": 100,
-                      "dueDate": "24/09/2024",
-                      "posteAuth": "AUT. 08/5 S3/81 53079 08129.07.20211",
-                      "posteDocumentType": "876"
-                  }
-              ]
+            "subject": <Avviso.Oggetto>,
+            "paymentAmount": <Avviso.Importo>,
+            "dueDate": <Avviso.Data>,
+            "code": <Avviso.Codice>,
+            "installments": [
+              {
+                "code": <Avviso.Rata1.Codice>,
+                "amount": <Avviso.Rata1.Importo>,
+                "dueDate": <Avviso.Rata1.Data>
+              }
+            ]
           },
           "creditorInstitution": {
-              "taxCode": "82001760676"
+            "taxCode": <Ente.CF>
           },
           "debtor": {
-              "taxCode": "rccmrz88A52C409A",
-              "fullName": "MARZIA ROCCARASO",
-              "address": "Corso Sempione",
-              "postalCode": "20149",
-              "city": "Milano",
-              "buildingNumber": "55",
-              "province": "MI"
+            "taxCode": <Destinatario.CF>,
+            "fullName": <Destinatario.NomeCompleto>,
+            "address": <Destinatario.Indirizzo>,
+            "postalCode": <Destinatario.CodicePostale>,
+            "city": <Destinatario.Citta>,
+            "buildingNumber": <Destinatario.Building>,
+            "province": <Destinatario.Provincia>
           }
+        }
       }
-    }
-    """
-    When the client send POST to /notices/generate
-    Then check statusCode is 201
+      """
+    Then the response status should be 201
+    And the response should be in PDF format
+    And the PDF document should be equal to the reference PDF "reference.pdf"

@@ -12,8 +12,10 @@
   "dependencies": {
     "@cucumber/cucumber": "^8.4.0",
     "axios": "^0.27.2",
+    "base64topdf": "^1.1.8",
     "dotenv": "^16.0.2",
     "dotenv-cli": "^3.2.0",
-    "npx": "^10.2.2"
+    "npx": "^10.2.2",
+    "util.promisify": "^1.1.2"
   }
 }
