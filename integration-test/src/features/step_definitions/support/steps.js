@@ -33,9 +33,6 @@ Given(/^the creditor institution in the storage:$/, async function (dataTable) {
     let data = new FormData();
 
     data.append('institutions-data', JSON.stringify(jsonBody));
-
-    console.log(JSON.stringify(jsonBody));
-
     data.append('file', fs.createReadStream(logoPath));
 
 
@@ -60,7 +57,9 @@ When(/^I send a (POST|PUT) request to "([^"]*)" with body:$/, async function (me
         const regex = new RegExp(`<${key}>`, 'g');
         jsonBody = jsonBody.replace(regex, value);
     }
+    console.log(jsonBody);
     responseToCheck = await call(method, app_host + url, jsonBody);
+    console.log(responseToCheck);
 });
 
 Then(/^the response should be in PDF format$/, async function () {
