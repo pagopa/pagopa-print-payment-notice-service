@@ -2,7 +2,25 @@ name: Integration Tests
 
 on:
   schedule:
-    - cron: '00 08 * * *'
+    - cron: '00 09 * * 1-5'
+
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+        description: Select the Environment
+      canary:
+        description: 'run the tests on canary version'
+        required: false
+        type: boolean
+        default: false
+      notify:
+        description: 'notify result with slack message'
+        required: false
+        type: boolean
+        default: false
+
 
   workflow_call:
     inputs:
@@ -29,6 +47,7 @@ on:
         type: choice
         description: Select the Environment
         options:
+          - local
           - dev
           - uat
       canary:
@@ -37,11 +56,10 @@ on:
         type: boolean
         default: false
       notify:
+        description: 'notify result with slack message'
         required: false
         type: boolean
-        description: 'send the slack notification'
-        default: true
-
+        default: false
 
 permissions:
   id-token: write
@@ -97,16 +115,15 @@ jobs:
     needs: [ integration_test ]
     runs-on: ubuntu-latest
     name: Notify
-    if: ${{ always() && inputs.notify == 'true' }}
+    if: ${{ always() && (inputs.notify || github.event.inputs == null) }}
     steps:
       - name: Report Status
-        if: ${{ inputs.notify }}
         uses: ravsamhq/notify-slack-action@v2
         with:
           status: ${{ needs.integration_test.result }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          notify_when: 'failure,skipped'
-          notification_title: '<{run_url}|Scheduled Integration Test> has {status_message}'
+          notify_when: 'success,failure,skipped'
+          notification_title: '<{run_url}| Integration Test> has {status_message} in ${{ inputs.environment }}'
           message_format: '{emoji} <{run_url}|{workflow}> {status_message} in <{repo_url}|{repo}>'
           footer: 'Linked to <{workflow_url}| workflow file>'
         env:

@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: "print-payment-notice-service"
   image:
     repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
-    tag: "0.3.0"
+    tag: "0.3.3"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -34,9 +34,9 @@ microservice-chart:
     servicePort: 8080
   serviceAccount:
     create: false
-    annotations: { }
+    annotations: {}
     name: ""
-  podAnnotations: { }
+  podAnnotations: {}
   podSecurityContext:
     seccompProfile:
       type: RuntimeDefault
@@ -86,12 +86,14 @@ microservice-chart:
     NOTICE_GENERATION_REST_ENDPOINT: "https://api.platform.pagopa.it/print-payment-notice-generator/v1"
     KAFKA_BROKER: "pagopa-p-itn-core-evh-meucci.servicebus.windows.net:9093"
     KAFKA_NOTICE_GENERATION_TOPIC: pagopa-printit-evh
+    NOTICE_STORAGE_ENDPOINT: 'https://pagopapprintitnotices.blob.core.windows.net'
     REST_CLIENT_LOGGER_LEVEL: 'NONE'
   envSecret:
     # required
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'app-insight-connection-string'
     OTEL_EXPORTER_OTLP_HEADERS: elastic-apm-secret-token
     MONGODB_CONNECTION_URI: 'notices-mongo-connection-string'
+    TEMPLATE_STORAGE_CONN_STRING: 'templates-storage-account-connection-string'
     INSTITUTION_STORAGE_CONN_STRING: 'institutions-storage-account-connection-string'
     NOTICE_STORAGE_CONN_STRING: 'notices-storage-account-connection-string'
     KAFKA_SASL_JAAS_CONFIG: 'ehub-p-notice-jaas-config'
@@ -105,8 +107,8 @@ microservice-chart:
   keyvault:
     name: "pagopa-p-itn-printit-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
-  nodeSelector: { }
-  tolerations: [ ]
+  nodeSelector: {}
+  tolerations: []
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
@@ -133,5 +135,5 @@ microservice-chart:
         repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
         tag: "0.0.0"
         pullPolicy: Always
-      envConfig: { }
-      envSecret: { }
+      envConfig: {}
+      envSecret: {}

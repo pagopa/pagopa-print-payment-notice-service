@@ -31,6 +31,9 @@ public class CreditorInstitution {
     @Schema(hidden = true, description = "Boolean to refer if it has a web channel", requiredMode = Schema.RequiredMode.REQUIRED)
     private Boolean webChannel;
 
+    @Schema(hidden = true, description = "Boolean to refer if it has an app channel", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Boolean appChannel;
+
     @Schema(hidden = true, description = "CI physical channel data")
     private String physicalChannel;
 
@@ -40,7 +43,7 @@ public class CreditorInstitution {
     @Schema(hidden = true, description = "Poste account number")
     private String posteAccountNumber;
 
-    @Schema(description = "Poste auth code")
+    @Schema(hidden = true, description = "Poste auth code")
     private String posteAuth;
 
 }
