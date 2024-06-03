@@ -44,14 +44,34 @@ public enum AppError {
             "Error occurred while attempting to get file url"),
 
     COULD_NOT_DELETE_FOLDER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,
-            "Error deleting notices" , "Error occurred while attempting to delete a folder"),
+            "Error deleting notices", "Error occurred while attempting to delete a folder"),
 
     NOTICE_REQUEST_YET_TO_PROCESS(HttpStatus.FORBIDDEN, "Notice request To Be Completed",
             "The notice request is yet to be completely processed"),
 
     ERROR_ON_GET_FOLDER_URL_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,
             "Error recovering folder Signed Url",
-            "Error occure while attempting to retrieve folder signed url"),
+            "Error occured while attempting to retrieve folder signed url"),
+    INSTITUTION_DATA_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Error uploading institution data",
+            "Error occured while attempting to upload institution data"),
+
+    LOGO_FILE_INPUT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Error managing logo input",
+            "Exception has been thrown while managing the logo file passed as input," +
+                    " could not create either the working directory or the file"),
+
+     INSTITUTION_CLIENT_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE,
+            "Institution Storage Not Available",
+            "Institution Storage client temporarily not available"),
+
+    INSTITUTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Institution Not Found",
+            "Required institution data has not been found on the storage"),
+
+    INSTITUTION_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Parsing Error for Institution Data",
+            "Exception thrown while parsing institution data retrieve from storage"),
+
+    INSTITUTION_RETRIEVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Error while retrieving Institution data",
+            "Unexpected error occurred while retrieving institution data"),
+
     UNKNOWN(null, null, null);
 
 

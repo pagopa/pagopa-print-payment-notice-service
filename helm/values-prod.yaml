@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: "print-payment-notice-service"
   image:
     repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
-    tag: "0.3.0"
+    tag: "0.3.1-next"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -86,6 +86,7 @@ microservice-chart:
     NOTICE_GENERATION_REST_ENDPOINT: "https://api.platform.pagopa.it/print-payment-notice-generator/v1"
     KAFKA_BROKER: "pagopa-p-itn-core-evh-meucci.servicebus.windows.net:9093"
     KAFKA_NOTICE_GENERATION_TOPIC: pagopa-printit-evh
+    NOTICE_STORAGE_ENDPOINT: 'https://pagopapprintitnotices.blob.core.windows.net'
     REST_CLIENT_LOGGER_LEVEL: 'NONE'
   envSecret:
     # required
@@ -93,10 +94,16 @@ microservice-chart:
     OTEL_EXPORTER_OTLP_HEADERS: elastic-apm-secret-token
     MONGODB_CONNECTION_URI: 'notices-mongo-connection-string'
     TEMPLATE_STORAGE_CONN_STRING: 'templates-storage-account-connection-string'
+    INSTITUTION_STORAGE_CONN_STRING: 'institutions-storage-account-connection-string'
+    NOTICE_STORAGE_CONN_STRING: 'notices-storage-account-connection-string'
     KAFKA_SASL_JAAS_CONFIG: 'ehub-p-notice-jaas-config'
     AES_SECRET_KEY: 'aes-key'
     AES_SALT: 'aes-salt'
     NOTICE_GENERATION_SUBSCRIPTION_KEY: 'notice-generation-sub-key'
+    NOTICE_STORAGE_ENDPOINT: 'notices-storage-account-blob-endpoint'
+    NOTICE_STORAGE_CLIENT_ID: 'blob-storage-pdf-client-id'
+    NOTICE_STORAGE_TENANT_ID: 'tenant-id'
+    NOTICE_STORAGE_CLIENT_SECRET: 'pdf-generator-client-secret'
   keyvault:
     name: "pagopa-p-itn-printit-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"

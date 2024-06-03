@@ -37,13 +37,13 @@ for line in $(echo "$secret" | jq -r '. | to_entries[] | select(.key) | "\(.key)
   IFS='=' read -r -a array <<< "$line"
   response=$(az keyvault secret show --vault-name $keyvault --name "${array[1]}")
   value=$(echo "$response" | jq -r '.value')
+  value=$(echo "$value" | sed 's/\$/\$\$/g')
   echo "${array[0]}=$value" >> .env
 done
 
 
 stack_name=$(cd .. && basename "$PWD")
 docker compose -p "${stack_name}" up -d --remove-orphans --force-recreate --build
-
 
 # waiting the containers
 printf 'Waiting for the service'

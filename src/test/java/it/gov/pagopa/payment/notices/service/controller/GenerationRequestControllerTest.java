@@ -199,7 +199,7 @@ class GenerationRequestControllerTest {
                                 getNoticeGenerationRequestItem()))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM));
         verify(noticeGenerationService).generateNotice(any(), any(), any());
     }
@@ -272,7 +272,7 @@ class GenerationRequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());
-        verify(noticeGenerationService).deleteFolder(any(),any());
+        verify(noticeGenerationService).deleteFolder(any(), any());
     }
 
     @Test
