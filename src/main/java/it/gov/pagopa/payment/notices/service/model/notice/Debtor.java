@@ -3,6 +3,7 @@ package it.gov.pagopa.payment.notices.service.model.notice;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Data
@@ -13,10 +14,12 @@ public class Debtor {
 
     @ToString.Exclude
     @Schema(description = "Debtor taxCode")
+    @Size(max = 16)
     private String taxCode;
     @Schema(description = "Debtor full name", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull
     @NotEmpty
+    @Size(max = 70)
     @ToString.Exclude
     private String fullName;
 
@@ -24,6 +27,7 @@ public class Debtor {
     @Schema(description = "Debtor address", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull
     @NotEmpty
+    @Size(max = 140)
     private String address;
 
     @ToString.Exclude

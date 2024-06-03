@@ -56,9 +56,8 @@ public class InstitutionsController {
      * Uploads institutions data to the related storage, using the taxCode provided within
      * the UploadData instance, if the institution is already on the storage, the content
      * will be updated. The institution json data will include the link on the uploaded logo
-     *
      * @param institutionsDataContent institution data to upload
-     * @param logo                    institution logo to upload
+     * @param logo institution logo to upload
      */
     @Operation(summary = "uploadInstitutionData",
             description = "Uploads or updates the provided institution data and logo on the related storage," +
@@ -122,6 +121,46 @@ public class InstitutionsController {
             throw new AppException(AppError.LOGO_FILE_INPUT_ERROR, e);
         }
 
+    }
+
+    /**
+     * Retrieving institution data, related to the provided taxCode
+     * @param taxCode institution data to be used retrieval
+     * @return institution data
+     */
+    @Operation(summary = "getInstitutionData",
+            description = "Retrieves saved institution data and logo on the related storage," +
+                    " to be used in the payment notice generation process",
+            security = {@SecurityRequirement(name = "ApiKey")})
+    @OpenApiTableMetadata(readWriteIntense = OpenApiTableMetadata.ReadWrite.WRITE,
+            external = true, internal = false)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "Unauthorized", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "403",
+                    description = "Forbidden", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "404",
+                    description = "Not Found", content = @Content(
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "429",
+                    description = "Too many requests", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "500",
+                    description = "Service unavailable",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class)))
+    })
+    @GetMapping(value = "/data/{taxCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public UploadData getInstitutionData(
+            @Parameter(description = "tax code of the CI to use for retrieval")
+            @PathVariable(name = "taxCode") String taxCode) {
+        return institutionsService.getInstitutionData(taxCode);
     }
 
 }
