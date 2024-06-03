@@ -11,7 +11,7 @@ Feature: Single Generation
       | appChannel         | false                                  |
       | physicalChannel    | "Canale Fisico"                        |
       | cbill              | "CBI1234"                              |
-      | posteAccountNumber | "IT60X0542811101000000123456"          |
+      | posteAccountNumber | "000000123456"                         |
       | posteAuth          | "AUT. 08/5 S3/81 53079 08129.07.20211" |
       | logo               | "./resources/logo1.png"                |
     When I send a GET request to "/notices/templates"
@@ -81,7 +81,7 @@ Feature: Single Generation
       | appChannel         | false                                  |
       | physicalChannel    | "Canale Fisico"                        |
       | cbill              | "CBI1234"                              |
-      | posteAccountNumber | "IT60X0542811101000000123456"          |
+      | posteAccountNumber | "000000123456"                         |
       | posteAuth          | "AUT. 08/5 S3/81 53079 08129.07.20211" |
       | logo               | "./resources/logo1.png"                |
     When I send a GET request to "/notices/templates"
@@ -143,7 +143,7 @@ Feature: Single Generation
       | appChannel         | false                                  |
       | physicalChannel    | "Canale Fisico"                        |
       | cbill              | "CBI1234"                              |
-      | posteAccountNumber | "IT60X0542811101000000123456"          |
+      | posteAccountNumber | "000000123456"                         |
       | posteAuth          | "AUT. 08/5 S3/81 53079 08129.07.20211" |
       | logo               | "./resources/logo1.png"                |
     When I send a GET request to "/notices/templates"
