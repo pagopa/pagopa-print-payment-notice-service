@@ -10,11 +10,11 @@ Feature: Single Generation
       | webChannel         | true                                   |
       | physicalChannel    | "Canale Fisico"                        |
       | cbill              | "CBI1234"                              |
-      | posteAccountNumber | "232323"                               |
+      | posteAccountNumber | "IT60X0542811101000000123456"          |
       | posteAuth          | "AUT. 08/5 S3/81 53079 08129.07.20211" |
       | logo               | "./resources/logo1.png"                |
 
-  Scenario: All fields with a value
+  Scenario: Rata singola - Tutti campi valorizzati
     When I send a GET request to "/notices/templates"
     Then the response status should be 200
     And the response list should contain a template "TemplateSingleInstalment"
@@ -22,19 +22,19 @@ Feature: Single Generation
       | variableName               | value                      |
       | template_id                | "TemplateSingleInstalment" |
       | Avviso.Oggetto             | "Avviso Pagamento di TEST" |
-      | Avviso.Importo             | 100                        |
+      | Avviso.Importo             | 150000                     |
       | Avviso.Data                | "31/12/2024"               |
       | Avviso.Codice              | "47000000880099905"        |
-      | Avviso.Rata1.Codice        | "inst1"                    |
+      | Avviso.Rata1.Codice        | "47000000880099905"        |
       | Avviso.Rata1.Importo       | 150000                     |
       | Avviso.Rata1.Data          | "31/12/2024"               |
       | Ente.CF                    | "12345678911"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
-      | Destinatario.Indirizzo     | "Via Roma"                 |
+      | Destinatario.Indirizzo     | "Via Nazionale"            |
       | Destinatario.CodicePostale | "00100"                    |
-      | Destinatario.Citta         | "Somewhere"                |
-      | Destinatario.Building      | "15"                       |
+      | Destinatario.Citta         | "Roma"                     |
+      | Destinatario.Building      | "1"                        |
       | Destinatario.Provincia     | "RM"                       |
     When I send a POST request to "/notices/generate" with body:
     """

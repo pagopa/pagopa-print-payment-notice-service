@@ -33,6 +33,9 @@ Given(/^the creditor institution in the storage:$/, async function (dataTable) {
     let data = new FormData();
 
     data.append('institutions-data', JSON.stringify(jsonBody));
+
+    console.log(JSON.stringify(jsonBody));
+
     data.append('file', fs.createReadStream(logoPath));
 
 
