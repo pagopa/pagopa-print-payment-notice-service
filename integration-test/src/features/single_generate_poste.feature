@@ -15,7 +15,7 @@ Feature: Single Generation Poste
       | logo               | "./resources/logo1.png"                |
     When I send a GET request to "/notices/templates"
     Then the response status should be 200
-    And the response list should contain a template "TemplateSingleInstalmentPoste"
+    And the response should contain "TemplateSingleInstalmentPoste"
     Given I have the following variables:
       | variableName               | value                           |
       | template_id                | "TemplateSingleInstalmentPoste" |
@@ -77,7 +77,7 @@ Feature: Single Generation Poste
       | logo               | "./resources/logo1.png"                |
     When I send a GET request to "/notices/templates"
     Then the response status should be 200
-    And the response list should contain a template "TemplateSingleInstalmentPoste"
+    And the response should contain "TemplateSingleInstalmentPoste"
     Given I have the following variables:
       | variableName               | value                           |
       | template_id                | "TemplateSingleInstalmentPoste" |
