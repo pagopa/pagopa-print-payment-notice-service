@@ -7,7 +7,10 @@ import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusRes
 import it.gov.pagopa.payment.notices.service.model.GetSignedUrlResource;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
-import it.gov.pagopa.payment.notices.service.model.notice.*;
+import it.gov.pagopa.payment.notices.service.model.notice.CreditorInstitution;
+import it.gov.pagopa.payment.notices.service.model.notice.Debtor;
+import it.gov.pagopa.payment.notices.service.model.notice.Notice;
+import it.gov.pagopa.payment.notices.service.model.notice.NoticeRequestData;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,13 +53,6 @@ class GenerationRequestControllerTest {
                                 .dueDate("24/10/2024")
                                 .subject("subject")
                                 .paymentAmount(100L)
-                                .installments(Collections.singletonList(
-                                        InstallmentData.builder()
-                                                .amount(100L)
-                                                .code("codeRate")
-                                                .dueDate("24/10/2024")
-                                                .build()
-                                ))
                                 .build())
                         .creditorInstitution(CreditorInstitution.builder()
                                 .taxCode("taxCode")

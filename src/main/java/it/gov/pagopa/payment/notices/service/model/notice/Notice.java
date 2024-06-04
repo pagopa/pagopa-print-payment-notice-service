@@ -27,7 +27,6 @@ public class Notice {
 
     @Schema(description = "Notice total amount to pay", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull
-    @NotEmpty
     @Max(value = 99999999999L)
     private Long paymentAmount;
 
