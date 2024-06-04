@@ -16,6 +16,7 @@ public class Debtor {
     @Schema(description = "Debtor taxCode")
     @Size(max = 16)
     private String taxCode;
+
     @Schema(description = "Debtor full name", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull
     @NotEmpty

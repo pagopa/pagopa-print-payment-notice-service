@@ -38,14 +38,17 @@ public class UploadData {
     private String info;
 
     @Schema(description = "Boolean to refer if it has a web channel", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull
     @Builder.Default
     private Boolean webChannel = false;
 
     @Schema(description = "Boolean to refer if it has a app channel", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull
     @Builder.Default
     private Boolean appChannel = false;
 
     @Schema(description = "CI physical channel data")
+    @Deprecated
     private String physicalChannel;
 
     @Schema(description = "CI cbill", requiredMode = Schema.RequiredMode.REQUIRED)
