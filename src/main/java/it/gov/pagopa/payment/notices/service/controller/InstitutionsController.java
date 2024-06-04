@@ -56,8 +56,9 @@ public class InstitutionsController {
      * Uploads institutions data to the related storage, using the taxCode provided within
      * the UploadData instance, if the institution is already on the storage, the content
      * will be updated. The institution json data will include the link on the uploaded logo
+     *
      * @param institutionsDataContent institution data to upload
-     * @param logo institution logo to upload
+     * @param logo                    institution logo to upload
      */
     @Operation(summary = "uploadInstitutionData",
             description = "Uploads or updates the provided institution data and logo on the related storage," +
@@ -90,6 +91,7 @@ public class InstitutionsController {
                     "  \"organization\": \"organization_unit\",\n" +
                     "  \"info\": \"info@contacts.it\",\n" +
                     "  \"webChannel\": false,\n" +
+                    "  \"appChannel\": false,\n" +
                     "  \"physicalChannel\": \"physicalChannel_f0abb45cbc34\",\n" +
                     "  \"cbill\": \"cbill_9c5ff5908c72\",\n" +
                     "  \"posteAccountNumber\": \"posteAccountNumber_2177702a81c2\",\n" +
@@ -107,7 +109,7 @@ public class InstitutionsController {
 
             UploadData institutionsData = objectMapper.readValue(institutionsDataContent, UploadData.class);
             if(!validator.validate(institutionsData).isEmpty()) {
-                throw new AppException(AppError.BAD_REQUEST, "Validation errors on provided input");
+                throw new AppException(AppError.BAD_REQUEST, "Validation errors on provided input {}", validator.validate(institutionsData));
             }
 
             File workingDir = createWorkingDirectory();
@@ -125,6 +127,7 @@ public class InstitutionsController {
 
     /**
      * Retrieving institution data, related to the provided taxCode
+     *
      * @param taxCode institution data to be used retrieval
      * @return institution data
      */
@@ -147,13 +150,13 @@ public class InstitutionsController {
                     description = "Forbidden", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "404",
                     description = "Not Found", content = @Content(
-                            schema = @Schema(implementation = ProblemJson.class))),
+                    schema = @Schema(implementation = ProblemJson.class))),
             @ApiResponse(responseCode = "429",
                     description = "Too many requests", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "500",
                     description = "Service unavailable",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ProblemJson.class)))
+                            schema = @Schema(implementation = ProblemJson.class)))
     })
     @GetMapping(value = "/data/{taxCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

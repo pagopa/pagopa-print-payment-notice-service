@@ -78,10 +78,10 @@ public class NoticesController {
      */
     @PostMapping("/generate")
     public ResponseEntity<Resource> generateNotice(
-            @RequestParam(value = "folderId", required = false) String folderId,
+            @Schema(description = "If the file exists you can specify the folder id. Pass it if you want to regenerate the file") @RequestParam(value = "folderId", required = false) String folderId,
             @Parameter(description = "templateId to use for retrieval")
             @Valid @NotNull @RequestBody NoticeGenerationRequestItem noticeGenerationRequestItem,
-            @RequestHeader(value = Constants.X_USER_ID, required = false) String userId) {
+            @Schema(description = "User ID. Required if `folderId` is provided") @RequestHeader(value = Constants.X_USER_ID, required = false) String userId) {
         if(folderId != null && userId == null) {
             throw new AppException(AppError.BAD_REQUEST, "Invalid Data");
         }

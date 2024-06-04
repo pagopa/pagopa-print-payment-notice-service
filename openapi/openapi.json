@@ -36,7 +36,7 @@
                 "properties" : {
                   "institutions-data" : {
                     "type" : "string",
-                    "description" : "String containing the json data to upload ```{\n  \"taxCode\": \"ABC345678h\",\n  \"fullName\": \"Comune di Roma\",\n  \"organization\": \"organization_unit\",\n  \"info\": \"info@contacts.it\",\n  \"webChannel\": false,\n  \"physicalChannel\": \"physicalChannel_f0abb45cbc34\",\n  \"cbill\": \"cbill_9c5ff5908c72\",\n  \"posteAccountNumber\": \"posteAccountNumber_2177702a81c2\",\n  \"posteAuth\": \"code_poste_auth_332\",\n} ```"
+                    "description" : "String containing the json data to upload ```{\n  \"taxCode\": \"ABC345678h\",\n  \"fullName\": \"Comune di Roma\",\n  \"organization\": \"organization_unit\",\n  \"info\": \"info@contacts.it\",\n  \"webChannel\": false,\n  \"appChannel\": false,\n  \"physicalChannel\": \"physicalChannel_f0abb45cbc34\",\n  \"cbill\": \"cbill_9c5ff5908c72\",\n  \"posteAccountNumber\": \"posteAccountNumber_2177702a81c2\",\n  \"posteAuth\": \"code_poste_auth_332\",\n} ```"
                   },
                   "file" : {
                     "type" : "string",
@@ -585,16 +585,20 @@
         "parameters" : [ {
           "name" : "folderId",
           "in" : "query",
+          "description" : "If the file exists you can specify the folder id. Pass it if you want to regenerate the file",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "If the file exists you can specify the folder id. Pass it if you want to regenerate the file"
           }
         }, {
           "name" : "X-User-Id",
           "in" : "header",
+          "description" : "User ID. Required if `folderId` is provided",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "User ID. Required if `folderId` is provided"
           }
         } ],
         "requestBody" : {
@@ -1589,10 +1593,12 @@
         "description" : "Notice data"
       },
       "NoticeGenerationRequestItem" : {
+        "required" : [ "data", "templateId" ],
         "type" : "object",
         "properties" : {
           "templateId" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The template identifier. Use the appropriate GET service to retrieve the list of the ids"
           },
           "data" : {
             "$ref" : "#/components/schemas/NoticeRequestData"
@@ -1613,7 +1619,8 @@
           "debtor" : {
             "$ref" : "#/components/schemas/Debtor"
           }
-        }
+        },
+        "description" : "The data used to fill the template"
       },
       "ProblemJson" : {
         "type" : "object",
