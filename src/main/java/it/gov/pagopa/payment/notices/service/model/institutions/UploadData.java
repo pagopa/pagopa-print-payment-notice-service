@@ -56,6 +56,9 @@ public class UploadData {
     @NotEmpty
     private String cbill;
 
+    @Schema(description = "Poste name")
+    private String posteName;
+
     @Schema(description = "Poste account number")
     private String posteAccountNumber;
 
