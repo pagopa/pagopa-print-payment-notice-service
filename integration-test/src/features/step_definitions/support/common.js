@@ -1,4 +1,6 @@
 const axios = require("axios");
+const FormData = require("form-data");
+const fs = require("fs");
 
 axios.defaults.headers.common['Ocp-Apim-Subscription-Key'] = process.env.SUBKEY // for all requests
 if (process.env.CANARY) {
@@ -6,6 +8,7 @@ if (process.env.CANARY) {
 }
 
 function get(url) {
+
     return axios.get(url)
         .then(res => {
             return res;
@@ -16,7 +19,13 @@ function get(url) {
 }
 
 function post(url, body) {
-    return axios.post(url, body)
+    let config = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        responseType: 'stream'
+    };
+    return axios.post(url, body, config)
         .then(res => {
             return res;
         })
@@ -61,4 +70,28 @@ function call(method, url, body) {
 
 }
 
-module.exports = {get, post, put, del, call}
+
+function formData(url, data) {
+    let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: url,
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            'Accept': 'application/json',
+            ...data.getHeaders()
+        },
+        data: data,
+    };
+
+    return axios.request(config)
+        .then((response) => {
+            return response
+        })
+        .catch((error) => {
+            return error.response;
+        });
+}
+
+
+module.exports = {get, post, put, del, call, formData}

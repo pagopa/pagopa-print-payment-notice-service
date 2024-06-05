@@ -1,6 +1,7 @@
 package it.gov.pagopa.payment.notices.service.model.notice;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -26,7 +27,6 @@ public class Notice {
 
     @Schema(description = "Notice total amount to pay", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull
-    @NotEmpty
     @Max(value = 99999999999L)
     private Long paymentAmount;
 
@@ -51,6 +51,6 @@ public class Notice {
 
     @Schema(description = "Notice Installments")
     @Size(min = 2)
-    private List<InstallmentData> installments;
+    private List<@Valid InstallmentData> installments;
 
 }
