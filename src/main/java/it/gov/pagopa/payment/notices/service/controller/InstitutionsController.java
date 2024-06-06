@@ -100,11 +100,11 @@ public class InstitutionsController {
                     required = true,
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
             @Valid @NotNull @RequestPart("institutions-data") String institutionsDataContent,
-            @Parameter(description = "logo file to upload", required = true)
+            @Parameter(description = "logo file to upload")
             @RequestParam(value = "file", required = false) MultipartFile logo
     ) {
 
-        File logoImage;
+        File logoImage = null;
         try {
 
             UploadData institutionsData = objectMapper.readValue(institutionsDataContent, UploadData.class);
@@ -112,12 +112,19 @@ public class InstitutionsController {
                 throw new AppException(AppError.BAD_REQUEST, "Validation errors on provided input {}", validator.validate(institutionsData));
             }
 
-            File workingDir = createWorkingDirectory();
-            Path tempDirectory = Files.createTempDirectory(workingDir.toPath(), "notice-service")
-                    .normalize()
-                    .toAbsolutePath();
-            logoImage = File.createTempFile("logo", ".png", tempDirectory.toFile());
-            logo.transferTo(logoImage);
+            if (logo != null) {
+                File workingDir = createWorkingDirectory();
+                Path tempDirectory = Files.createTempDirectory(workingDir.toPath(), "notice-service")
+                        .normalize()
+                        .toAbsolutePath();
+                logoImage = File.createTempFile("logo", ".png", tempDirectory.toFile());
+                logo.transferTo(logoImage);
+            } else if (institutionsData.getLogo() == null) {
+                throw new AppException(AppError.BAD_REQUEST,
+                        "Existing logo should be passed in the json data," +
+                                " or a file should be provided");
+            }
+
             institutionsService.uploadInstitutionsData(institutionsData, logoImage);
         } catch (IOException e) {
             throw new AppException(AppError.LOGO_FILE_INPUT_ERROR, e);
