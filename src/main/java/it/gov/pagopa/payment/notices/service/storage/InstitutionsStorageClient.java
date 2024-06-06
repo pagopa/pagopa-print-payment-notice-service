@@ -75,17 +75,21 @@ public class InstitutionsStorageClient {
 
         try {
 
-            //Get a reference to a blob
-            BlobClient blobClient = logoBlobContainerClient.getBlobClient(String.join("/", taxCode,
-                    "logo.png"));
+            Response<BlockBlobItem> blockBlobItemResponse = null;
+            if( logo != null) {
+                //Get a reference to a blob
+                BlobClient blobClient = logoBlobContainerClient.getBlobClient(String.join("/", taxCode,
+                        "logo.png"));
 
-            //Upload the blob
-            Response<BlockBlobItem> blockBlobItemResponse = blobClient.uploadWithResponse(
-                    new BlobParallelUploadOptions(
-                            logo
-                    ), null, null);
+                //Upload the blob
+                blockBlobItemResponse = blobClient.uploadWithResponse(
+                        new BlobParallelUploadOptions(
+                                logo
+                        ), null, null);
 
-            data.setLogo(blobClient.getBlobUrl());
+                data.setLogo(blobClient.getBlobUrl());
+            }
+
 
             //Get a reference to a blob
             BlobClient jsonBlobClient = blobContainerClient.getBlobClient(
@@ -99,9 +103,9 @@ public class InstitutionsStorageClient {
                     ), null, null);
 
             //Build response accordingly
-            int statusCode = blockBlobItemResponse.getStatusCode();
             int jsonBlobCode = jsonBlockBlobItemResponse.getStatusCode();
 
+            int statusCode = logo == null ? HttpStatus.CREATED.value() : blockBlobItemResponse.getStatusCode();
             return statusCode == HttpStatus.CREATED.value() && jsonBlobCode == HttpStatus.CREATED.value();
         } catch (BlobStorageException blobStorageException) {
             log.error(blobStorageException.getMessage(), blobStorageException);

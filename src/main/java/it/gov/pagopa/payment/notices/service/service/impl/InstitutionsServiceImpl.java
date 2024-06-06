@@ -1,5 +1,6 @@
 package it.gov.pagopa.payment.notices.service.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
 import it.gov.pagopa.payment.notices.service.model.institutions.UploadData;
@@ -25,17 +26,32 @@ public class InstitutionsServiceImpl implements InstitutionsService {
 
     @Override
     public void uploadInstitutionsData(UploadData institutionsData, File logo) {
-        try (BufferedInputStream fis = new BufferedInputStream(new FileInputStream(logo))) {
-            boolean result = institutionsStorageClient.saveInstitutionsData(
-                    institutionsData.getTaxCode(),institutionsData,fis);
-            if (!result) {
-                throw new AppException(AppError.INSTITUTION_DATA_UPLOAD_ERROR);
+        if (logo != null) {
+            try (BufferedInputStream fis = new BufferedInputStream(new FileInputStream(logo))) {
+                saveData(institutionsData, fis);
+            } catch (AppException e) {
+                throw e;
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                throw new AppException(AppError.INSTITUTION_DATA_UPLOAD_ERROR, e);
             }
-        } catch (AppException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new AppException(AppError.INSTITUTION_DATA_UPLOAD_ERROR, e);
+        } else {
+            try {
+                saveData(institutionsData, null);
+            } catch (AppException e) {
+                throw e;
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                throw new AppException(AppError.INSTITUTION_DATA_UPLOAD_ERROR, e);
+            }
+        }
+    }
+
+    private void saveData(UploadData institutionsData, BufferedInputStream fis) throws JsonProcessingException {
+        boolean result = institutionsStorageClient.saveInstitutionsData(
+                institutionsData.getTaxCode(), institutionsData, fis);
+        if(!result) {
+            throw new AppException(AppError.INSTITUTION_DATA_UPLOAD_ERROR);
         }
     }
 
