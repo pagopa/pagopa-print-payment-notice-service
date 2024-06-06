@@ -57,6 +57,7 @@ When(/^I send a (POST|PUT) request to "([^"]*)" with body:$/, async function (me
         const regex = new RegExp(`<${key}>`, 'g');
         jsonBody = jsonBody.replace(regex, value);
     }
+    console.log(jsonBody);
     responseToCheck = await call(method, app_host + url, jsonBody);
 });
 
@@ -95,12 +96,19 @@ Then(/^check response body is$/, function (payload) {
 });
 
 Then(/^the response status should be (\d+)$/, function (statusCode) {
+    console.log(responseToCheck);
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
     assert.strictEqual(responseToCheck.status, statusCode);
 });
 
 Then(/^the response should contain "([^"]*)"$/, function (templateId) {
+    assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
+    assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
+    assert(JSON.stringify(responseToCheck.data).includes(templateId));
+});
+
+Then(/^the response list should contain a template "([^"]*)"$/, function (templateId) {
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
     assert(JSON.stringify(responseToCheck.data).includes(templateId));

@@ -1527,6 +1527,8 @@
         "type" : "object",
         "properties" : {
           "code" : {
+            "maxLength" : 18,
+            "minLength" : 18,
             "type" : "string",
             "description" : "Installment code"
           },
@@ -1543,7 +1545,7 @@
         "description" : "Notice Installments"
       },
       "Notice" : {
-        "required" : [ "code", "dueDate", "paymentAmount", "subject" ],
+        "required" : [ "code", "paymentAmount", "subject" ],
         "type" : "object",
         "properties" : {
           "subject" : {
@@ -1575,8 +1577,8 @@
             "description" : "Notice due date"
           },
           "code" : {
-            "maxLength" : 22,
-            "minLength" : 0,
+            "maxLength" : 18,
+            "minLength" : 18,
             "type" : "string",
             "description" : "Notice code"
           },
