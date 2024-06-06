@@ -1,1726 +1,1857 @@
 {
-  "openapi" : "3.0.1",
-  "info" : {
-    "title" : "Print Payment Notices - Service",
-    "description" : "Microservice to expose the APIs for Print Payment Notices",
-    "termsOfService" : "https://www.pagopa.gov.it/",
-    "version" : "0.0.3-1-fix-generator-call"
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Print Payment Notices - Service",
+    "description": "Microservice to expose the APIs for Print Payment Notices",
+    "termsOfService": "https://www.pagopa.gov.it/",
+    "version": "0.3.5"
   },
-  "servers" : [ {
-    "url" : "http://localhost:8080"
-  }, {
-    "url" : "https://{host}{basePath}",
-    "variables" : {
-      "host" : {
-        "default" : "api.dev.platform.pagopa.it",
-        "enum" : [ "api.dev.platform.pagopa.it", "api.uat.platform.pagopa.it", "api.platform.pagopa.it" ]
-      },
-      "basePath" : {
-        "default" : "/print-payment-notice-service/v1"
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    },
+    {
+      "url": "https://{host}{basePath}",
+      "variables": {
+        "host": {
+          "default": "api.dev.platform.pagopa.it",
+          "enum": [
+            "api.dev.platform.pagopa.it",
+            "api.uat.platform.pagopa.it",
+            "api.platform.pagopa.it"
+          ]
+        },
+        "basePath": {
+          "default": "/print-payment-notice-service/v1"
+        }
       }
     }
-  } ],
-  "paths" : {
-    "/institutions/data" : {
-      "post" : {
-        "tags" : [ "Institutions Data APIs" ],
-        "summary" : "uploadInstitutionData",
-        "description" : "Uploads or updates the provided institution data and logo on the related storage, to be used in the payment notice generation process",
-        "operationId" : "updateInstitutions",
-        "requestBody" : {
-          "content" : {
-            "multipart/form-data" : {
-              "schema" : {
-                "required" : [ "institutions-data" ],
-                "type" : "object",
-                "properties" : {
-                  "institutions-data" : {
-                    "type" : "string",
-                    "description" : "String containing the json data to upload ```{\n  \"taxCode\": \"ABC345678h\",\n  \"fullName\": \"Comune di Roma\",\n  \"organization\": \"organization_unit\",\n  \"info\": \"info@contacts.it\",\n  \"webChannel\": false,\n  \"appChannel\": false,\n  \"physicalChannel\": \"physicalChannel_f0abb45cbc34\",\n  \"cbill\": \"cbill_9c5ff5908c72\",\n  \"posteAccountNumber\": \"posteAccountNumber_2177702a81c2\",\n  \"posteAuth\": \"code_poste_auth_332\",\n} ```"
+  ],
+  "paths": {
+    "/institutions/data": {
+      "post": {
+        "tags": [
+          "Institutions Data APIs"
+        ],
+        "summary": "uploadInstitutionData",
+        "description": "Uploads or updates the provided institution data and logo on the related storage, to be used in the payment notice generation process",
+        "operationId": "updateInstitutions",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "institutions-data"
+                ],
+                "type": "object",
+                "properties": {
+                  "institutions-data": {
+                    "type": "string",
+                    "description": "String containing the json data to upload ```{\n  \"taxCode\": \"ABC345678h\",\n  \"fullName\": \"Comune di Roma\",\n  \"organization\": \"organization_unit\",\n  \"info\": \"info@contacts.it\",\n  \"webChannel\": false,\n  \"appChannel\": false,\n  \"physicalChannel\": \"physicalChannel_f0abb45cbc34\",\n  \"cbill\": \"cbill_9c5ff5908c72\",\n  \"posteAccountNumber\": \"posteAccountNumber_2177702a81c2\",\n  \"posteAuth\": \"code_poste_auth_332\",\n} ```"
                   },
-                  "file" : {
-                    "type" : "string",
-                    "description" : "logo file to upload",
-                    "format" : "binary"
+                  "file": {
+                    "type": "string",
+                    "description": "logo file to upload",
+                    "format": "binary"
                   }
                 }
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "403" : {
-            "description" : "Forbidden",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "429" : {
-            "description" : "Too many requests",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "500" : {
-            "description" : "Service unavailable",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "500": {
+            "description": "Service unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           }
         },
-        "security" : [ {
-          "ApiKey" : [ ]
-        } ]
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
       },
-      "parameters" : [ {
-        "name" : "X-Request-Id",
-        "in" : "header",
-        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-        "schema" : {
-          "type" : "string"
-        }
-      } ]
-    },
-    "/institutions/data/{taxCode}" : {
-      "get" : {
-        "tags" : [ "Institutions Data APIs" ],
-        "summary" : "getInstitutionData",
-        "description" : "Retrieves saved institution data and logo on the related storage, to be used in the payment notice generation process",
-        "operationId" : "getInstitutionData",
-        "parameters" : [ {
-          "name" : "taxCode",
-          "in" : "path",
-          "description" : "tax code of the CI to use for retrieval",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+        }
+      ]
+    },
+    "/institutions/data/{taxCode}": {
+      "get": {
+        "tags": [
+          "Institutions Data APIs"
+        ],
+        "summary": "getInstitutionData",
+        "description": "Retrieves saved institution data and logo on the related storage, to be used in the payment notice generation process",
+        "operationId": "getInstitutionData",
+        "parameters": [
+          {
+            "name": "taxCode",
+            "in": "path",
+            "description": "tax code of the CI to use for retrieval",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "403" : {
-            "description" : "Forbidden",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "404": {
+            "description": "Not Found",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "429" : {
-            "description" : "Too many requests",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "500" : {
-            "description" : "Service unavailable",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "500": {
+            "description": "Service unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           }
         },
-        "security" : [ {
-          "ApiKey" : [ ]
-        } ]
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
       },
-      "parameters" : [ {
-        "name" : "X-Request-Id",
-        "in" : "header",
-        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-        "schema" : {
-          "type" : "string"
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
+          }
         }
-      } ]
+      ]
     },
-    "/notices/folder/{folderId}" : {
-      "delete" : {
-        "tags" : [ "Notice Generation Request APIs" ],
-        "summary" : "deleteFolder",
-        "description" : "Delete selected folder, if allowed",
-        "operationId" : "deleteFolder",
-        "parameters" : [ {
-          "name" : "folderId",
-          "in" : "path",
-          "description" : "folderId to use for request retrieval",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
+    "/notices/folder/{folderId}": {
+      "delete": {
+        "tags": [
+          "Notice Generation Request APIs"
+        ],
+        "summary": "deleteFolder",
+        "description": "Delete selected folder, if allowed",
+        "operationId": "deleteFolder",
+        "parameters": [
+          {
+            "name": "folderId",
+            "in": "path",
+            "description": "folderId to use for request retrieval",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "description": "userId to use for request retrieval",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
-        }, {
-          "name" : "X-User-Id",
-          "in" : "header",
-          "description" : "userId to use for request retrieval",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Folder Deleted",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+        ],
+        "responses": {
+          "200": {
+            "description": "Folder Deleted",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "403" : {
-            "description" : "Forbidden",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "404" : {
-            "description" : "Folder not found",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "404": {
+            "description": "Folder not found",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "429" : {
-            "description" : "Too many requests",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "500" : {
-            "description" : "Service error",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "500": {
+            "description": "Service error",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "503" : {
-            "description" : "Service or notice storage unavailable",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "503": {
+            "description": "Service or notice storage unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           }
         },
-        "security" : [ {
-          "ApiKey" : [ ]
-        } ]
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
       },
-      "parameters" : [ {
-        "name" : "X-Request-Id",
-        "in" : "header",
-        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-        "schema" : {
-          "type" : "string"
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
+          }
         }
-      } ]
+      ]
     },
-    "/notices/folder/{folder_id}/status" : {
-      "get" : {
-        "tags" : [ "Notice Generation Request APIs" ],
-        "summary" : "getFolderStatus",
-        "description" : "Return generation request status for a folder of notices",
-        "operationId" : "getFolderStatus",
-        "parameters" : [ {
-          "name" : "folder_id",
-          "in" : "path",
-          "description" : "folderId to use for request status retrieval",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
+    "/notices/folder/{folder_id}/status": {
+      "get": {
+        "tags": [
+          "Notice Generation Request APIs"
+        ],
+        "summary": "getFolderStatus",
+        "description": "Return generation request status for a folder of notices",
+        "operationId": "getFolderStatus",
+        "parameters": [
+          {
+            "name": "folder_id",
+            "in": "path",
+            "description": "folderId to use for request status retrieval",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "description": "userId to use for request status retrieval",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
-        }, {
-          "name" : "X-User-Id",
-          "in" : "header",
-          "description" : "userId to use for request status retrieval",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/GetGenerationRequestStatusResource"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetGenerationRequestStatusResource"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "403" : {
-            "description" : "Forbidden",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "404" : {
-            "description" : "Folder not found or unavailable for the requirer",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "404": {
+            "description": "Folder not found or unavailable for the requirer",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "429" : {
-            "description" : "Too many requests",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "500" : {
-            "description" : "Service unavailable",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "500": {
+            "description": "Service unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           }
         },
-        "security" : [ {
-          "ApiKey" : [ ]
-        } ]
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
       },
-      "parameters" : [ {
-        "name" : "X-Request-Id",
-        "in" : "header",
-        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-        "schema" : {
-          "type" : "string"
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
+          }
         }
-      } ]
+      ]
     },
-    "/notices/generate" : {
-      "post" : {
-        "tags" : [ "Notice Generation Request APIs" ],
-        "summary" : "generateNotice",
-        "description" : "Request notice generation using the generator API and returns the pdf that has been producedif a folderId is provided and it is available for the userId, it will be saved for future recovery",
-        "operationId" : "generateNotice",
-        "parameters" : [ {
-          "name" : "folderId",
-          "in" : "query",
-          "description" : "If the file exists you can specify the folder id. Pass it if you want to regenerate the file",
-          "required" : false,
-          "schema" : {
-            "type" : "string",
-            "description" : "If the file exists you can specify the folder id. Pass it if you want to regenerate the file"
+    "/notices/generate": {
+      "post": {
+        "tags": [
+          "Notice Generation Request APIs"
+        ],
+        "summary": "generateNotice",
+        "description": "Request notice generation using the generator API and returns the pdf that has been producedif a folderId is provided and it is available for the userId, it will be saved for future recovery",
+        "operationId": "generateNotice",
+        "parameters": [
+          {
+            "name": "folderId",
+            "in": "query",
+            "description": "If the file exists you can specify the folder id. Pass it if you want to regenerate the file",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "If the file exists you can specify the folder id. Pass it if you want to regenerate the file"
+            }
+          },
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "description": "User ID. Required if `folderId` is provided",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "User ID. Required if `folderId` is provided"
+            }
           }
-        }, {
-          "name" : "X-User-Id",
-          "in" : "header",
-          "description" : "User ID. Required if `folderId` is provided",
-          "required" : false,
-          "schema" : {
-            "type" : "string",
-            "description" : "User ID. Required if `folderId` is provided"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/NoticeGenerationRequestItem"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NoticeGenerationRequestItem"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "201" : {
-            "description" : "OK",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+        "responses": {
+          "201": {
+            "description": "OK",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/pdf" : {
-                "schema" : {
-                  "type" : "string",
-                  "format" : "binary"
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "403" : {
-            "description" : "Forbidden",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "429" : {
-            "description" : "Too many requests",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "500" : {
-            "description" : "Service unavailable",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "500": {
+            "description": "Service unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           }
         },
-        "security" : [ {
-          "ApiKey" : [ ]
-        } ]
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
       },
-      "parameters" : [ {
-        "name" : "X-Request-Id",
-        "in" : "header",
-        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-        "schema" : {
-          "type" : "string"
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
+          }
         }
-      } ]
+      ]
     },
-    "/notices/generate-massive" : {
-      "post" : {
-        "tags" : [ "Notice Generation Request APIs" ],
-        "summary" : "generateNoticeMassiveRequest",
-        "description" : "Insert massive notice generation request and returns folderId for reference an future recovery",
-        "operationId" : "generateNoticeMassiveRequest",
-        "parameters" : [ {
-          "name" : "X-User-Id",
-          "in" : "header",
-          "description" : "userId to use for request status retrieval",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/NoticeGenerationMassiveRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Bad Request",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Unauthorized",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
-          },
-          "403" : {
-            "description" : "Forbidden",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
-          },
-          "429" : {
-            "description" : "Too many requests",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Service unavailable",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
-                }
-              }
+    "/notices/generate-massive": {
+      "post": {
+        "tags": [
+          "Notice Generation Request APIs"
+        ],
+        "summary": "generateNoticeMassiveRequest",
+        "description": "Insert massive notice generation request and returns folderId for reference an future recovery",
+        "operationId": "generateNoticeMassiveRequest",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "description": "userId to use for request status retrieval",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NoticeGenerationMassiveRequest"
+              }
+            }
+          },
+          "required": true
         },
-        "security" : [ {
-          "ApiKey" : [ ]
-        } ]
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Service unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
       },
-      "parameters" : [ {
-        "name" : "X-Request-Id",
-        "in" : "header",
-        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-        "schema" : {
-          "type" : "string"
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
+          }
         }
-      } ]
+      ]
     },
-    "/notices/templates" : {
-      "get" : {
-        "tags" : [ "Notice Templates APIs" ],
-        "summary" : "getTemplates",
-        "description" : "Return available templates for notice generation",
-        "operationId" : "getTemplates",
-        "responses" : {
-          "200" : {
-            "description" : "Return template data",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+    "/notices/templates": {
+      "get": {
+        "tags": [
+          "Notice Templates APIs"
+        ],
+        "summary": "getTemplates",
+        "description": "Return available templates for notice generation",
+        "operationId": "getTemplates",
+        "responses": {
+          "200": {
+            "description": "Return template data",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/TemplateResource"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemplateResource"
                   }
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "403" : {
-            "description" : "Forbidden",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "404" : {
-            "description" : "Templates not found",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "404": {
+            "description": "Templates not found",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "429" : {
-            "description" : "Too many requests",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "500" : {
-            "description" : "Service error",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "500": {
+            "description": "Service error",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "503" : {
-            "description" : "Service or template table unavailable",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "503": {
+            "description": "Service or template table unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           }
         },
-        "security" : [ {
-          "ApiKey" : [ ]
-        } ]
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
       },
-      "parameters" : [ {
-        "name" : "X-Request-Id",
-        "in" : "header",
-        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-        "schema" : {
-          "type" : "string"
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
+          }
         }
-      } ]
+      ]
     },
-    "/notices/templates/{template_id}" : {
-      "get" : {
-        "tags" : [ "Notice Templates APIs" ],
-        "summary" : "getTemplate",
-        "description" : "Return templates",
-        "operationId" : "getTemplate",
-        "parameters" : [ {
-          "name" : "template_id",
-          "in" : "path",
-          "description" : "templateId to use for retrieval",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
+    "/notices/templates/{template_id}": {
+      "get": {
+        "tags": [
+          "Notice Templates APIs"
+        ],
+        "summary": "getTemplate",
+        "description": "Return templates",
+        "operationId": "getTemplate",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "description": "templateId to use for retrieval",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Return template data",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+        ],
+        "responses": {
+          "200": {
+            "description": "Return template data",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : { }
+            "content": {
+              "application/json": {}
             }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "403" : {
-            "description" : "Forbidden",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "404" : {
-            "description" : "Template not found",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "404": {
+            "description": "Template not found",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "429" : {
-            "description" : "Too many requests",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "500" : {
-            "description" : "Service error",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "500": {
+            "description": "Service error",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "503" : {
-            "description" : "Service or template storage unavailable",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "503": {
+            "description": "Service or template storage unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           }
         },
-        "security" : [ {
-          "ApiKey" : [ ]
-        } ]
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
       },
-      "parameters" : [ {
-        "name" : "X-Request-Id",
-        "in" : "header",
-        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-        "schema" : {
-          "type" : "string"
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
+          }
         }
-      } ]
+      ]
     },
-    "/notices/{folderId}/file/{fileId}/url" : {
-      "get" : {
-        "tags" : [ "Notice Generation Request APIs" ],
-        "summary" : "getSignedUrlResource",
-        "description" : "Return file signedUrl",
-        "operationId" : "getSignedUrlResource",
-        "parameters" : [ {
-          "name" : "folderId",
-          "in" : "path",
-          "description" : "folderId to use for request retrieval",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
+    "/notices/{folderId}/file/{fileId}/url": {
+      "get": {
+        "tags": [
+          "Notice Generation Request APIs"
+        ],
+        "summary": "getSignedUrlResource",
+        "description": "Return file signedUrl",
+        "operationId": "getSignedUrlResource",
+        "parameters": [
+          {
+            "name": "folderId",
+            "in": "path",
+            "description": "folderId to use for request retrieval",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "description": "userId to use for request retrieval",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fileId",
+            "in": "path",
+            "description": "fileId to use for request retrieval",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
-        }, {
-          "name" : "X-User-Id",
-          "in" : "header",
-          "description" : "userId to use for request retrieval",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "fileId",
-          "in" : "path",
-          "description" : "fileId to use for request retrieval",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Return file signed url",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+        ],
+        "responses": {
+          "200": {
+            "description": "Return file signed url",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/GetSignedUrlResource"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSignedUrlResource"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "403" : {
-            "description" : "Forbidden",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "404" : {
-            "description" : "Folder or file not found",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "404": {
+            "description": "Folder or file not found",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "429" : {
-            "description" : "Too many requests",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "500" : {
-            "description" : "Service error",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "500": {
+            "description": "Service error",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "503" : {
-            "description" : "Service or notice storage unavailable",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "503": {
+            "description": "Service or notice storage unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           }
         },
-        "security" : [ {
-          "ApiKey" : [ ]
-        } ]
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
       },
-      "parameters" : [ {
-        "name" : "X-Request-Id",
-        "in" : "header",
-        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-        "schema" : {
-          "type" : "string"
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
+          }
         }
-      } ]
+      ]
     },
-    "/notices/{folderId}/url" : {
-      "get" : {
-        "tags" : [ "Notice Generation Request APIs" ],
-        "summary" : "getFolderSignedUrlResource",
-        "description" : "Return compressed folder file signedUrl",
-        "operationId" : "getFolderSignedUrlResource",
-        "parameters" : [ {
-          "name" : "folderId",
-          "in" : "path",
-          "description" : "folderId to use for request retrieval",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
+    "/notices/{folderId}/url": {
+      "get": {
+        "tags": [
+          "Notice Generation Request APIs"
+        ],
+        "summary": "getFolderSignedUrlResource",
+        "description": "Return compressed folder file signedUrl",
+        "operationId": "getFolderSignedUrlResource",
+        "parameters": [
+          {
+            "name": "folderId",
+            "in": "path",
+            "description": "folderId to use for request retrieval",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "description": "userId to use for request retrieval",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
-        }, {
-          "name" : "X-User-Id",
-          "in" : "header",
-          "description" : "userId to use for request retrieval",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Return folder signed url",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+        ],
+        "responses": {
+          "200": {
+            "description": "Return folder signed url",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/GetSignedUrlResource"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSignedUrlResource"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Unauthorized",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "403" : {
-            "description" : "Forbidden",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "404" : {
-            "description" : "Folder or file not found",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "404": {
+            "description": "Folder or file not found",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "429" : {
-            "description" : "Too many requests",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }
           },
-          "500" : {
-            "description" : "Service error",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "500": {
+            "description": "Service error",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           },
-          "503" : {
-            "description" : "Service or notice storage unavailable",
-            "headers" : {
-              "X-Request-Id" : {
-                "description" : "This header identifies the call",
-                "schema" : {
-                  "type" : "string"
+          "503": {
+            "description": "Service or notice storage unavailable",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemJson"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
           }
         },
-        "security" : [ {
-          "ApiKey" : [ ]
-        } ]
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
       },
-      "parameters" : [ {
-        "name" : "X-Request-Id",
-        "in" : "header",
-        "description" : "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-        "schema" : {
-          "type" : "string"
+      "parameters": [
+        {
+          "name": "X-Request-Id",
+          "in": "header",
+          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
+          "schema": {
+            "type": "string"
+          }
         }
-      } ]
+      ]
     }
   },
-  "components" : {
-    "schemas" : {
-      "CreditorInstitution" : {
-        "required" : [ "taxCode" ],
-        "type" : "object",
-        "properties" : {
-          "taxCode" : {
-            "type" : "string",
-            "description" : "CI tax code"
+  "components": {
+    "schemas": {
+      "CreditorInstitution": {
+        "required": [
+          "taxCode"
+        ],
+        "type": "object",
+        "properties": {
+          "taxCode": {
+            "type": "string",
+            "description": "CI tax code"
           }
         },
-        "description" : "Creditor Institution data"
+        "description": "Creditor Institution data"
       },
-      "Debtor" : {
-        "required" : [ "address", "buildingNumber", "city", "fullName", "postalCode", "province" ],
-        "type" : "object",
-        "properties" : {
-          "taxCode" : {
-            "maxLength" : 16,
-            "minLength" : 0,
-            "type" : "string",
-            "description" : "Debtor taxCode"
+      "Debtor": {
+        "required": [
+          "address",
+          "buildingNumber",
+          "city",
+          "fullName",
+          "postalCode",
+          "province"
+        ],
+        "type": "object",
+        "properties": {
+          "taxCode": {
+            "maxLength": 16,
+            "minLength": 0,
+            "type": "string",
+            "description": "Debtor taxCode"
           },
-          "fullName" : {
-            "maxLength" : 70,
-            "minLength" : 0,
-            "type" : "string",
-            "description" : "Debtor full name"
+          "fullName": {
+            "maxLength": 70,
+            "minLength": 0,
+            "type": "string",
+            "description": "Debtor full name"
           },
-          "address" : {
-            "maxLength" : 140,
-            "minLength" : 0,
-            "type" : "string",
-            "description" : "Debtor address"
+          "address": {
+            "maxLength": 140,
+            "minLength": 0,
+            "type": "string",
+            "description": "Debtor address"
           },
-          "postalCode" : {
-            "type" : "string",
-            "description" : "Debtor postal code"
+          "postalCode": {
+            "type": "string",
+            "description": "Debtor postal code"
           },
-          "city" : {
-            "type" : "string",
-            "description" : "Debtor city"
+          "city": {
+            "type": "string",
+            "description": "Debtor city"
           },
-          "buildingNumber" : {
-            "type" : "string",
-            "description" : "Debtor building number"
+          "buildingNumber": {
+            "type": "string",
+            "description": "Debtor building number"
           },
-          "province" : {
-            "type" : "string",
-            "description" : "Debtor province"
+          "province": {
+            "type": "string",
+            "description": "Debtor province"
           }
         },
-        "description" : "Debtor data"
+        "description": "Debtor data"
       },
-      "InstallmentData" : {
-        "required" : [ "amount", "code", "dueDate" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "maxLength" : 18,
-            "minLength" : 18,
-            "type" : "string",
-            "description" : "Installment code"
+      "InstallmentData": {
+        "required": [
+          "amount",
+          "code",
+          "dueDate"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Installment code"
           },
-          "amount" : {
-            "type" : "integer",
-            "description" : "Installment amount",
-            "format" : "int64"
+          "amount": {
+            "type": "integer",
+            "description": "Installment amount",
+            "format": "int64"
           },
-          "dueDate" : {
-            "type" : "string",
-            "description" : "Installment dueDate"
+          "dueDate": {
+            "type": "string",
+            "description": "Installment dueDate"
           }
         },
-        "description" : "Notice Installments"
+        "description": "Notice Installments"
       },
-      "Notice" : {
-        "required" : [ "code", "paymentAmount", "subject" ],
-        "type" : "object",
-        "properties" : {
-          "subject" : {
-            "maxLength" : 90,
-            "minLength" : 0,
-            "type" : "string",
-            "description" : "Notice subject"
+      "Notice": {
+        "required": [
+          "code",
+          "dueDate",
+          "paymentAmount",
+          "subject"
+        ],
+        "type": "object",
+        "properties": {
+          "subject": {
+            "maxLength": 90,
+            "minLength": 0,
+            "type": "string",
+            "description": "Notice subject"
           },
-          "paymentAmount" : {
-            "maximum" : 99999999999,
-            "type" : "integer",
-            "description" : "Notice total amount to pay",
-            "format" : "int64"
+          "paymentAmount": {
+            "maximum": 99999999999,
+            "type": "integer",
+            "description": "Notice total amount to pay",
+            "format": "int64"
           },
-          "reducedAmount" : {
-            "maximum" : 99999999999,
-            "type" : "integer",
-            "description" : "Notice reduced amount to pay (used for example in reduced amount for infractions)",
-            "format" : "int64"
+          "reducedAmount": {
+            "maximum": 99999999999,
+            "type": "integer",
+            "description": "Notice reduced amount to pay (used for example in reduced amount for infractions)",
+            "format": "int64"
           },
-          "discountedAmount" : {
-            "maximum" : 99999999999,
-            "type" : "integer",
-            "description" : "Notice discounted amount to pay (used for example in discounted amount for infractions)",
-            "format" : "int64"
+          "discountedAmount": {
+            "maximum": 99999999999,
+            "type": "integer",
+            "description": "Notice discounted amount to pay (used for example in discounted amount for infractions)",
+            "format": "int64"
           },
-          "dueDate" : {
-            "type" : "string",
-            "description" : "Notice due date"
+          "dueDate": {
+            "type": "string",
+            "description": "Notice due date"
           },
-          "code" : {
-            "maxLength" : 18,
-            "minLength" : 18,
-            "type" : "string",
-            "description" : "Notice code"
+          "code": {
+            "maxLength": 22,
+            "minLength": 0,
+            "type": "string",
+            "description": "Notice code"
           },
-          "installments" : {
-            "maxItems" : 2147483647,
-            "minItems" : 2,
-            "type" : "array",
-            "description" : "Notice Installments",
-            "items" : {
-              "$ref" : "#/components/schemas/InstallmentData"
+          "installments": {
+            "maxItems": 2147483647,
+            "minItems": 2,
+            "type": "array",
+            "description": "Notice Installments",
+            "items": {
+              "$ref": "#/components/schemas/InstallmentData"
             }
           }
         },
-        "description" : "Notice data"
+        "description": "Notice data"
       },
-      "NoticeGenerationRequestItem" : {
-        "required" : [ "data", "templateId" ],
-        "type" : "object",
-        "properties" : {
-          "templateId" : {
-            "type" : "string",
-            "description" : "The template identifier. Use the appropriate GET service to retrieve the list of the ids"
+      "NoticeGenerationRequestItem": {
+        "required": [
+          "data",
+          "templateId"
+        ],
+        "type": "object",
+        "properties": {
+          "templateId": {
+            "type": "string",
+            "description": "The template identifier. Use the appropriate GET service to retrieve the list of the ids"
           },
-          "data" : {
-            "$ref" : "#/components/schemas/NoticeRequestData"
+          "data": {
+            "$ref": "#/components/schemas/NoticeRequestData"
           }
         },
-        "description" : "templateId to use for retrieval"
+        "description": "templateId to use for retrieval"
       },
-      "NoticeRequestData" : {
-        "required" : [ "creditorInstitution", "debtor", "notice" ],
-        "type" : "object",
-        "properties" : {
-          "notice" : {
-            "$ref" : "#/components/schemas/Notice"
+      "NoticeRequestData": {
+        "required": [
+          "creditorInstitution",
+          "debtor",
+          "notice"
+        ],
+        "type": "object",
+        "properties": {
+          "notice": {
+            "$ref": "#/components/schemas/Notice"
           },
-          "creditorInstitution" : {
-            "$ref" : "#/components/schemas/CreditorInstitution"
+          "creditorInstitution": {
+            "$ref": "#/components/schemas/CreditorInstitution"
           },
-          "debtor" : {
-            "$ref" : "#/components/schemas/Debtor"
+          "debtor": {
+            "$ref": "#/components/schemas/Debtor"
           }
         },
-        "description" : "The data used to fill the template"
+        "description": "The data used to fill the template"
       },
-      "ProblemJson" : {
-        "type" : "object",
-        "properties" : {
-          "title" : {
-            "type" : "string",
-            "description" : "A short, summary of the problem type. Written in english and readable for engineers (usually not suited for non technical stakeholders and not localized); example: Service Unavailable"
+      "ProblemJson": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "A short, summary of the problem type. Written in english and readable for engineers (usually not suited for non technical stakeholders and not localized); example: Service Unavailable"
           },
-          "status" : {
-            "maximum" : 600,
-            "minimum" : 100,
-            "type" : "integer",
-            "description" : "The HTTP status code generated by the origin server for this occurrence of the problem.",
-            "format" : "int32",
-            "example" : 200
+          "status": {
+            "maximum": 600,
+            "minimum": 100,
+            "type": "integer",
+            "description": "The HTTP status code generated by the origin server for this occurrence of the problem.",
+            "format": "int32",
+            "example": 200
           },
-          "detail" : {
-            "type" : "string",
-            "description" : "A human readable explanation specific to this occurrence of the problem.",
-            "example" : "There was an error processing the request"
+          "detail": {
+            "type": "string",
+            "description": "A human readable explanation specific to this occurrence of the problem.",
+            "example": "There was an error processing the request"
           }
         }
       },
-      "NoticeGenerationMassiveRequest" : {
-        "required" : [ "notices" ],
-        "type" : "object",
-        "properties" : {
-          "notices" : {
-            "maxItems" : 2147483647,
-            "minItems" : 1,
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/NoticeGenerationRequestItem"
+      "NoticeGenerationMassiveRequest": {
+        "required": [
+          "notices"
+        ],
+        "type": "object",
+        "properties": {
+          "notices": {
+            "maxItems": 2147483647,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NoticeGenerationRequestItem"
             }
           }
         },
-        "description" : "massive notice generation request data"
+        "description": "massive notice generation request data"
       },
-      "GetSignedUrlResource" : {
-        "type" : "object",
-        "properties" : {
-          "signedUrl" : {
-            "type" : "string"
+      "GetSignedUrlResource": {
+        "type": "object",
+        "properties": {
+          "signedUrl": {
+            "type": "string"
           }
         }
       },
-      "TemplateResource" : {
-        "required" : [ "description", "templateExampleUrl", "templateId" ],
-        "type" : "object",
-        "properties" : {
-          "templateId" : {
-            "type" : "string",
-            "description" : "templateId, to use when requiring generation of a notice with the selected template"
+      "TemplateResource": {
+        "required": [
+          "description",
+          "templateExampleUrl",
+          "templateId"
+        ],
+        "type": "object",
+        "properties": {
+          "templateId": {
+            "type": "string",
+            "description": "templateId, to use when requiring generation of a notice with the selected template"
           },
-          "description" : {
-            "type" : "string",
-            "description" : "Template description"
+          "description": {
+            "type": "string",
+            "description": "Template description"
           },
-          "templateExampleUrl" : {
-            "type" : "string",
-            "description" : "Template example url"
+          "templateExampleUrl": {
+            "type": "string",
+            "description": "Template example url"
           }
         }
       },
-      "GetGenerationRequestStatusResource" : {
-        "required" : [ "noticesInError", "processedNotices", "status" ],
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "description" : "Generation request status",
-            "enum" : [ "INSERTED", "PROCESSING", "COMPLETING", "FAILED", "PROCESSED", "PROCESSED_WITH_FAILURES" ]
+      "GetGenerationRequestStatusResource": {
+        "required": [
+          "noticesInError",
+          "processedNotices",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Generation request status",
+            "enum": [
+              "INSERTED",
+              "PROCESSING",
+              "COMPLETING",
+              "FAILED",
+              "PROCESSED",
+              "PROCESSED_WITH_FAILURES"
+            ]
           },
-          "processedNotices" : {
-            "type" : "array",
-            "description" : "Successfully processed items in request",
-            "items" : {
-              "type" : "string",
-              "description" : "Successfully processed items in request"
+          "processedNotices": {
+            "type": "array",
+            "description": "Successfully processed items in request",
+            "items": {
+              "type": "string",
+              "description": "Successfully processed items in request"
             }
           },
-          "noticesInError" : {
-            "type" : "array",
-            "description" : "items related to the request that produced an error",
-            "items" : {
-              "type" : "string",
-              "description" : "items related to the request that produced an error"
+          "noticesInError": {
+            "type": "array",
+            "description": "items related to the request that produced an error",
+            "items": {
+              "type": "string",
+              "description": "items related to the request that produced an error"
             }
           }
         }
       }
     },
-    "securitySchemes" : {
-      "ApiKey" : {
-        "type" : "apiKey",
-        "description" : "The API key to access this function app.",
-        "name" : "Ocp-Apim-Subscription-Key",
-        "in" : "header"
+    "securitySchemes": {
+      "ApiKey": {
+        "type": "apiKey",
+        "description": "The API key to access this function app.",
+        "name": "Ocp-Apim-Subscription-Key",
+        "in": "header"
       }
     }
   }
