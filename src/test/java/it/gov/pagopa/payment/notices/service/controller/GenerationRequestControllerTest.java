@@ -49,7 +49,7 @@ class GenerationRequestControllerTest {
                 .templateId("template")
                 .data(NoticeRequestData.builder()
                         .notice(Notice.builder()
-                                .code("code")
+                                .code("123456789012345678")
                                 .dueDate("24/10/2024")
                                 .subject("subject")
                                 .paymentAmount(100L)
