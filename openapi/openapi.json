@@ -4,7 +4,7 @@
     "title" : "Print Payment Notices - Service",
     "description" : "Microservice to expose the APIs for Print Payment Notices",
     "termsOfService" : "https://www.pagopa.gov.it/",
-    "version" : "0.3.4"
+    "version" : "0.3.5"
   },
   "servers" : [ {
     "url" : "http://localhost:8080"
@@ -1527,6 +1527,8 @@
         "type" : "object",
         "properties" : {
           "code" : {
+            "maxLength" : 18,
+            "minLength" : 18,
             "type" : "string",
             "description" : "Installment code"
           },
@@ -1543,7 +1545,7 @@
         "description" : "Notice Installments"
       },
       "Notice" : {
-        "required" : [ "code", "dueDate", "paymentAmount", "subject" ],
+        "required" : [ "code", "paymentAmount", "subject" ],
         "type" : "object",
         "properties" : {
           "subject" : {
@@ -1575,8 +1577,8 @@
             "description" : "Notice due date"
           },
           "code" : {
-            "maxLength" : 22,
-            "minLength" : 0,
+            "maxLength" : 18,
+            "minLength" : 18,
             "type" : "string",
             "description" : "Notice code"
           },
