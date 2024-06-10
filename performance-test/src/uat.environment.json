@@ -4,8 +4,8 @@
       "env": "uat",
       "blobStorageContainerID": "institutionsdatablob",
       "blobStorageLogoContainerID": "institutionslogoblob",
-      "noticeServiceUri": "https://api.uat.platform.pagopa.it/print-payment-notice-service/v1"
-
+      "noticeServiceUri": "https://api.uat.platform.pagopa.it/print-payment-notice-service/v1",
+      "ciTaxCode": "000000000000"
     }
   ]
 }
