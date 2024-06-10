@@ -22,8 +22,8 @@ parameters:
     displayName: "Script name"
     type: string
     values:
-      - "receipt_service"
-    default: "receipt_service"
+      - "payment_notice_service"
+    default: "payment_notice_service"
   - name: "DB_NAME"
     displayName: "DB name"
     type: string
