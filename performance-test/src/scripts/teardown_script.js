@@ -1,4 +1,7 @@
-import { blobInstContainerClient, blobLogoContainerClient, CI_TAX_CODE } from "./scripts_common.js";
+import {
+    blobInstContainerClient, blobLogoContainerClient, noticesContainerClient,
+     CI_TAX_CODE, NOTICES_DB, userId
+} from "./scripts_common.js";
 
 //DELETE CI DATA FROM BLOB STORAGE
 const deleteDocumentFromAzure = async () => {
@@ -18,3 +21,23 @@ const deleteDocumentFromAzure = async () => {
 deleteDocumentFromAzure().then((res) => {
     console.log("RESPONSE DELETE CI DATA STATUS", res._response.status);
 });
+
+const deleteTestFolderData = async () => {
+    await client.connect();
+    const collection = client.db(NOTICES_DB).collection(NOTICES_COLLECTION);
+    const findFoldersByUserId = {
+        userId: userId
+    };
+    const noticesToDelete = await collection.find(findFoldersByUserId).toArray();
+
+    noticesToDelete.forEach(function(data) {
+      let iter1 = containerClient.listBlobsByHierarchy("/", { prefix: data.id+"/" });
+      for await (const item of iter1) {
+        if (item.kind !== "prefix") {
+          await blobInstContainerClient.deleteBlob(item.name);
+        }
+      }
+      await collection.deleteOne({ "_id": data.id });
+    });
+
+}
