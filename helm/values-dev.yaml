@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: "print-payment-notice-service"
   image:
     repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
-    tag: "0.3.5"
+    tag: "0.4.1"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -100,7 +100,7 @@ microservice-chart:
     AES_SECRET_KEY: 'aes-key'
     AES_SALT: 'aes-salt'
     NOTICE_GENERATION_SUBSCRIPTION_KEY: 'notice-generation-sub-key'
-    NOTICE_STORAGE_CLIENT_ID: 'blob-storage-pdf-client-id'
+    NOTICE_STORAGE_CLIENT_ID: 'pdf-generator-client-id'
     NOTICE_STORAGE_TENANT_ID: 'tenant-id'
     NOTICE_STORAGE_CLIENT_SECRET: 'pdf-generator-client-secret'
   keyvault:
