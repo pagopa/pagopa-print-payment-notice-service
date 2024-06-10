@@ -20,7 +20,7 @@ const ciTaxCode = `${vars.ciTaxCode}`;
 export default function () {
 
       let inputData = retrieveInputData(ciTaxCode, templateId);
-      let response = generateSingleNotice(pdfEngineUri, subKey, inputData);
+      let response = generateSingleNotice(noticeServiceUri, subKey, inputData);
 
       console.log("Generate PDF call, Status " + response.status);
 
