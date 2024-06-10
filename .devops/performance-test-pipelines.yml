@@ -14,26 +14,39 @@ parameters:
     type: string
     values:
       - "load"
-      - "smoke"
-      - "soak"
       - "spike"
       - "stress"
       - "constant"
-      - # TODO: add your values
     default: "constant"
   - name: "SCRIPT"
     displayName: "Script name"
     type: string
     values:
-      - yourscriptname # TODO: add your script
+      - "receipt_service"
+    default: "receipt_service"
+  - name: "DB_NAME"
+    displayName: "DB name"
+    type: string
+    values:
+      - pagopa_print-payment-notice-servicek6
+  - name: "TEMPLATE_ID"
+    displayName: "Template to use"
+    type: string
+    values:
+      - "TemplateSingleInstalment"
+      - "TemplateSingleInstalmentPoste"
+      - "TemplateInstalmentsMultiplesOf2"
+      - "TemplateInstalmentsMultiplesOf3"
+    default: "TemplateSingleInstalment"
 variables:
   ${{ if eq(parameters['ENVIRONMENT'], 'dev') }}:
     poolImage: 'pagopa-dev-loadtest-linux'
-    API_SUBSCRIPTION_KEY: $(DEV_API_SUBSCRIPTION_KEY)
+    API_SUBSCRIPTION_KEY: "$(DEV_API_SUBSCRIPTION_KEY)"
+    blobStorageConnectionString : "$(DEV_BLOB_STORAGE_CONNECTION_STRING)"
   ${{ if eq(parameters['ENVIRONMENT'], 'uat') }}:
     poolImage: 'pagopa-uat-loadtest-linux'
-    API_SUBSCRIPTION_KEY: $(UAT_API_SUBSCRIPTION_KEY)
-
+    API_SUBSCRIPTION_KEY: "$(UAT_API_SUBSCRIPTION_KEY)"
+    blobStorageConnectionString : "$(UAT_BLOB_STORAGE_CONNECTION_STRING)"
 
 pool:
   name: $(poolImage)
@@ -43,9 +56,32 @@ steps:
       cd ./performance-test/src
       docker pull grafana/k6
     displayName: Pull k6 image
-
-    # TODO: add your env params
+  - script: |
+      cd ./performance-test/src
+      docker build -f ./DockerfilePre -t exec-node .
+      docker run --rm --name initToRunk6 \
+      -e BLOB_STORAGE_CONN_STRING=${BLOB_STORAGE_CONN_STRING} \
+      -e ENVIRONMENT_STRING="${ENVIRONMENT_STRING}" \
+      exec-node
+    displayName: Precondition run perf test
+    env:
+      BLOB_STORAGE_CONN_STRING: ${{ variables.blobStorageConnectionString }}
+      ENVIRONMENT_STRING: ${{ parameters.ENVIRONMENT }}
   - script: |
       cd ./performance-test
-      sh ./run_performance_test.sh ${{ parameters.ENVIRONMENT }} ${{ parameters.TEST_TYPE }} ${{ parameters.SCRIPT }} afmcalculatork6 $(API_SUBSCRIPTION_KEY)
+      sh ./run_performance_test.sh ${{ parameters.ENVIRONMENT }} ${{ parameters.TEST_TYPE }} ${{ parameters.SCRIPT }} ${{ parameters.DB_NAME}} $OCP_APIM_SUBSCRIPTION_KEY ${{ parameters.TEMPLATE_ID }}
     displayName: Run k6 ${{ parameters.SCRIPT }} on ${{ parameters.ENVIRONMENT }}
+    env:
+      OCP_APIM_SUBSCRIPTION_KEY: ${{ variables.API_SUBSCRIPTION_KEY }}
+  - script: |
+      cd ./performance-test/src
+      docker build -f ./DockerfilePost -t exec-node .
+      docker run --rm --name initToRunk6 \
+      -e BLOB_STORAGE_CONN_STRING=${BLOB_STORAGE_CONN_STRING} \
+      -e ENVIRONMENT_STRING="${ENVIRONMENT_STRING}" \
+      exec-node
+    displayName: Teardown run perf test
+    env:
+      BLOB_STORAGE_CONN_STRING: ${{ variables.blobStorageConnectionString }}
+      ENVIRONMENT_STRING: ${{ parameters.ENVIRONMENT }}
+

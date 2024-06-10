@@ -1,11 +1,10 @@
 {
   "environment": [
     {
-      "env": "local",
+      "env": "dev",
       "blobStorageContainerID": "institutionsdatablob",
       "blobStorageLogoContainerID": "institutionslogoblob",
-      "noticeServiceUri": "http://localhost:8080",
-      "ciTaxCode": "000000000000"
+      "noticeServiceUri": "https://api.dev.platform.pagopa.it/print-payment-notice-service/v1"
     }
   ]
 }

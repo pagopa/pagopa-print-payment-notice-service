@@ -1,11 +1,11 @@
 {
   "environment": [
     {
-      "env": "local",
+      "env": "uat",
       "blobStorageContainerID": "institutionsdatablob",
       "blobStorageLogoContainerID": "institutionslogoblob",
-      "noticeServiceUri": "http://localhost:8080",
-      "ciTaxCode": "000000000000"
+      "noticeServiceUri": "https://api.uat.platform.pagopa.it/print-payment-notice-service/v1"
+
     }
   ]
 }
