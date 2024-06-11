@@ -2,12 +2,12 @@
   "environment": [
     {
       "env": "local",
-      "blobStorageContainerID": "institutionsdatablob",
+      "blobStorageInstContainerID": "institutionsdatablob",
       "blobStorageLogoContainerID": "institutionslogoblob",
       "blobStorageNoticeContainerID": "notices",
       "noticesDb": "noticesMongoDb",
       "noticesCollection": "payment_notice_generation_request",
-      "noticeServiceUri": "http://localhost:8080",
+      "noticeServiceUri": "http://localhost:8082",
       "ciTaxCode": "000000000000"
     }
   ]

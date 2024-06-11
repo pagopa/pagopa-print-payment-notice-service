@@ -22,8 +22,10 @@ parameters:
     displayName: "Script name"
     type: string
     values:
-      - "payment_notice_service"
-    default: "payment_notice_service"
+      - "notice_single_generation"
+      - "notice_massive_generation"
+      - "notice_single_generation_on_massive"
+    default: "notice_single_generation"
   - name: "DB_NAME"
     displayName: "DB name"
     type: string
@@ -38,6 +40,14 @@ parameters:
       - "TemplateInstalmentsMultiplesOf2"
       - "TemplateInstalmentsMultiplesOf3"
     default: "TemplateSingleInstalment"
+  - name: "PROCESS_TIME"
+    displayName: "Process time for single notice (in seconds)"
+    type: number
+    default: 5
+  - name: "NUMBER_OF_MASSIVE_ELEMENTS"
+    displayName: "Number of notices in a massive request"
+    type: number
+    default: 10
 variables:
   ${{ if eq(parameters['ENVIRONMENT'], 'dev') }}:
     poolImage: 'pagopa-dev-loadtest-linux'
@@ -75,6 +85,7 @@ steps:
       BLOB_INSTITUTIONS_CONN_STRING: ${{ variables.blobInstitutionsConnectionString }}
       BLOB_NOTICES_CONN_STRING: ${{ variables.blobNoticesConnectionString }}
       NOTICES_MONGO_CONN_STRING: ${{ variables.mongoNoticesConnectionString }}
+      NUMBER_OF_MASSIVE_ELEMENTS: ${{ variables. }}
       ENVIRONMENT_STRING: ${{ parameters.ENVIRONMENT }}
   - script: |
       cd ./performance-test

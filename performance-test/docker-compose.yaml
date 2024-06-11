@@ -11,6 +11,8 @@ services:
       - TEST_TYPE=/scripts/test-types/${type}.json
       - K6_OUT=influxdb=http://nginx:8086/${db_name}
       - TEMPLATE_ID=${template_id}
+      - PROCESS_TIME=${process_time}
+      - NUMBER_OF_MASSIVE_ELEMENTS=${number_of_massive_elements}
     command: run /scripts/${script}.js
     depends_on:
       - nginx

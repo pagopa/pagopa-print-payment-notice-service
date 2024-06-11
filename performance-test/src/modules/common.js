@@ -5,7 +5,7 @@ function randomString(length, charset) {
 }
 
 export function retrieveNoticeItemData(ciTaxCode, templateId) {
-    return JSON.stringify({
+    return {
         "templateId": templateId,
         "data": {
           "notice": {
@@ -39,5 +39,5 @@ export function retrieveNoticeItemData(ciTaxCode, templateId) {
             "province": "RM"
           }
         }
-  });
+  };
 }

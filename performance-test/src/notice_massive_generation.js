@@ -6,21 +6,23 @@ import { retrieveNoticeItemData } from './modules/common.js';
 const varsArray = new SharedArray('vars', function () {
     return JSON.parse(open(`./${__ENV.VARS}`)).environment;
 });
-export const ENV_VARS = varsArray[0];
 export let options = JSON.parse(open(__ENV.TEST_TYPE));
 
 let attachmentUrl = "";
 
-const  = varsArray[0];
+const vars = varsArray[0];
 const noticeServiceUri = `${vars.noticeServiceUri}`;
 const subKey = `${__ENV.SUBSCRIPTION_KEY}`;
 const templateId = `${__ENV.TEMPLATE_ID}`;
 const ciTaxCode = `${vars.ciTaxCode}`;
 const numberOfElements = `${vars.numberOfElements}`;
+const processTime = `${__ENV.PROCESS_TIME >= 0 ? __ENV.PROCESS_TIME : 3}`;
+const numberOfElements = `${__ENV.NUMBER_OF_MASSIVE_ELEMENTS >= 0 ? __ENV.NUMBER_OF_MASSIVE_ELEMENTS : 10}`;
+
 
 function postcondition(folderId) {
 
-    let response = getNoticeRequest(noticeServiceUri, subKey, folderId);
+    let response = getNoticeRequest(noticeServiceUri, subKey, folderId, ciTaxCode);
 
     console.log("Get Notice Request call, Status " + response.status);
 
@@ -29,16 +31,8 @@ function postcondition(folderId) {
       'Get Notice Request content_type is the expected one':
        (response) => response.headers["Content-Type"] === "application/json",
       'Get Notice Request not null and with status PROCESSED':
-        (response) => response.body !== null && response.body.status === "PROCESSED"
+        (response) => response.body !== null && JSON.parse(response.body).status === "PROCESSED"
     });
-
-    let deleteResponse = deleteNoticeRequest(noticeServiceUri, folderId);
-
-    console.log("Delete Notice Request call, Status " + deleteResponse.status);
-
-     check(deleteResponse, {
-          'Get Notice Request status is 200': (response) => response.status === 200
-     });
 
 }
 
@@ -47,10 +41,10 @@ export default function () {
       const notices = [];
 
       for (let i = 0; i < numberOfElements; i++) {
-        notices.push(retrieveInputData(ciTaxCode, templateId));
+        notices.push(retrieveNoticeItemData(ciTaxCode, templateId));
       }
 
-      let response = generateMassiveNotice(noticeServiceUri, subKey, notices);
+      let response = generateMassiveNotice(noticeServiceUri, subKey, {"notices": notices}, ciTaxCode);
 
       console.log("Generate Notice call, Status " + response.status);
 
@@ -61,7 +55,7 @@ export default function () {
         'Generate Massive Request body not null': (response) => response.body !== null
       });
 
-	  sleep(processTime);
+	  sleep(processTime*numberOfElements);
 	  postcondition(response.body);
 
 }

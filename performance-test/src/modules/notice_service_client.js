@@ -4,48 +4,51 @@ export function generateSingleNotice(noticeServiceUri, subKey, inputData, folder
 
     let headers = {
         'Ocp-Apim-Subscription-Key': subKey,
-        'X-User-Id': inputData.creditorInstitution.taxCode
+        'X-User-Id': inputData.data.creditorInstitution.taxCode,
+	    'Content-Type': 'application/json'
     };
 
-    var uri = folderId !== null ?
-        `${noticeServiceUri}/notices/generate?folderId=${folderId}` :
-        `${noticeServiceUri}/notices/generate`;
-
-    return http.post(uri, inputData, {headers, responseType: "text"});
+    return folderId !== null ?
+        http.post(noticeServiceUri+`/notices/generate?folderId=${folderId}`,
+        folderId, JSON.stringify(inputData), {headers}) :
+        http.post(noticeServiceUri+"/notices/generate",
+         JSON.stringify(inputData), {headers, responseType: "text"});
 
 }
 
-export function generateMassiveNotice(noticeServiceUri, subKey, inputData) {
+export function generateMassiveNotice(noticeServiceUri, subKey, inputData, userId) {
 
     let headers = {
         'Ocp-Apim-Subscription-Key': subKey,
-        'X-User-Id': inputData[0].creditorInstitution.taxCode
+        'X-User-Id': userId,
+        'Content-Type': 'application/json'
     };
 
-    return http.post(`${noticeServiceUri}/notices/generate-massive`, inputData, {headers, responseType: "text"});
+    return http.post(`${noticeServiceUri}/notices/generate-massive`, JSON.stringify(inputData), {headers, responseType: "text"});
 
 }
 
-export function getNoticeRequest(noticeServiceUri, subKey, folderId) {
+export function getNoticeRequest(noticeServiceUri, subKey, folderId, userId) {
 
     let headers = {
         'Ocp-Apim-Subscription-Key': subKey,
-        'X-User-Id': inputData.creditorInstitution.taxCode
+        'X-User-Id': userId
     };
 
     return http.get(`${noticeServiceUri}/notices/folder/${folderId}/status`,
-        {headers, responseType: "application/json"});
+        {headers, responseType: "text"});
 
 }
 
-export function deleteNoticeRequest(noticeServiceUri, subKey, folderId) {
+export function deleteNoticeRequest(noticeServiceUri, subKey, folderId, userId) {
 
     let headers = {
         'Ocp-Apim-Subscription-Key': subKey,
-        'X-User-Id': inputData.creditorInstitution.taxCode
+        'X-User-Id': userId,
+        'Content-Type': 'application/json'
     };
 
-    return http.delete(`${noticeServiceUri}/notices/folder/${folderId}`,
-        {headers, responseType: "application/json"});
+    return http.del(`${noticeServiceUri}/notices/folder/${folderId}`,
+        {headers});
 
 }

@@ -1,7 +1,6 @@
 import { BlobServiceClient } from "@azure/storage-blob";
-const { MongoClient, ObjectId } = require('mongodb');
+import { MongoClient, ObjectId } from "mongodb";
 import { createRequire } from 'node:module';
-import http from 'k6/http';
 
 const require = createRequire(import.meta.url);
 
@@ -40,4 +39,5 @@ export const noticesContainerClient = blobNoticesClient.getContainerClient(
     blobStorageNoticeContainerID || ""
 );
 
+console.log(mongoDbConnString);
 export const noticesMongoClient = new MongoClient(mongoDbConnString);

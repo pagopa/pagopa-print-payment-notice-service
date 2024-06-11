@@ -2,7 +2,7 @@
   "environment": [
     {
       "env": "uat",
-      "blobStorageContainerID": "institutionsdatablob",
+      "blobStorageInstContainerID": "institutionsdatablob",
       "blobStorageLogoContainerID": "institutionslogoblob",
       "blobStorageNoticeContainerID": "notices",
       "noticesDb": "noticesMongoDb",

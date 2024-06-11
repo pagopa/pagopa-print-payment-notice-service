@@ -17,7 +17,7 @@ To invoke k6 test passing parameter use -e (or --env) flag:
 Test the receipt service: 
 
 ```
-k6 run --env VARS=local.environment.json --env TEST_TYPE=./test-types/load.json --env BLOB_STORAGE_KEY=<your-secret> --env TEMPLAYE_ID=<template-id> <script_name>.js
+k6 run --env VARS=local.environment.json --env TEST_TYPE=./test-types/load.json --env TEMPLATE_ID=<template-id> <script_name>.js
 ```
 
 where the mean of the environment variables is:
@@ -34,7 +34,7 @@ where the mean of the environment variables is:
   ]
 ```
 
-`blobInstContainerClient`: container name for institution data storage
+`blobStorageInstContainerID`: container name for institution data storage
 
 `blobStorageLogoContainerID`: container name for institution logo storage
 
