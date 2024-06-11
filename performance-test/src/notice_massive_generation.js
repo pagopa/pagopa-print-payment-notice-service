@@ -1,7 +1,7 @@
 import { sleep, check } from 'k6';
-import { generateSingleNotice } from './modules/notice_service_client.js';
+import { generateMassiveNotice, getNoticeRequest, deleteNoticeRequest } from './modules/notice_service_client.js';
 import { SharedArray } from 'k6/data';
-import { retrieveNoticeItemData, getNoticeData } from './modules/common.js';
+import { retrieveNoticeItemData } from './modules/common.js';
 
 const varsArray = new SharedArray('vars', function () {
     return JSON.parse(open(`./${__ENV.VARS}`)).environment;
@@ -27,8 +27,10 @@ function postcondition(folderId) {
       'Generate PDF content_type is the expected one':
        (response) => response.headers["Content-Type"] === "application/json",
       'Generate Massive Request request not null and with status PROCESSED':
-        (response) => response.body !== null && response.body.status === "PROCESSING"
+        (response) => response.body !== null && response.body.status === "PROCESSED"
     });
+
+    deleteNoticeRequest(noticeServiceUri, folderId);
 
 }
 
