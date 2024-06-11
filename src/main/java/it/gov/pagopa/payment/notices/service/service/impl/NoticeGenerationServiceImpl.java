@@ -13,6 +13,7 @@ import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
 import it.gov.pagopa.payment.notices.service.model.enums.PaymentGenerationRequestStatus;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestErrorRepository;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestRepository;
+import it.gov.pagopa.payment.notices.service.service.BrokerService;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
 import it.gov.pagopa.payment.notices.service.service.async.AsyncService;
 import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
@@ -44,6 +45,8 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     private final NoticeGenerationClient noticeGenerationClient;
     private final AsyncService asyncService;
 
+    private final BrokerService brokerService;
+
     private final NoticeStorageClient noticeStorageClient;
 
     public NoticeGenerationServiceImpl(
@@ -51,11 +54,12 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             PaymentGenerationRequestErrorRepository paymentGenerationRequestErrorRepository,
             AsyncService asyncService,
             NoticeGenerationClient noticeGenerationClient,
-            NoticeStorageClient noticeStorageClient) {
+            BrokerService brokerService, NoticeStorageClient noticeStorageClient) {
         this.paymentGenerationRequestRepository = paymentGenerationRequestRepository;
         this.paymentGenerationRequestErrorRepository = paymentGenerationRequestErrorRepository;
         this.asyncService = asyncService;
         this.noticeGenerationClient = noticeGenerationClient;
+        this.brokerService = brokerService;
         this.noticeStorageClient = noticeStorageClient;
     }
 
@@ -106,7 +110,13 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId) {
         try {
 
-            if(folderId != null && userId != null) {
+            String ciTaxCode = noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode();
+
+            if (!userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode)) {
+                throw new AppException(AppError.NOT_ALLOWED_ON_CI_CODE);
+            }
+
+            if(folderId != null) {
                 findFolderIfExists(folderId, userId);
             }
 
