@@ -46,9 +46,7 @@ export default function () {
 
       const notices = [];
 
-      for (let i = 0; i < numberOfElements; i++) {
-        notices.push(retrieveInputData(ciTaxCode, templateId));
-      }
+      notices.push(retrieveInputData(ciTaxCode, templateId));
 
       let response = generateMassiveNotice(noticeServiceUri, subKey, notices);
 
@@ -61,7 +59,22 @@ export default function () {
         'Generate Massive Request body not null': (response) => response.body !== null
       });
 
-	  sleep(processTime);
-	  postcondition(response.body);
+      let folderId =  response.body:
+
+	  sleep(100);
+
+      let inputData = retrieveInputData(ciTaxCode, templateId);
+      let singleGenResponse = generateSingleNotice(noticeServiceUri, subKey, inputData, null);
+
+      console.log("Generate PDF call, Status " + response.status);
+
+      check(response, {
+        'Generate PDF status is 200': (response) => response.status === 200,
+        'Generate PDF content_type is the expected one':
+         (response) => response.headers["Content-Type"] === "application/pdf",
+        'Generate PDF body not null': (response) => response.body !== null
+      });
+
+	  postcondition(folderId);
 
 }

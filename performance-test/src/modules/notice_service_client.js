@@ -8,8 +8,10 @@ export function generateSingleNotice(noticeServiceUri, subKey, inputData, folder
     };
 
     var uri = folderId !== null ?
+        `${noticeServiceUri}/notices/generate?folderId=${folderId}` :
+        `${noticeServiceUri}/notices/generate`;
 
-    return http.post(`${noticeServiceUri}/notices/generate`, inputData, {headers, responseType: "text"});
+    return http.post(uri, inputData, {headers, responseType: "text"});
 
 }
 
