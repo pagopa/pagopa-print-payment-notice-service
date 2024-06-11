@@ -4,6 +4,9 @@
       "env": "dev",
       "blobStorageContainerID": "institutionsdatablob",
       "blobStorageLogoContainerID": "institutionslogoblob",
+      "blobStorageNoticeContainerID": "notices",
+      "noticesDb": "noticesMongoDb",
+      "noticesCollection": "payment_notice_generation_request",
       "noticeServiceUri": "https://api.dev.platform.pagopa.it/print-payment-notice-service/v1",
       "ciTaxCode": "000000000000"
     }

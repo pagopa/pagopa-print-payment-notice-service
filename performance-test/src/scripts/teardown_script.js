@@ -1,6 +1,6 @@
 import {
     blobInstContainerClient, blobLogoContainerClient, noticesContainerClient,
-     CI_TAX_CODE, NOTICES_DB, userId
+     CI_TAX_CODE, NOTICES_DB, NOTICES_COLLECTION
 } from "./scripts_common.js";
 
 //DELETE CI DATA FROM BLOB STORAGE
@@ -26,7 +26,7 @@ const deleteTestFolderData = async () => {
     await client.connect();
     const collection = client.db(NOTICES_DB).collection(NOTICES_COLLECTION);
     const findFoldersByUserId = {
-        userId: userId
+        userId: CI_TAX_CODE
     };
     const noticesToDelete = await collection.find(findFoldersByUserId).toArray();
 

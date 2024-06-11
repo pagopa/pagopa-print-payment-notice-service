@@ -4,6 +4,9 @@
       "env": "local",
       "blobStorageContainerID": "institutionsdatablob",
       "blobStorageLogoContainerID": "institutionslogoblob",
+      "blobStorageNoticeContainerID": "notices",
+      "noticesDb": "noticesMongoDb",
+      "noticesCollection": "payment_notice_generation_request",
       "noticeServiceUri": "http://localhost:8080",
       "ciTaxCode": "000000000000"
     }
