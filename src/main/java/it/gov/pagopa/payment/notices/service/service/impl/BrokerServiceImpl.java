@@ -18,7 +18,7 @@ public class BrokerServiceImpl implements BrokerService {
     private final Integer pageLimit;
 
     public BrokerServiceImpl(ApiConfigClient apiConfigClient,
-                             @Value("notice.check.page.limit") Integer pageLimit) {
+                             @Value("${notice.check.page.limit}") Integer pageLimit) {
         this.apiConfigClient = apiConfigClient;
         this.pageLimit = pageLimit;
     }
