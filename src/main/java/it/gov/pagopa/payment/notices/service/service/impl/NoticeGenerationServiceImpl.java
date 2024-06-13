@@ -112,7 +112,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
             String ciTaxCode = noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode();
 
-            if (!userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode)) {
+            if (!userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode, "300")) {
                 throw new AppException(AppError.NOT_ALLOWED_ON_CI_CODE);
             }
 

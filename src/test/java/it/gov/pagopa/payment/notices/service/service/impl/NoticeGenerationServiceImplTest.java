@@ -82,7 +82,7 @@ class NoticeGenerationServiceImplTest {
                 paymentGenerationRequestRepository,
                 noticeGenerationRequestProducer,
                 brokerService);
-        when(brokerService.checkBrokerAllowance(any(),any())).thenReturn(false);
+        when(brokerService.checkBrokerAllowance(any(),any(),any())).thenReturn(false);
         noticeGenerationService = new NoticeGenerationServiceImpl(
                 paymentGenerationRequestRepository,
                 paymentGenerationRequestErrorRepository,

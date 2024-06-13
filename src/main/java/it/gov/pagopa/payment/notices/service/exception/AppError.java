@@ -76,6 +76,9 @@ public enum AppError {
         "The request has been executed for a creditor institution having a different tax code to the one onboarded, and" +
                 "without having allowance to manage notices for said ci"),
 
+    ERROR_ON_PT_ALLOWANCE_CHECK(HttpStatus.INTERNAL_SERVER_ERROR,
+            "Error on pt allowance check", "Error occured during allowance check for PT"),
+
     UNKNOWN(null, null, null);
 
 
