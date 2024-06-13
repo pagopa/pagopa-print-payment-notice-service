@@ -1,6 +1,6 @@
 Feature: Single Generation - 2 Installments
 
-  Scenario: FT_09_RateMultiple2_AllFields: Rate multiple 2 - Tutti campi valorizzati
+  Scenario: FT_22_RateMultiple2_AllFields: Rate multiple 4 - Tutti campi valorizzati
     Given the creditor institution in the storage:
       | variableName       | value                                  |
       | taxCode            | "80034390585"                          |
@@ -21,7 +21,7 @@ Feature: Single Generation - 2 Installments
       | variableName               | value                      |
       | template_id                | "TemplateInstalments"      |
       | Avviso.Oggetto             | "Avviso Pagamento di TEST" |
-      | Avviso.Importo             | 300000                     |
+      | Avviso.Importo             | 600000                     |
       | Avviso.Data                | "30/12/2024"               |
       | Avviso.Codice              | "470000008800999051"       |
       | Avviso.Rata1.Codice        | "470000008800999062"       |
@@ -30,6 +30,12 @@ Feature: Single Generation - 2 Installments
       | Avviso.Rata2.Codice        | "470000008800999073"       |
       | Avviso.Rata2.Importo       | 140000                     |
       | Avviso.Rata2.Data          | "31/12/2025"               |
+      | Avviso.Rata3.Codice        | "470000008800999063"       |
+      | Avviso.Rata3.Importo       | 160000                     |
+      | Avviso.Rata3.Data          | "31/12/2024"               |
+      | Avviso.Rata4.Codice        | "470000008800999074"       |
+      | Avviso.Rata4.Importo       | 140000                     |
+      | Avviso.Rata4.Data          | "31/12/2025"               |
       | Ente.CF                    | "80034390585"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
@@ -58,6 +64,16 @@ Feature: Single Generation - 2 Installments
                 "code": <Avviso.Rata2.Codice>,
                 "amount": <Avviso.Rata2.Importo>,
                 "dueDate": <Avviso.Rata2.Data>
+              },
+              {
+                "code": <Avviso.Rata3.Codice>,
+                "amount": <Avviso.Rata3.Importo>,
+                "dueDate": <Avviso.Rata3.Data>
+              },
+              {
+                "code": <Avviso.Rata4.Codice>,
+                "amount": <Avviso.Rata4.Importo>,
+                "dueDate": <Avviso.Rata4.Data>
               }
             ]
           },
@@ -81,7 +97,7 @@ Feature: Single Generation - 2 Installments
     And the PDF document should be equal to the reference PDF "scenario_ft_09.pdf"
 
 
-  Scenario: FT_10_RateMultiple2_SomeFields: Rate multiple 2 - Solo alcuni campi valorizzati
+  Scenario: FT_23_RateMultiple2_SomeFields: Rate multiple 5 - Solo alcuni campi valorizzati
     Given the creditor institution in the storage:
       | variableName       | value                                  |
       | taxCode            | "80034390585"                          |
@@ -105,12 +121,21 @@ Feature: Single Generation - 2 Installments
       | Avviso.Importo             | 300000                     |
       | Avviso.Data                | "31/12/2024"               |
       | Avviso.Codice              | "470000008800999051"       |
-      | Avviso.Rata1.Codice        | "470000008800999052"       |
-      | Avviso.Rata1.Importo       | 150000                     |
+      | Avviso.Rata1.Codice        | "470000008800999062"       |
+      | Avviso.Rata1.Importo       | 160000                     |
       | Avviso.Rata1.Data          | "31/12/2024"               |
-      | Avviso.Rata2.Codice        | "470000008800999063"       |
-      | Avviso.Rata2.Importo       | 150000                     |
+      | Avviso.Rata2.Codice        | "470000008800999073"       |
+      | Avviso.Rata2.Importo       | 140000                     |
       | Avviso.Rata2.Data          | "31/12/2025"               |
+      | Avviso.Rata3.Codice        | "470000008800999063"       |
+      | Avviso.Rata3.Importo       | 160000                     |
+      | Avviso.Rata3.Data          | "31/12/2024"               |
+      | Avviso.Rata4.Codice        | "470000008800999074"       |
+      | Avviso.Rata4.Importo       | 140000                     |
+      | Avviso.Rata4.Data          | "31/12/2025"               |
+      | Avviso.Rata5.Codice        | "570000008800999074"       |
+      | Avviso.Rata5.Importo       | 50000                      |
+      | Avviso.Rata5.Data          | "5/12/2025"                |
       | Ente.CF                    | "80034390585"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
@@ -139,6 +164,20 @@ Feature: Single Generation - 2 Installments
                 "code": <Avviso.Rata2.Codice>,
                 "amount": <Avviso.Rata2.Importo>,
                 "dueDate": <Avviso.Rata2.Data>
+              },
+              {
+                "code": <Avviso.Rata3.Codice>,
+                "amount": <Avviso.Rata3.Importo>,
+                "dueDate": <Avviso.Rata3.Data>
+              },
+              {
+                "code": <Avviso.Rata4.Codice>,
+                "amount": <Avviso.Rata4.Importo>,
+                "dueDate": <Avviso.Rata4.Data>
+              }, {
+                "code": <Avviso.Rata5.Codice>,
+                "amount": <Avviso.Rata5.Importo>,
+                "dueDate": <Avviso.Rata5.Data>
               }
             ]
           },

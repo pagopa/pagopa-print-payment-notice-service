@@ -22,7 +22,7 @@ Feature: Single Generation Poste
       | Avviso.Oggetto             | "Avviso Pagamento di TEST"      |
       | Avviso.Importo             | 150000                          |
       | Avviso.Data                | "31/12/2024"                    |
-      | Avviso.Codice              | "47000000880099905"             |
+      | Avviso.Codice              | "470000008800999051"            |
       | Ente.CF                    | "80034390585"                   |
       | Destinatario.CF            | "FFFCST83A15L113V"              |
       | Destinatario.NomeCompleto  | "Mario Rossi"                   |
@@ -84,7 +84,7 @@ Feature: Single Generation Poste
       | Avviso.Oggetto             | "Avviso Pagamento di TEST"      |
       | Avviso.Importo             | 100                             |
       | Avviso.Data                | "31/12/2024"                    |
-      | Avviso.Codice              | "47000000880099905"             |
+      | Avviso.Codice              | "470000008800999051"            |
       | Ente.CF                    | "80034390585"                   |
       | Destinatario.CF            | "FFFCST83A15L113V"              |
       | Destinatario.NomeCompleto  | "Mario Rossi"                   |
@@ -147,7 +147,7 @@ Feature: Single Generation Poste
       | Avviso.Oggetto             | "Avviso Pagamento di TEST"      |
       | Avviso.Importo             | 150000                          |
       | Avviso.Data                | null                            |
-      | Avviso.Codice              | "47000000880099905"             |
+      | Avviso.Codice              | "470000008800999051"            |
       | Ente.CF                    | "80034390585"                   |
       | Destinatario.CF            | "FFFCST83A15L113V"              |
       | Destinatario.NomeCompleto  | "Mario Rossi"                   |
@@ -210,7 +210,7 @@ Feature: Single Generation Poste
       | Avviso.Oggetto             | "Avviso Pagamento di TEST"      |
       | Avviso.Importo             | 150000                          |
       | Avviso.Data                | null                            |
-      | Avviso.Codice              | "47000000880099905"             |
+      | Avviso.Codice              | "470000008800999051"            |
       | Ente.CF                    | "80034390585"                   |
       | Destinatario.CF            | "FFFCST83A15L113V"              |
       | Destinatario.NomeCompleto  | "Mario Rossi"                   |
