@@ -30,7 +30,7 @@ class OpenApiGenerationTest {
     @Test
     void swaggerSpringPlugin() throws Exception {
         saveOpenAPI("/v3/api-docs", "openapi.json");
-        saveOpenAPI("/v3/api-docs/apim", "openapi_apim.json");
+        saveOpenAPI("/v3/api-docs/external", "openapi_external.json");
     }
 
     private void saveOpenAPI(String fromUri, String toFile) throws Exception {
@@ -43,6 +43,7 @@ class OpenApiGenerationTest {
                             final String content = result.getResponse().getContentAsString();
                             assertFalse(content.isBlank());
                             assertFalse(content.contains("${"), "Generated swagger contains placeholders");
+                            assertFalse(content.contains("@some.value@)"), "Generated swagger contains placeholders");
                             Object swagger =
                                     objectMapper.readValue(result.getResponse().getContentAsString(), Object.class);
                             String formatted =

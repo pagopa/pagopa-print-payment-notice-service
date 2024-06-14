@@ -53,7 +53,7 @@ module "api_external_v1" {
   service_url = null
 
   content_format = "openapi"
-  content_value  = templatefile("../openapi/openapi_apim.json", {
+  content_value  = templatefile("../openapi/openapi_external.json", {
     host = local.host
   })
 
