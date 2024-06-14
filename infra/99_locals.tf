@@ -4,7 +4,8 @@ locals {
   apim = {
     name       = "${local.product}-apim"
     rg         = "${local.product}-api-rg"
-    product_id = "pagoa_notices_service"
+    ext_product_id = "pagopa_notices_service_external"
+    int_product_id = "pagopa_notices_service_internal"
   }
 }
 

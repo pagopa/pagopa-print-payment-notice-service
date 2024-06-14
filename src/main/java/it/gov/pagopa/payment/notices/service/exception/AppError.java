@@ -72,7 +72,7 @@ public enum AppError {
     INSTITUTION_RETRIEVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Error while retrieving Institution data",
             "Unexpected error occurred while retrieving institution data"),
 
-    NOT_ALLOWED_ON_CI_CODE(HttpStatus.UNAUTHORIZED, "Not allowed for notice ci tax code",
+    NOT_ALLOWED_ON_CI_CODE(HttpStatus.FORBIDDEN, "Not allowed for notice ci tax code",
         "The request has been executed for a creditor institution having a different tax code to the one onboarded, and" +
                 "without having allowance to manage notices for said ci"),
 
