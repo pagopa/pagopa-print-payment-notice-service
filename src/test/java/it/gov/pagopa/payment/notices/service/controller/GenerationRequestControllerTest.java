@@ -237,7 +237,7 @@ class GenerationRequestControllerTest {
     void getSignedUrlShouldReturnDataOnOk() throws Exception {
         when(noticeGenerationService.getFileSignedUrl(any(), any(), any()))
                 .thenReturn(GetSignedUrlResource.builder().signedUrl("test").build());
-        String url = "/notices/folderId/file/fileId/url";
+        String url = "/notices/folder/folderId/file/fileId/url";
         mvc.perform(get(url)
                         .header("X-User-Id", "test")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -251,7 +251,7 @@ class GenerationRequestControllerTest {
     void getSignedUrlShouldReturnKOonErrorFile() throws Exception {
         when(noticeGenerationService.getFileSignedUrl(any(), any(), any()))
                 .thenThrow(new AppException(AppError.INTERNAL_SERVER_ERROR));
-        String url = "/notices/folderId/file/fileId/url";
+        String url = "/notices/folder/folderId/file/fileId/url";
         mvc.perform(get(url)
                         .header("X-User-Id", "test")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -275,7 +275,7 @@ class GenerationRequestControllerTest {
     void getFolderUrlShouldReturnDataOnOk() throws Exception {
         when(noticeGenerationService.getFolderSignedUrl(any(), any()))
                 .thenReturn(GetSignedUrlResource.builder().signedUrl("test").build());
-        String url = "/notices/folderId/url";
+        String url = "/notices/folder/folderId/url";
         mvc.perform(get(url)
                         .header("X-User-Id", "test")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -289,7 +289,7 @@ class GenerationRequestControllerTest {
     void getFolderSignedUrlShouldReturnKOonErrorFile() throws Exception {
         when(noticeGenerationService.getFolderSignedUrl(any(), any()))
                 .thenThrow(new AppException(AppError.INTERNAL_SERVER_ERROR));
-        String url = "/notices/folderId/url";
+        String url = "/notices/folder/folderId/url";
         mvc.perform(get(url)
                         .header("X-User-Id", "test")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -86,6 +86,7 @@ microservice-chart:
     OTEL_LOGS_EXPORTER: none
     OTEL_TRACES_SAMPLER: "always_on"
     NOTICE_GENERATION_REST_ENDPOINT: "https://api.dev.platform.pagopa.it/print-payment-notice-generator/v1"
+    API_CONFIG_REST_ENDPOINT: "https://api.dev.platform.pagopa.it/apiconfig/auth/api/v1/"
     KAFKA_BROKER: "pagopa-d-itn-core-evh-meucci.servicebus.windows.net:9093"
     KAFKA_NOTICE_GENERATION_TOPIC: 'pagopa-printit-evh'
     NOTICE_STORAGE_ENDPOINT: 'https://pagopadprintitnotices.blob.core.windows.net'
@@ -102,6 +103,7 @@ microservice-chart:
     AES_SECRET_KEY: 'aes-key'
     AES_SALT: 'aes-salt'
     NOTICE_GENERATION_SUBSCRIPTION_KEY: 'notice-generation-sub-key'
+    API_CONFIG_SUBSCRIPTION_KEY: 'api-config-sub-key'
     NOTICE_STORAGE_CLIENT_ID: 'pdf-generator-client-id'
     NOTICE_STORAGE_TENANT_ID: 'tenant-id'
     NOTICE_STORAGE_CLIENT_SECRET: 'pdf-generator-client-secret'
