@@ -51,6 +51,8 @@ microservice-chart:
     mounts:
       - name: temp
         mountPath: /temp
+      - name: logs
+        mountPath: /logs
   resources:
     requests:
       memory: "512Mi"
