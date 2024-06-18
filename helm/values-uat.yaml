@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: "print-payment-notice-service"
   image:
     repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
-    tag: "0.4.1"
+    tag: "0.4.2"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -41,8 +41,8 @@ microservice-chart:
     seccompProfile:
       type: RuntimeDefault
   securityContext:
-    allowPrivilegeEscalation: false
     readOnlyRootFilesystem: false
+    allowPrivilegeEscalation: true
     capabilities:
       drop:
         - all
@@ -51,6 +51,8 @@ microservice-chart:
     mounts:
       - name: temp
         mountPath: /temp
+      - name: logs
+        mountPath: /logs
   resources:
     requests:
       memory: "512Mi"
@@ -61,9 +63,9 @@ microservice-chart:
   autoscaling:
     enable: true
     minReplica: 1
-    maxReplica: 3
-    pollingInterval: 10 # seconds
-    cooldownPeriod: 50 # seconds
+    maxReplica: 1
+    pollingInterval: 30 # seconds
+    cooldownPeriod: 300 # seconds
     triggers:
       - type: cpu
         metadata:
@@ -85,8 +87,8 @@ microservice-chart:
     OTEL_TRACES_SAMPLER: "always_on"
     NOTICE_GENERATION_REST_ENDPOINT: "https://api.uat.platform.pagopa.it/print-payment-notice-generator/v1"
     API_CONFIG_REST_ENDPOINT: "https://api.uat.platform.pagopa.it/apiconfig/auth/api/v1/"
-    KAFKA_BROKER: "pagopa-u-itn-core-evh-meucci.servicebus.windows.net:9092"
-    KAFKA_NOTICE_GENERATION_TOPIC: pagopa-printit-evh
+    KAFKA_BROKER: "pagopa-u-itn-core-evh-meucci.servicebus.windows.net:9093"
+    KAFKA_NOTICE_GENERATION_TOPIC: 'pagopa-printit-evh'
     NOTICE_STORAGE_ENDPOINT: 'https://pagopauprintitnotices.blob.core.windows.net'
     REST_CLIENT_LOGGER_LEVEL: 'NONE'
   envSecret:
