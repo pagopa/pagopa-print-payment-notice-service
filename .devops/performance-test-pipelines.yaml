@@ -52,14 +52,14 @@ variables:
   ${{ if eq(parameters['ENVIRONMENT'], 'dev') }}:
     poolImage: 'pagopa-dev-loadtest-linux'
     API_SUBSCRIPTION_KEY: "$(DEV_API_SUBSCRIPTION_KEY)"
-    blobInstitutionsConnectionString : "$(DEV_BLOB_INSTITUTIONS_CONNECTION_STRING)"
+    blobInstitutionsConnectionString: "$(DEV_BLOB_INSTITUTIONS_CONNECTION_STRING)"
     blobNoticesConnectionString: "$(DEV_BLOB_NOTICES_CONNECTION_STRING)"
     mongoNoticesConnectionString: "${DEV_MONGO_NOTICES_CONNECTION_STRING)"
 
   ${{ if eq(parameters['ENVIRONMENT'], 'uat') }}:
     poolImage: 'pagopa-uat-loadtest-linux'
     API_SUBSCRIPTION_KEY: "$(UAT_API_SUBSCRIPTION_KEY)"
-    blobInstitutionsConnectionString : "$(UAT_BLOB_INSTITUTIONS_CONNECTION_STRING)"
+    blobInstitutionsConnectionString: "$(UAT_BLOB_INSTITUTIONS_CONNECTION_STRING)"
     blobNoticesConnectionString: "$(UAT_BLOB_NOTICES_CONNECTION_STRING)"
     mongoNoticesConnectionString: "${UAT_MONGO_NOTICES_CONNECTION_STRING)"
 
@@ -85,7 +85,7 @@ steps:
       BLOB_INSTITUTIONS_CONN_STRING: ${{ variables.blobInstitutionsConnectionString }}
       BLOB_NOTICES_CONN_STRING: ${{ variables.blobNoticesConnectionString }}
       NOTICES_MONGO_CONN_STRING: ${{ variables.mongoNoticesConnectionString }}
-      NUMBER_OF_MASSIVE_ELEMENTS: ${{ variables. }}
+      NUMBER_OF_MASSIVE_ELEMENTS: ${{ parameters.NUMBER_OF_MASSIVE_ELEMENTS }}
       ENVIRONMENT_STRING: ${{ parameters.ENVIRONMENT }}
   - script: |
       cd ./performance-test
