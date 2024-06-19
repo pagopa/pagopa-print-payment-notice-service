@@ -14,10 +14,12 @@ import it.gov.pagopa.payment.notices.service.model.GetSignedUrlResource;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
 import it.gov.pagopa.payment.notices.service.model.enums.PaymentGenerationRequestStatus;
+import it.gov.pagopa.payment.notices.service.model.notice.CreditorInstitution;
 import it.gov.pagopa.payment.notices.service.model.notice.Notice;
 import it.gov.pagopa.payment.notices.service.model.notice.NoticeRequestData;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestErrorRepository;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestRepository;
+import it.gov.pagopa.payment.notices.service.service.BrokerService;
 import it.gov.pagopa.payment.notices.service.service.async.AsyncService;
 import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
 import it.gov.pagopa.payment.notices.service.util.Aes256Utils;
@@ -45,18 +47,28 @@ class NoticeGenerationServiceImplTest {
 
     @MockBean
     NoticeGenerationClient noticeGenerationClient;
+
     @MockBean
     NoticeStorageClient noticeStorageClient;
+
     @MockBean
     private PaymentGenerationRequestRepository paymentGenerationRequestRepository;
+
     @MockBean
     private PaymentGenerationRequestErrorRepository paymentGenerationRequestErrorRepository;
+
     @MockBean
     private NoticeGenerationRequestProducer noticeGenerationRequestProducer;
+
+    @MockBean
+    private BrokerService brokerService;
+
     @SpyBean
     private ObjectMapper objectMapper;
+
     @SpyBean
     private Aes256Utils aes256Utils;
+
     @Autowired
     @InjectMocks
     private AsyncService asyncService;
@@ -68,13 +80,15 @@ class NoticeGenerationServiceImplTest {
         Mockito.reset(
                 paymentGenerationRequestErrorRepository,
                 paymentGenerationRequestRepository,
-                noticeGenerationRequestProducer);
+                noticeGenerationRequestProducer,
+                brokerService);
+        when(brokerService.checkBrokerAllowance(any(),any(),any())).thenReturn(false);
         noticeGenerationService = new NoticeGenerationServiceImpl(
                 paymentGenerationRequestRepository,
                 paymentGenerationRequestErrorRepository,
                 asyncService,
                 noticeGenerationClient,
-                noticeStorageClient);
+                brokerService, noticeStorageClient);
     }
 
     @Test
@@ -155,10 +169,13 @@ class NoticeGenerationServiceImplTest {
     void generateMassiveRequestShouldSendEventOnSuccess() {
         NoticeGenerationRequestItem noticeGenerationRequestItem = NoticeGenerationRequestItem.builder()
                 .templateId("testTemplate")
-                .data(NoticeRequestData.builder().notice(
+                .data(NoticeRequestData.builder().
+                        notice(
                                 Notice.builder().code("testCode")
                                         .build()
-                        ).build()
+                        ).
+                        creditorInstitution(CreditorInstitution.builder().taxCode("testUserId").build())
+                        .build()
                 ).build();
         NoticeGenerationMassiveRequest noticeGenerationMassiveRequest =
                 NoticeGenerationMassiveRequest.builder().notices(
@@ -178,7 +195,9 @@ class NoticeGenerationServiceImplTest {
     void generateMassiveRequestShouldSaveErrorEventOnSendFailure() {
         NoticeGenerationRequestItem noticeGenerationRequestItem = NoticeGenerationRequestItem.builder()
                 .templateId("testTemplate")
-                .data(NoticeRequestData.builder().notice(
+                .data(NoticeRequestData.builder()
+                        .creditorInstitution(CreditorInstitution.builder().taxCode("testUserId").build())
+                        .notice(
                                 Notice.builder().code("testCode")
                                         .build()
                         ).build()
@@ -205,8 +224,10 @@ class NoticeGenerationServiceImplTest {
                                 Request.HttpMethod.GET, "test", new HashMap<>(),
                                 "".getBytes(), Charset.defaultCharset(), null))
                         .body("".getBytes()).build());
-        File returnFile = noticeGenerationService.generateNotice(NoticeGenerationRequestItem.builder().build(),
-                null, null);
+        File returnFile = noticeGenerationService.generateNotice(NoticeGenerationRequestItem
+                        .builder().data(NoticeRequestData.builder().creditorInstitution(
+                                CreditorInstitution.builder().taxCode("userId").build()).build()).build(),
+                null, "userId");
         assertNotNull(returnFile);
         verify(noticeGenerationClient).generateNotice(any(), any());
         verifyNoInteractions(paymentGenerationRequestRepository);
@@ -214,14 +235,30 @@ class NoticeGenerationServiceImplTest {
 
     @Test
     void shouldReturnExceptionOnMissingFolderRequest() {
-        NoticeGenerationRequestItem generationRequestItem = NoticeGenerationRequestItem.builder().build();
-        assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(generationRequestItem, "test", "test"));
+        NoticeGenerationRequestItem generationRequestItem = NoticeGenerationRequestItem.builder().data(
+                NoticeRequestData.builder().creditorInstitution(
+                        CreditorInstitution.builder().taxCode("testUserId").build()).build())
+                .build();
+        assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(generationRequestItem,
+                "test", "testUserId"));
         verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         verifyNoInteractions(noticeGenerationClient);
     }
 
     @Test
-    void getFileSignedUrlSholdReturnDataOnValidRequest() {
+    void shouldReturnExceptionOnFailedAllowanceCheck() {
+        NoticeGenerationRequestItem generationRequestItem = NoticeGenerationRequestItem.builder().data(
+                        NoticeRequestData.builder().creditorInstitution(
+                                CreditorInstitution.builder().taxCode("testUserId").build()).build())
+                .build();
+        assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(generationRequestItem,
+                "test", "wrongUserId"));
+        verifyNoInteractions(paymentGenerationRequestRepository);
+        verifyNoInteractions(noticeGenerationClient);
+    }
+
+    @Test
+    void getFileSignedUrlShouldReturnDataOnValidRequest() {
         when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any())).thenReturn(
                 Optional.of(PaymentNoticeGenerationRequest.builder().build()));
         when(noticeStorageClient.getFileSignedUrl(any(), any())).thenReturn("signedUrl");

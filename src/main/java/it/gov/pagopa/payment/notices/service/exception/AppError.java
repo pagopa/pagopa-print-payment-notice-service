@@ -72,6 +72,13 @@ public enum AppError {
     INSTITUTION_RETRIEVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Error while retrieving Institution data",
             "Unexpected error occurred while retrieving institution data"),
 
+    NOT_ALLOWED_ON_CI_CODE(HttpStatus.FORBIDDEN, "Not allowed for notice ci tax code",
+        "The request has been executed for a creditor institution having a different tax code to the one onboarded, and" +
+                "without having allowance to manage notices for said ci"),
+
+    ERROR_ON_PT_ALLOWANCE_CHECK(HttpStatus.INTERNAL_SERVER_ERROR,
+            "Error on pt allowance check", "Error occured during allowance check for PT"),
+
     UNKNOWN(null, null, null);
 
 
