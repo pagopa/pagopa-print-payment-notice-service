@@ -37,8 +37,8 @@ parameters:
     values:
       - "TemplateSingleInstalment"
       - "TemplateSingleInstalmentPoste"
-      - "TemplateInstalmentsMultiplesOf2"
-      - "TemplateInstalmentsMultiplesOf3"
+      - "TemplateInstalments"
+      - "TemplateInstalmentsPoste"
     default: "TemplateSingleInstalment"
   - name: "PROCESS_TIME"
     displayName: "Process time for single notice (in seconds)"
