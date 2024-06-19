@@ -74,12 +74,7 @@ steps:
   - script: |
       cd ./performance-test/src
       docker build -f ./DockerfilePre -t exec-node .
-      docker run --rm --name initToRunk6 \
-      -e BLOB_INSTITUTIONS_CONN_STRING=${BLOB_INSTITUTIONS_CONN_STRING} \
-      -e BLOB_NOTICES_CONN_STRING=${BLOB_NOTICES_CONN_STRING} \      
-      -e NOTICES_MONGO_CONN_STRING=${NOTICES_MONGO_CONN_STRING} \
-      -e ENVIRONMENT_STRING="${ENVIRONMENT_STRING}" \
-      exec-node
+      docker run --rm --name initToRunk6 -e BLOB_INSTITUTIONS_CONN_STRING=${BLOB_INSTITUTIONS_CONN_STRING} -e BLOB_NOTICES_CONN_STRING=${BLOB_NOTICES_CONN_STRING} -e NOTICES_MONGO_CONN_STRING=${NOTICES_MONGO_CONN_STRING} -e ENVIRONMENT_STRING="${ENVIRONMENT_STRING}" exec-node
     displayName: Precondition run perf test
     env:
       BLOB_INSTITUTIONS_CONN_STRING: ${{ variables.blobInstitutionsConnectionString }}
@@ -96,12 +91,7 @@ steps:
   - script: |
       cd ./performance-test/src
       docker build -f ./DockerfilePost -t exec-node .
-      docker run --rm --name initToRunk6 \
-      -e BLOB_INSTITUTIONS_CONN_STRING=${BLOB_INSTITUTIONS_CONN_STRING} \
-      -e BLOB_NOTICES_CONN_STRING=${BLOB_NOTICES_CONN_STRING} \      
-      -e NOTICES_MONGO_CONN_STRING=${NOTICES_MONGO_CONN_STRING} \
-      -e ENVIRONMENT_STRING="${ENVIRONMENT_STRING}" \
-      exec-node
+      docker run --rm --name initToRunk6 -e BLOB_INSTITUTIONS_CONN_STRING=${BLOB_INSTITUTIONS_CONN_STRING} -e BLOB_NOTICES_CONN_STRING=${BLOB_NOTICES_CONN_STRING} -e NOTICES_MONGO_CONN_STRING=${NOTICES_MONGO_CONN_STRING} -e ENVIRONMENT_STRING="${ENVIRONMENT_STRING}" exec-node
     displayName: Teardown run perf test
     env:
       BLOB_INSTITUTIONS_CONN_STRING: ${{ variables.blobInstitutionsConnectionString }}
