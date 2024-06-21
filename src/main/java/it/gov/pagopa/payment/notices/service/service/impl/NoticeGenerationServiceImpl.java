@@ -85,6 +85,8 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public String generateMassive(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId) {
 
         try {
+
+
             String folderId = paymentGenerationRequestRepository.save(PaymentNoticeGenerationRequest.builder()
                     .status(PaymentGenerationRequestStatus.INSERTED)
                     .createdAt(Instant.now())
@@ -95,7 +97,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                     .requestDate(Instant.now())
                     .build()).getId();
 
-            asyncService.sendNotices(noticeGenerationMassiveRequest, folderId);
+            asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
 
             return folderId;
 
