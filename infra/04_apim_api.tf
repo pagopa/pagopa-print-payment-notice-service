@@ -57,7 +57,7 @@ module "api_external_v1" {
     host = local.host
   })
 
-  xml_content = templatefile("./policy/_base_policy.xml", {
+  xml_content = templatefile("./policy/_base_policy_external.xml", {
     hostname = var.hostname
   })
 }
