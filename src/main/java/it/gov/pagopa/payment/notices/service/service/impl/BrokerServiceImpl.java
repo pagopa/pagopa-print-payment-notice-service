@@ -35,7 +35,7 @@ public class BrokerServiceImpl implements BrokerService {
 
                 CreditorInstitutionsView creditorInstitutionsView =
                         apiConfigClient.getCreditorInstitutionsAssociatedToBrokerStations(
-                                pageLimit, pageNumber, brokerTaxCode, targetTaxCode);
+                                pageLimit, pageNumber, targetTaxCode, brokerTaxCode);
 
                 if(creditorInstitutionsView == null ||
                         creditorInstitutionsView.getCreditorInstitutionList().size() == 0) {
