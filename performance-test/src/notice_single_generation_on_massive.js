@@ -43,7 +43,7 @@ export default function () {
 
       console.log("Generate Notice call, Status " + response.status);
 
-      let folderId = response.body;
+      let folderId = JSON.parse(response.body).folderId;
 
       let inputData = retrieveNoticeItemData(ciTaxCode, templateId);
 

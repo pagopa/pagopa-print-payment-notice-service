@@ -56,6 +56,6 @@ export default function () {
       });
 
 	  sleep(processTime*numberOfElements);
-	  postcondition(response.body);
+	  postcondition(JSON.parse(response.body).folderId);
 
 }
