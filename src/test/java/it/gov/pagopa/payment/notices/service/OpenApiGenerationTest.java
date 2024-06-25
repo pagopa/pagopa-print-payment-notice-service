@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest
+@SpringBootTest(classes = Application.class)
 @AutoConfigureMockMvc
 class OpenApiGenerationTest {
 
@@ -29,20 +29,28 @@ class OpenApiGenerationTest {
 
     @Test
     void swaggerSpringPlugin() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/v3/api-docs").accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
-                .andDo(result -> {
-                    assertNotNull(result);
-                    assertNotNull(result.getResponse());
-                    final String content = result.getResponse().getContentAsString();
-                    assertFalse(content.isBlank());
-                    Object swagger = objectMapper.readValue(result.getResponse().getContentAsString(), Object.class);
-                    String formatted = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(swagger);
-                    Path basePath = Paths.get("openapi/");
-                    Files.createDirectories(basePath);
-                    Files.write(basePath.resolve("openapi.json"), formatted.getBytes());
-                });
+        saveOpenAPI("/v3/api-docs", "openapi.json");
+        saveOpenAPI("/v3/api-docs/external", "openapi_external.json");
     }
 
-
+    private void saveOpenAPI(String fromUri, String toFile) throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get(fromUri).accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andDo(
+                        (result) -> {
+                            assertNotNull(result);
+                            assertNotNull(result.getResponse());
+                            final String content = result.getResponse().getContentAsString();
+                            assertFalse(content.isBlank());
+                            assertFalse(content.contains("${"), "Generated swagger contains placeholders");
+                            assertFalse(content.contains("@some.value@)"), "Generated swagger contains placeholders");
+                            Object swagger =
+                                    objectMapper.readValue(result.getResponse().getContentAsString(), Object.class);
+                            String formatted =
+                                    objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(swagger);
+                            Path basePath = Paths.get("openapi/");
+                            Files.createDirectories(basePath);
+                            Files.write(basePath.resolve(toFile), formatted.getBytes());
+                        });
+    }
 }
