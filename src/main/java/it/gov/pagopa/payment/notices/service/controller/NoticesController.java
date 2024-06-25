@@ -162,7 +162,7 @@ public class NoticesController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = String.class))),
+                            schema = @Schema(implementation = NoticeGenerationMassiveResource.class))),
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ProblemJson.class))),
@@ -177,12 +177,14 @@ public class NoticesController {
                     schema = @Schema(implementation = ProblemJson.class)))
     })
     @PostMapping("/generate-massive")
-    public String generateNoticeMassiveRequest(
+    public NoticeGenerationMassiveResource generateNoticeMassiveRequest(
             @Parameter(description = "massive notice generation request data")
             @Valid @NotNull @RequestBody NoticeGenerationMassiveRequest noticeGenerationMassiveRequest,
             @Parameter(description = "userId to use for request status retrieval")
             @Valid @NotNull @RequestHeader(Constants.X_USER_ID) String userId) {
-        return noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, userId);
+        return NoticeGenerationMassiveResource.builder().folderId(
+                noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, userId))
+                .build();
     }
 
     /**
