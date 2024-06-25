@@ -1,5 +1,6 @@
 package it.gov.pagopa.payment.notices.service.service.impl;
 
+import feign.FeignException;
 import feign.Response;
 import it.gov.pagopa.payment.notices.service.client.NoticeGenerationClient;
 import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationRequest;
@@ -131,6 +132,13 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             try (Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem)) {
                 if(generationResponse.status() != HttpStatus.OK.value()) {
                     log.error("Feign Client Response {}", generationResponse);
+
+                    if(generationResponse.status() != HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+                        throw new AppException(HttpStatus.valueOf(generationResponse.status()),
+                                "Error on generation request",
+                                new String(generationResponse.body().asInputStream().readAllBytes()));
+                    }
+
                     throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR);
                 }
 
@@ -140,7 +148,8 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                     return targetFile;
                 }
             }
-
+        } catch (AppException e) {
+            throw e;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new AppException(AppError.ERROR_ON_GENERATION_REQUEST, e);
