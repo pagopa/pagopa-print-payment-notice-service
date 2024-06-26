@@ -1,0 +1,101 @@
+# azure-pipelines.yml
+trigger: none
+
+parameters:
+  - name: "ENVIRONMENT"
+    displayName: "Environment"
+    type: string
+    values:
+      - "dev"
+      - "uat"
+    default: "uat"
+  - name: "TEST_TYPE"
+    displayName: "Test type"
+    type: string
+    values:
+      - "load"
+      - "spike"
+      - "stress"
+      - "constant"
+    default: "constant"
+  - name: "SCRIPT"
+    displayName: "Script name"
+    type: string
+    values:
+      - "notice_single_generation"
+      - "notice_massive_generation"
+      - "notice_single_generation_on_massive"
+    default: "notice_single_generation"
+  - name: "DB_NAME"
+    displayName: "DB name"
+    type: string
+    values:
+      - pagopa_print-payment-notice-servicek6
+  - name: "TEMPLATE_ID"
+    displayName: "Template to use"
+    type: string
+    values:
+      - "TemplateSingleInstalment"
+      - "TemplateSingleInstalmentPoste"
+      - "TemplateInstalments"
+      - "TemplateInstalmentsPoste"
+    default: "TemplateSingleInstalment"
+  - name: "PROCESS_TIME"
+    displayName: "Process time for single notice (in seconds)"
+    type: number
+    default: 5
+  - name: "NUMBER_OF_MASSIVE_ELEMENTS"
+    displayName: "Number of notices in a massive request"
+    type: number
+    default: 10
+variables:
+  ${{ if eq(parameters['ENVIRONMENT'], 'dev') }}:
+    poolImage: 'pagopa-dev-loadtest-linux'
+    API_SUBSCRIPTION_KEY: "$(DEV_API_SUBSCRIPTION_KEY)"
+    blobInstitutionsConnectionString: "$(DEV_BLOB_INSTITUTIONS_CONNECTION_STRING)"
+    blobNoticesConnectionString: "$(DEV_BLOB_NOTICES_CONNECTION_STRING)"
+    mongoNoticesConnectionString: "${DEV_MONGO_NOTICES_CONNECTION_STRING)"
+
+  ${{ if eq(parameters['ENVIRONMENT'], 'uat') }}:
+    poolImage: 'pagopa-uat-loadtest-linux'
+    API_SUBSCRIPTION_KEY: "$(UAT_API_SUBSCRIPTION_KEY)"
+    blobInstitutionsConnectionString: "$(UAT_BLOB_INSTITUTIONS_CONNECTION_STRING)"
+    blobNoticesConnectionString: "$(UAT_BLOB_NOTICES_CONNECTION_STRING)"
+    mongoNoticesConnectionString: "${UAT_MONGO_NOTICES_CONNECTION_STRING)"
+
+pool:
+  name: $(poolImage)
+
+steps:
+  - script: |
+      cd ./performance-test/src
+      docker pull grafana/k6
+    displayName: Pull k6 image
+  - script: |
+      cd ./performance-test/src
+      docker build -f ./DockerfilePre -t exec-node .
+      docker run --rm --name initToRunk6 -e BLOB_INSTITUTIONS_CONN_STRING=${BLOB_INSTITUTIONS_CONN_STRING} -e BLOB_NOTICES_CONN_STRING=${BLOB_NOTICES_CONN_STRING} -e NOTICES_MONGO_CONN_STRING=${NOTICES_MONGO_CONN_STRING} -e ENVIRONMENT_STRING="${ENVIRONMENT_STRING}" exec-node
+    displayName: Precondition run perf test
+    env:
+      BLOB_INSTITUTIONS_CONN_STRING: ${{ variables.blobInstitutionsConnectionString }}
+      BLOB_NOTICES_CONN_STRING: ${{ variables.blobNoticesConnectionString }}
+      NOTICES_MONGO_CONN_STRING: ${{ variables.mongoNoticesConnectionString }}
+      NUMBER_OF_MASSIVE_ELEMENTS: ${{ parameters.NUMBER_OF_MASSIVE_ELEMENTS }}
+      ENVIRONMENT_STRING: ${{ parameters.ENVIRONMENT }}
+  - script: |
+      cd ./performance-test
+      sh ./run_performance_test.sh ${{ parameters.ENVIRONMENT }} ${{ parameters.TEST_TYPE }} ${{ parameters.SCRIPT }} ${{ parameters.DB_NAME}} $OCP_APIM_SUBSCRIPTION_KEY ${{ parameters.TEMPLATE_ID }}
+    displayName: Run k6 ${{ parameters.SCRIPT }} on ${{ parameters.ENVIRONMENT }}
+    env:
+      OCP_APIM_SUBSCRIPTION_KEY: ${{ variables.API_SUBSCRIPTION_KEY }}
+  - script: |
+      cd ./performance-test/src
+      docker build -f ./DockerfilePost -t exec-node .
+      docker run --rm --name initToRunk6 -e BLOB_INSTITUTIONS_CONN_STRING=${BLOB_INSTITUTIONS_CONN_STRING} -e BLOB_NOTICES_CONN_STRING=${BLOB_NOTICES_CONN_STRING} -e NOTICES_MONGO_CONN_STRING=${NOTICES_MONGO_CONN_STRING} -e ENVIRONMENT_STRING="${ENVIRONMENT_STRING}" exec-node
+    displayName: Teardown run perf test
+    env:
+      BLOB_INSTITUTIONS_CONN_STRING: ${{ variables.blobInstitutionsConnectionString }}
+      BLOB_NOTICES_CONN_STRING: ${{ variables.blobNoticesConnectionString }}
+      NOTICES_MONGO_CONN_STRING: ${{ variables.mongoNoticesConnectionString }}
+      ENVIRONMENT_STRING: ${{ parameters.ENVIRONMENT }}
+

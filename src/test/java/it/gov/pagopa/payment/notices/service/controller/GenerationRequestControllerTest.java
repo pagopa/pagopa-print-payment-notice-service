@@ -3,10 +3,7 @@ package it.gov.pagopa.payment.notices.service.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
-import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
-import it.gov.pagopa.payment.notices.service.model.GetSignedUrlResource;
-import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
-import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
+import it.gov.pagopa.payment.notices.service.model.*;
 import it.gov.pagopa.payment.notices.service.model.notice.CreditorInstitution;
 import it.gov.pagopa.payment.notices.service.model.notice.Debtor;
 import it.gov.pagopa.payment.notices.service.model.notice.Notice;
@@ -123,7 +120,7 @@ class GenerationRequestControllerTest {
         when(noticeGenerationService.generateMassive(any(), any()))
                 .thenReturn("folderTests");
         String url = "/notices/generate-massive";
-        String folderId = mvc.perform(post(url)
+        String bodyStr = mvc.perform(post(url)
                         .content(new ObjectMapper().writeValueAsBytes(
                                 NoticeGenerationMassiveRequest.builder()
                                         .notices(Collections.singletonList(
@@ -135,8 +132,11 @@ class GenerationRequestControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType("application/json"))
                 .andReturn().getResponse().getContentAsString();
-        Assertions.assertNotNull(folderId);
-        Assertions.assertEquals("folderTests", folderId);
+        Assertions.assertNotNull(bodyStr);
+        NoticeGenerationMassiveResource resource = objectMapper.readValue(
+                bodyStr, NoticeGenerationMassiveResource.class);
+        Assertions.assertNotNull(resource.getFolderId());
+        Assertions.assertEquals("folderTests", resource.getFolderId());
         verify(noticeGenerationService).generateMassive(any(), any());
     }
 
