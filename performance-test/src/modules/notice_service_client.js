@@ -12,7 +12,8 @@ export function generateSingleNotice(noticeServiceUri, subKey, inputData, folder
     if (folderId) {
         path = path + `?folderId=${folderId}`;
     }
-    console.log(`POST ${path}`, inputData)
+    console.log(`POST ${path}`, inputData);
+    console.log(`k=`, subKey.charAt(0));
 
     return folderId !== null ?
         http.post(path,
