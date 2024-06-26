@@ -85,6 +85,8 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public String generateMassive(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId) {
 
         try {
+
+
             String folderId = paymentGenerationRequestRepository.save(PaymentNoticeGenerationRequest.builder()
                     .status(PaymentGenerationRequestStatus.INSERTED)
                     .createdAt(Instant.now())
@@ -95,7 +97,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                     .requestDate(Instant.now())
                     .build()).getId();
 
-            asyncService.sendNotices(noticeGenerationMassiveRequest, folderId);
+            asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
 
             return folderId;
 
@@ -112,7 +114,8 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
             String ciTaxCode = noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode();
 
-            if (!userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode, "300")) {
+            if(!userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode,
+                    noticeGenerationRequestItem.getData().getNotice().getCode())) {
                 throw new AppException(AppError.NOT_ALLOWED_ON_CI_CODE);
             }
 
