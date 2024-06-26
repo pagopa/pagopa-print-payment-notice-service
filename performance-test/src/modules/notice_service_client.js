@@ -5,14 +5,16 @@ export function generateSingleNotice(noticeServiceUri, subKey, inputData, folder
     let headers = {
         'Ocp-Apim-Subscription-Key': subKey,
         'X-User-Id': inputData.data.creditorInstitution.taxCode,
-	    'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
     };
 
+    console.log(`POST ${noticeServiceUri}/notices/generate?folderId=${folderId}`, inputData)
+
     return folderId !== null ?
-        http.post(noticeServiceUri+`/notices/generate?folderId=${folderId}`,
-        folderId, JSON.stringify(inputData), {headers}) :
-        http.post(noticeServiceUri+"/notices/generate",
-         JSON.stringify(inputData), {headers, responseType: "text"});
+        http.post(noticeServiceUri + `/notices/generate?folderId=${folderId}`,
+            folderId, JSON.stringify(inputData), {headers}) :
+        http.post(noticeServiceUri + "/notices/generate",
+            JSON.stringify(inputData), {headers, responseType: "text"});
 
 }
 
@@ -24,7 +26,10 @@ export function generateMassiveNotice(noticeServiceUri, subKey, inputData, userI
         'Content-Type': 'application/json'
     };
 
-    return http.post(`${noticeServiceUri}/notices/generate-massive`, JSON.stringify(inputData), {headers, responseType: "text"});
+    return http.post(`${noticeServiceUri}/notices/generate-massive`, JSON.stringify(inputData), {
+        headers,
+        responseType: "text"
+    });
 
 }
 
