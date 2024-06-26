@@ -1,10 +1,10 @@
 {
-  "openapi" : "3.0.1",
-  "info" : {
-    "description" : "@project.description@",
-    "termsOfService" : "https://www.pagopa.gov.it/",
-    "title" : "@project.name@",
-    "version" : "0.5.2"
+  "openapi": "3.0.1",
+  "info": {
+    "description": "Microservice to expose the APIs for Print Payment Notices",
+    "termsOfService": "https://www.pagopa.gov.it/",
+    "title": "Print Payment Notices - Service",
+    "version": "0.5.4"
   },
   "servers" : [ {
     "url" : "http://localhost:8080"
@@ -1075,12 +1075,12 @@
           },
           "required" : true
         },
-        "responses" : {
-          "200" : {
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/NoticeGenerationMassiveResource"
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoticeGenerationMassiveResource"
                 }
               }
             },
@@ -1654,16 +1654,31 @@
           }
         }
       },
-      "NoticeGenerationRequestItem" : {
-        "required" : [ "data", "templateId" ],
-        "type" : "object",
-        "properties" : {
-          "data" : {
-            "$ref" : "#/components/schemas/NoticeRequestData"
+      "NoticeGenerationMassiveResource": {
+        "required": [
+          "folder_id"
+        ],
+        "type": "object",
+        "properties": {
+          "folder_id": {
+            "type": "string",
+            "description": "Generation request folderId"
+          }
+        }
+      },
+      "NoticeGenerationRequestItem": {
+        "required": [
+          "data",
+          "templateId"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/NoticeRequestData"
           },
-          "templateId" : {
-            "type" : "string",
-            "description" : "The template identifier. Use the appropriate GET service to retrieve the list of the ids"
+          "templateId": {
+            "type": "string",
+            "description": "The template identifier. Use the appropriate GET service to retrieve the list of the ids"
           }
         },
         "description" : "templateId to use for retrieval"

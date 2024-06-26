@@ -1,0 +1,13 @@
+{
+  "logo": "https://assets.cdn.io.italia.it/logos/organizations/82001760675.png",
+  "fullName": "Comune di Controguerra",
+  "taxCode": "000000000000",
+  "organization": "Servizio Pagamenti",
+  "info": "Info: www.cittadicapri.it",
+  "posteAccountNumber": "232323",
+  "posteAuth": "AUT. 08/5 S3/81 53079 08129.07.20211",
+  "cbill": "78Q45",
+  "webChannel": true,
+  "appChannel": true,
+  "physicalChannel": "Canale Fisico"
+}
