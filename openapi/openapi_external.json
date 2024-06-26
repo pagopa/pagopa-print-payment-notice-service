@@ -1,10 +1,10 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "description" : "@project.description@",
+    "description" : "Microservice to expose the APIs for Print Payment Notices",
     "termsOfService" : "https://www.pagopa.gov.it/",
-    "title" : "@project.name@ - Payment Notice Service (External)",
-    "version" : "0.5.2"
+    "title" : "Print Payment Notices - Service - Payment Notice Service (External)",
+    "version" : "0.0.3-1-fix-generator-call"
   },
   "servers" : [ {
     "url" : "http://localhost:8080"

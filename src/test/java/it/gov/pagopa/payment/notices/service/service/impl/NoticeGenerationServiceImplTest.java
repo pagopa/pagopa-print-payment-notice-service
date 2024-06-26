@@ -33,6 +33,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
@@ -82,7 +83,7 @@ class NoticeGenerationServiceImplTest {
                 paymentGenerationRequestRepository,
                 noticeGenerationRequestProducer,
                 brokerService);
-        when(brokerService.checkBrokerAllowance(any(),any(),any())).thenReturn(false);
+        when(brokerService.checkBrokerAllowance(any(), any(), any())).thenReturn(false);
         noticeGenerationService = new NoticeGenerationServiceImpl(
                 paymentGenerationRequestRepository,
                 paymentGenerationRequestErrorRepository,
@@ -217,7 +218,7 @@ class NoticeGenerationServiceImplTest {
     }
 
     @Test
-    void shouldReturnDataOnValidNoticeGenerationRequest() {
+    void shouldReturnDataOnValidNoticeGenerationRequest() throws IOException {
         when(noticeGenerationClient.generateNotice(any(), any()))
                 .thenReturn(Response.builder().status(200)
                         .request(Request.create(
@@ -236,8 +237,8 @@ class NoticeGenerationServiceImplTest {
     @Test
     void shouldReturnExceptionOnMissingFolderRequest() {
         NoticeGenerationRequestItem generationRequestItem = NoticeGenerationRequestItem.builder().data(
-                NoticeRequestData.builder().creditorInstitution(
-                        CreditorInstitution.builder().taxCode("testUserId").build()).build())
+                        NoticeRequestData.builder().creditorInstitution(
+                                CreditorInstitution.builder().taxCode("testUserId").build()).build())
                 .build();
         assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(generationRequestItem,
                 "test", "testUserId"));
@@ -247,9 +248,15 @@ class NoticeGenerationServiceImplTest {
 
     @Test
     void shouldReturnExceptionOnFailedAllowanceCheck() {
-        NoticeGenerationRequestItem generationRequestItem = NoticeGenerationRequestItem.builder().data(
-                        NoticeRequestData.builder().creditorInstitution(
-                                CreditorInstitution.builder().taxCode("testUserId").build()).build())
+        NoticeGenerationRequestItem generationRequestItem = NoticeGenerationRequestItem.builder()
+                .data(NoticeRequestData.builder()
+                        .creditorInstitution(CreditorInstitution.builder()
+                                .taxCode("testUserId")
+                                .build())
+                        .notice(Notice.builder()
+                                .code("code")
+                                .build())
+                        .build())
                 .build();
         assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(generationRequestItem,
                 "test", "wrongUserId"));
