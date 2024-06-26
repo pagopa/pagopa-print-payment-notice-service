@@ -1322,14 +1322,14 @@
         "description" : "Notice Installments"
       },
       "Notice" : {
-        "required" : [ "code", "paymentAmount", "subject" ],
+        "required" : [ "paymentAmount", "subject" ],
         "type" : "object",
         "properties" : {
           "code" : {
             "maxLength" : 18,
             "minLength" : 18,
             "type" : "string",
-            "description" : "Notice code"
+            "description" : "Notice code, mandatory whenever the template contains a general payment"
           },
           "discountedAmount" : {
             "maximum" : 99999999999,
