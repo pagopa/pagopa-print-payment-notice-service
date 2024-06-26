@@ -69,6 +69,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
         List<String> errors = paymentGenerationRequestErrorRepository.findErrors(folderId)
                 .stream()
+                .filter(item -> !item.isCompressionError())
                 .map(PaymentNoticeGenerationRequestError::getId)
                 .toList();
 

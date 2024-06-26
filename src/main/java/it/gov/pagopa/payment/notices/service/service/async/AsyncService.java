@@ -90,6 +90,7 @@ public class AsyncService {
                                     .writeValueAsString(noticeGenerationRequestItem)))
                             .createdAt(Instant.now())
                             .numberOfAttempts(0)
+                            .compressionError(false)
                             .build()
             );
             paymentGenerationRequestRepository.findAndIncrementNumberOfElementsFailedById(folderId);
