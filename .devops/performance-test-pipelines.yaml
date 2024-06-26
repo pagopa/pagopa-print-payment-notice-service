@@ -54,14 +54,14 @@ variables:
     API_SUBSCRIPTION_KEY: "$(DEV_API_SUBSCRIPTION_KEY)"
     blobInstitutionsConnectionString: "$(DEV_BLOB_INSTITUTIONS_CONNECTION_STRING)"
     blobNoticesConnectionString: "$(DEV_BLOB_NOTICES_CONNECTION_STRING)"
-    mongoNoticesConnectionString: "${DEV_MONGO_NOTICES_CONNECTION_STRING)"
+    mongoNoticesConnectionString: "$(DEV_MONGO_NOTICES_CONNECTION_STRING)"
 
   ${{ if eq(parameters['ENVIRONMENT'], 'uat') }}:
     poolImage: 'pagopa-uat-loadtest-linux'
     API_SUBSCRIPTION_KEY: "$(UAT_API_SUBSCRIPTION_KEY)"
     blobInstitutionsConnectionString: "$(UAT_BLOB_INSTITUTIONS_CONNECTION_STRING)"
     blobNoticesConnectionString: "$(UAT_BLOB_NOTICES_CONNECTION_STRING)"
-    mongoNoticesConnectionString: "${UAT_MONGO_NOTICES_CONNECTION_STRING)"
+    mongoNoticesConnectionString: "$(UAT_MONGO_NOTICES_CONNECTION_STRING)"
 
 pool:
   name: $(poolImage)
