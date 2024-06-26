@@ -248,9 +248,15 @@ class NoticeGenerationServiceImplTest {
 
     @Test
     void shouldReturnExceptionOnFailedAllowanceCheck() {
-        NoticeGenerationRequestItem generationRequestItem = NoticeGenerationRequestItem.builder().data(
-                        NoticeRequestData.builder().creditorInstitution(
-                                CreditorInstitution.builder().taxCode("testUserId").build()).build())
+        NoticeGenerationRequestItem generationRequestItem = NoticeGenerationRequestItem.builder()
+                .data(NoticeRequestData.builder()
+                        .creditorInstitution(CreditorInstitution.builder()
+                                .taxCode("testUserId")
+                                .build())
+                        .notice(Notice.builder()
+                                .code("code")
+                                .build())
+                        .build())
                 .build();
         assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(generationRequestItem,
                 "test", "wrongUserId"));
