@@ -8,10 +8,14 @@ export function generateSingleNotice(noticeServiceUri, subKey, inputData, folder
         'Content-Type': 'application/json'
     };
 
-    console.log(`POST ${noticeServiceUri}/notices/generate?folderId=${folderId}`, inputData)
+    let path = noticeServiceUri + `/notices/generate`;
+    if (folderId) {
+        path = path + `?folderId=${folderId}`;
+    }
+    console.log(`POST ${path}`, inputData)
 
     return folderId !== null ?
-        http.post(noticeServiceUri + `/notices/generate?folderId=${folderId}`,
+        http.post(path,
             folderId, JSON.stringify(inputData), {headers}) :
         http.post(noticeServiceUri + "/notices/generate",
             JSON.stringify(inputData), {headers, responseType: "text"});
