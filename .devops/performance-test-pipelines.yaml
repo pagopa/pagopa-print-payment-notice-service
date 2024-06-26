@@ -30,7 +30,7 @@ parameters:
     displayName: "DB name"
     type: string
     values:
-      - pagopa_print-payment-notice-servicek6
+      - printnoticek6
   - name: "TEMPLATE_ID"
     displayName: "Template to use"
     type: string
