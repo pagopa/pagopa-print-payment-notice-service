@@ -7,9 +7,15 @@ if (process.env.CANARY) {
     axios.defaults.headers.common['X-Canary'] = 'canary' // for all requests
 }
 
-function get(url) {
+function get(url, userId) {
 
-    return axios.get(url)
+    let config = {
+        headers: {
+            'X-User-Id': userId,
+        },
+   }
+
+    return axios.get(url, config)
         .then(res => {
             return res;
         })
@@ -18,10 +24,11 @@ function get(url) {
         });
 }
 
-function post(url, body) {
+function post(url, body, userId) {
     let config = {
         headers: {
             'Content-Type': 'application/json',
+            'X-User-Id': userId,
         },
         responseType: 'stream'
     };
@@ -34,8 +41,15 @@ function post(url, body) {
         });
 }
 
-function put(url, body) {
-    return axios.put(url, body)
+function put(url, body, userId) {
+
+    let config = {
+        headers: {
+            'X-User-Id': userId,
+        },
+   }
+
+    return axios.put(url, body, config)
         .then(res => {
             return res;
         })
@@ -44,8 +58,15 @@ function put(url, body) {
         });
 }
 
-function del(url) {
-    return axios.delete(url)
+function del(url, userId) {
+
+    let config = {
+        headers: {
+            'X-User-Id': userId,
+        },
+   }
+
+    return axios.delete(url, config)
         .then(res => {
             return res;
         })
@@ -54,18 +75,18 @@ function del(url) {
         });
 }
 
-function call(method, url, body) {
+function call(method, url, body, userId = "ADMIN") {
     if (method === 'GET') {
-        return get(url)
+        return get(url, userId)
     }
     if (method === 'POST') {
-        return post(url, body)
+        return post(url, body, userId)
     }
     if (method === 'PUT') {
-        return put(url, body)
+        return put(url, body, userId)
     }
     if (method === 'DELETE') {
-        return del(url)
+        return del(url, userId)
     }
 
 }
@@ -93,5 +114,10 @@ function formData(url, data) {
         });
 }
 
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-module.exports = {get, post, put, del, call, formData}
+
+
+module.exports = {get, post, put, del, call, formData, sleep}
