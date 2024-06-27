@@ -147,7 +147,7 @@ Then(/^the response should contain folderId$/, function () {
     folderId = data.folderId;
 });
 
-Then('the request is in status completed after {int} ms', async function (time) {
+Then('the request is in status COMPLETED after {int} ms', async function (time) {
     // boundary time spent by azure function to process event
     await sleep(time);
     responseToCheck = await call('GET', app_host + '/folder'+ folderId +'/status', ciTaxCode);
