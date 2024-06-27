@@ -1,10 +1,10 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "description" : "@project.description@",
+    "description" : "Microservice to expose the APIs for Print Payment Notices",
     "termsOfService" : "https://www.pagopa.gov.it/",
-    "title" : "@project.name@",
-    "version" : "0.5.2"
+    "title" : "Print Payment Notices - Service",
+    "version" : "0.5.5"
   },
   "servers" : [ {
     "url" : "http://localhost:8080"
@@ -1080,7 +1080,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "string"
+                  "$ref" : "#/components/schemas/NoticeGenerationMassiveResource"
                 }
               }
             },
@@ -1558,7 +1558,7 @@
         }
       },
       "InstallmentData" : {
-        "required" : [ "amount", "code", "dueDate" ],
+        "required" : [ "amount", "code" ],
         "type" : "object",
         "properties" : {
           "amount" : {
@@ -1580,20 +1580,17 @@
         "description" : "Notice Installments"
       },
       "Notice" : {
-        "required" : [ "code", "paymentAmount", "subject" ],
+        "required" : [ "subject" ],
         "type" : "object",
         "properties" : {
           "code" : {
             "maxLength" : 18,
             "minLength" : 18,
             "type" : "string",
-            "description" : "Notice code"
+            "description" : "Notice code, mandatory whenever the template contains a general payment"
           },
-          "discountedAmount" : {
-            "maximum" : 99999999999,
-            "type" : "integer",
-            "description" : "Notice discounted amount to pay (used in discounted amount for infractions). Mandatory for CDS infraction notices",
-            "format" : "int64"
+          "discounted" : {
+            "$ref" : "#/components/schemas/InstallmentData"
           },
           "dueDate" : {
             "type" : "string",
@@ -1614,11 +1611,8 @@
             "description" : "Notice total amount to pay",
             "format" : "int64"
           },
-          "reducedAmount" : {
-            "maximum" : 99999999999,
-            "type" : "integer",
-            "description" : "Notice reduced amount to pay (used in reduced amount for infractions).  Mandatory for CDS infraction notices",
-            "format" : "int64"
+          "reduced" : {
+            "$ref" : "#/components/schemas/InstallmentData"
           },
           "subject" : {
             "maxLength" : 90,
@@ -1643,6 +1637,16 @@
           }
         },
         "description" : "massive notice generation request data"
+      },
+      "NoticeGenerationMassiveResource" : {
+        "required" : [ "folder_id" ],
+        "type" : "object",
+        "properties" : {
+          "folder_id" : {
+            "type" : "string",
+            "description" : "Generation request folderId"
+          }
+        }
       },
       "NoticeGenerationRequestItem" : {
         "required" : [ "data", "templateId" ],

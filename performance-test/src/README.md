@@ -1,20 +1,43 @@
-# Performance Tests with k6
+# K6 tests for _PrintPaymentNoticeService_ project
 
-[k6](https://k6.io/) is a load testing tool. 👀
-See [here](https://k6.io/docs/get-started/installation/) to install it.
+[k6](https://k6.io/) is a load testing tool. 👀 See [here](https://k6.io/docs/get-started/installation/) to install it.
 
-## How to Run 🚀
+- [01. Payment notice service](#01-print-payment-notice-service-service)
 
-To run k6 tests use the command:
+This is a set of [k6](https://k6.io) tests related to the _ReceiptPdfService_ initiative.
 
-``` shell
-k6 run --env VARS=local.environment.json --env TEST_TYPE=./test-types/load.json --env API_SUBSCRIPTION_KEY=<your-secret> <script-name>.js
+To invoke k6 test passing parameter use -e (or --env) flag:
+
+```
+-e MY_VARIABLE=MY_VALUE
 ```
 
-where
+## 01. Notice service
 
-- _VARS_ is a environment file
-- _TEST_TYPE_ is a file in `/test-types` folder
-- _API_SUBSCRIPTION_KEY_ is your sub-key
+Test the receipt service: 
 
-`<script-name>.js` is the scenario to run with k6
+```
+k6 run --env VARS=local.environment.json --env TEST_TYPE=./test-types/load.json --env TEMPLATE_ID=<template-id> <script_name>.js
+```
+
+where the mean of the environment variables is:
+
+```json
+  "environment": [
+    {
+      "env": "local",
+      "blobStorageInstContainerID": "institutionsdatablob",
+      "blobStorageLogoContainerID": "institutionslogoblob",
+      "noticeServiceUri": "http://localhost:8080",
+      "ciTaxCode": "000000000000"
+    }
+  ]
+```
+
+`blobStorageInstContainerID`: container name for institution data storage
+
+`blobStorageLogoContainerID`: container name for institution logo storage
+
+`noticeServiceUri`: notice service uri
+
+`ciTaxCode`: ci tax-code to be used on data generation

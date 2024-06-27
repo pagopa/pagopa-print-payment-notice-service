@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
 import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.clearTempDirectory;
 
@@ -81,7 +82,7 @@ public class NoticesController {
             @Schema(description = "If the file exists you can specify the folder id. Pass it if you want to regenerate the file") @RequestParam(value = "folderId", required = false) String folderId,
             @Parameter(description = "templateId to use for retrieval")
             @Valid @NotNull @RequestBody NoticeGenerationRequestItem noticeGenerationRequestItem,
-            @Schema(description = "User ID. Required if `folderId` is provided") @RequestHeader(value = Constants.X_USER_ID, required = false) String userId) {
+            @Schema(description = "User ID. Required if `folderId` is provided") @RequestHeader(value = Constants.X_USER_ID, required = false) String userId) throws IOException {
         if(folderId != null && userId == null) {
             throw new AppException(AppError.BAD_REQUEST, "Invalid Data");
         }
@@ -163,7 +164,7 @@ public class NoticesController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = String.class))),
+                            schema = @Schema(implementation = NoticeGenerationMassiveResource.class))),
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ProblemJson.class))),
@@ -178,12 +179,14 @@ public class NoticesController {
                     schema = @Schema(implementation = ProblemJson.class)))
     })
     @PostMapping("/generate-massive")
-    public String generateNoticeMassiveRequest(
+    public NoticeGenerationMassiveResource generateNoticeMassiveRequest(
             @Parameter(description = "massive notice generation request data")
             @Valid @NotNull @RequestBody NoticeGenerationMassiveRequest noticeGenerationMassiveRequest,
             @Parameter(description = "userId to use for request status retrieval")
             @Valid @NotNull @RequestHeader(Constants.X_USER_ID) String userId) {
-        return noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, userId);
+        return NoticeGenerationMassiveResource.builder().folderId(
+                noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, userId))
+                .build();
     }
 
     /**

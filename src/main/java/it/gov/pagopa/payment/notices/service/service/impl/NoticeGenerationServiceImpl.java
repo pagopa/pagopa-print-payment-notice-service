@@ -25,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -70,6 +71,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
         List<String> errors = paymentGenerationRequestErrorRepository.findErrors(folderId)
                 .stream()
+                .filter(item -> !item.isCompressionError())
                 .map(PaymentNoticeGenerationRequestError::getId)
                 .toList();
 
@@ -112,21 +114,22 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId) {
         try {
 
-            String ciTaxCode = noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode();
+        String ciTaxCode = noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode();
 
-            if(!userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode,
-                    noticeGenerationRequestItem.getData().getNotice().getCode())) {
-                throw new AppException(AppError.NOT_ALLOWED_ON_CI_CODE);
-            }
+        if (!"ADMIN".equals(userId) &&
+                !userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode,
+                noticeGenerationRequestItem.getData().getNotice().getCode())) {
+            throw new AppException(AppError.NOT_ALLOWED_ON_CI_CODE);
+        }
 
-            if(folderId != null) {
-                findFolderIfExists(folderId, userId);
-            }
+        if(folderId != null) {
+            findFolderIfExists(folderId, userId);
+        }
 
-            File workingDirectory = createWorkingDirectory();
-            Path tempDirectory = Files.createTempDirectory(workingDirectory.toPath(), "notice-generation-service")
-                    .normalize()
-                    .toAbsolutePath();
+        File workingDirectory = createWorkingDirectory();
+        Path tempDirectory = Files.createTempDirectory(workingDirectory.toPath(), "notice-generation-service")
+                .normalize()
+                .toAbsolutePath();
 
             try (Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem)) {
                 if(generationResponse.status() != HttpStatus.OK.value()) {
@@ -153,6 +156,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             log.error(e.getMessage(), e);
             throw new AppException(AppError.ERROR_ON_GENERATION_REQUEST, e);
         }
+
     }
 
     @Override

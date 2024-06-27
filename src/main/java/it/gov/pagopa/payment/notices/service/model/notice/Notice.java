@@ -32,20 +32,17 @@ public class Notice {
 
     @Schema(description = "Notice reduced amount to pay (used in reduced amount for infractions). " +
             " Mandatory for CDS infraction notices")
-    @Max(value = 99999999999L)
-    private Long reducedAmount;
+    private InstallmentData reduced;
 
     @Schema(description = "Notice discounted amount to pay (used in discounted amount for infractions)." +
             " Mandatory for CDS infraction notices")
-    @Max(value = 99999999999L)
-    private Long discountedAmount;
+    private InstallmentData discounted;
 
     @Schema(description = "Notice due date", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String dueDate;
 
-    @Schema(description = "Notice code", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
-    @NotEmpty
+    @Schema(description = "Notice code, mandatory whenever the template contains a general payment",
+            requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @Size(min = 18, max = 18)
     private String code;
 

@@ -33,6 +33,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
@@ -82,7 +83,7 @@ class NoticeGenerationServiceImplTest {
                 paymentGenerationRequestRepository,
                 noticeGenerationRequestProducer,
                 brokerService);
-        when(brokerService.checkBrokerAllowance(any(),any(),any())).thenReturn(false);
+        when(brokerService.checkBrokerAllowance(any(), any(), any())).thenReturn(false);
         noticeGenerationService = new NoticeGenerationServiceImpl(
                 paymentGenerationRequestRepository,
                 paymentGenerationRequestErrorRepository,
@@ -217,7 +218,32 @@ class NoticeGenerationServiceImplTest {
     }
 
     @Test
-    void shouldReturnDataOnValidNoticeGenerationRequest() {
+    void generateMassiveRequestShouldSaveErrorEventOnSendFailureForAllowance() {
+        NoticeGenerationRequestItem noticeGenerationRequestItem = NoticeGenerationRequestItem.builder()
+                .templateId("testTemplate")
+                .data(NoticeRequestData.builder()
+                        .creditorInstitution(CreditorInstitution.builder().taxCode("testUserId").build())
+                        .notice(
+                                Notice.builder().code("testCode")
+                                        .build()
+                        ).build()
+                ).build();
+        NoticeGenerationMassiveRequest noticeGenerationMassiveRequest =
+                NoticeGenerationMassiveRequest.builder().notices(
+                        Collections.singletonList(noticeGenerationRequestItem)).build();
+        when(paymentGenerationRequestRepository.save(any())).thenReturn(
+                PaymentNoticeGenerationRequest.builder().id("testFolderId").build());
+        when(noticeGenerationRequestProducer.noticeGeneration(any())).thenReturn(false);
+        String folderId = noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "wrongUserId");
+        assertNotNull(folderId);
+        assertEquals("testFolderId", folderId);
+        verify(paymentGenerationRequestRepository).save(any());
+        verify(paymentGenerationRequestErrorRepository).save(any());
+    }
+
+
+    @Test
+    void shouldReturnDataOnValidNoticeGenerationRequest() throws IOException {
         when(noticeGenerationClient.generateNotice(any(), any()))
                 .thenReturn(Response.builder().status(200)
                         .request(Request.create(
@@ -236,8 +262,8 @@ class NoticeGenerationServiceImplTest {
     @Test
     void shouldReturnExceptionOnMissingFolderRequest() {
         NoticeGenerationRequestItem generationRequestItem = NoticeGenerationRequestItem.builder().data(
-                NoticeRequestData.builder().creditorInstitution(
-                        CreditorInstitution.builder().taxCode("testUserId").build()).build())
+                        NoticeRequestData.builder().creditorInstitution(
+                                CreditorInstitution.builder().taxCode("testUserId").build()).build())
                 .build();
         assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(generationRequestItem,
                 "test", "testUserId"));
@@ -247,9 +273,15 @@ class NoticeGenerationServiceImplTest {
 
     @Test
     void shouldReturnExceptionOnFailedAllowanceCheck() {
-        NoticeGenerationRequestItem generationRequestItem = NoticeGenerationRequestItem.builder().data(
-                        NoticeRequestData.builder().creditorInstitution(
-                                CreditorInstitution.builder().taxCode("testUserId").build()).build())
+        NoticeGenerationRequestItem generationRequestItem = NoticeGenerationRequestItem.builder()
+                .data(NoticeRequestData.builder()
+                        .creditorInstitution(CreditorInstitution.builder()
+                                .taxCode("testUserId")
+                                .build())
+                        .notice(Notice.builder()
+                                .code("code")
+                                .build())
+                        .build())
                 .build();
         assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(generationRequestItem,
                 "test", "wrongUserId"));
@@ -283,7 +315,7 @@ class NoticeGenerationServiceImplTest {
     }
 
     @Test
-    void getFileSignedUrlSholdReturnExceptionOnClientKo() {
+    void getFileSignedUrlShouldReturnExceptionOnClientKo() {
         when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any())).thenReturn(
                 Optional.of(PaymentNoticeGenerationRequest.builder().build()));
         when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(

@@ -42,7 +42,14 @@ function post(url, body, userId) {
 }
 
 function put(url, body, userId) {
-    return axios.put(url, body)
+
+    let config = {
+        headers: {
+            'X-User-Id': userId,
+        },
+   }
+
+    return axios.put(url, body, config)
         .then(res => {
             return res;
         })
@@ -52,7 +59,14 @@ function put(url, body, userId) {
 }
 
 function del(url, userId) {
-    return axios.delete(url)
+
+    let config = {
+        headers: {
+            'X-User-Id': userId,
+        },
+   }
+
+    return axios.delete(url, config)
         .then(res => {
             return res;
         })
@@ -61,7 +75,7 @@ function del(url, userId) {
         });
 }
 
-function call(method, url, body, userId) {
+function call(method, url, body, userId = "ADMIN") {
     if (method === 'GET') {
         return get(url, userId)
     }

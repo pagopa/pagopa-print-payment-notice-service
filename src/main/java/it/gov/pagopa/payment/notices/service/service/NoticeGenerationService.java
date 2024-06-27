@@ -6,6 +6,7 @@ import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveReques
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Service interface for notice generation
@@ -46,7 +47,7 @@ public interface NoticeGenerationService {
      * @param userId                      userId used for security checks if a folderId is provided
      * @return generated notice
      */
-    File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId);
+    File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId) throws IOException;
 
     /**
      * Return a file signed url
