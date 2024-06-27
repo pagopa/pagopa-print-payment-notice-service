@@ -17,6 +17,7 @@ parameters:
       - "spike"
       - "stress"
       - "constant"
+      - "smoke"
     default: "constant"
   - name: "SCRIPT"
     displayName: "Script name"
