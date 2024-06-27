@@ -3,7 +3,7 @@ Feature: Single Generation - 2 Installments with Poste
   Scenario: FT_13_RateMultiple2Poste_AllFields: Rate multiple 2 - Tutti campi valorizzati
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | "Settore di Test"                      |
       | info               | "Info di Test"                         |
@@ -30,7 +30,7 @@ Feature: Single Generation - 2 Installments with Poste
       | Avviso.Rata2.Codice        | "470000008800999073"       |
       | Avviso.Rata2.Importo       | 140000                     |
       | Avviso.Rata2.Data          | "31/12/2025"               |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
@@ -82,17 +82,17 @@ Feature: Single Generation - 2 Installments with Poste
 
   Scenario: FT_13_RateMultiple2Poste_AllFields_KOBadRequestPoste: Rate multiple 2 - Tutti campi valorizzati KO per dati poste
     Given the creditor institution in the storage:
-      | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
-      | fullName           | "Comune di Test"                       |
-      | organization       | "Settore di Test"                      |
-      | info               | "Info di Test"                         |
-      | webChannel         | true                                   |
-      | appChannel         | false                                  |
-      | physicalChannel    | "Canale Fisico"                        |
-      | cbill              | "CBI1234"                              |
-      | posteAccountNumber | "000000123456"                         |
-      | logo               | "./resources/logo1.png"                |
+      | variableName       | value                   |
+      | taxCode            | "99999000013"           |
+      | fullName           | "Comune di Test"        |
+      | organization       | "Settore di Test"       |
+      | info               | "Info di Test"          |
+      | webChannel         | true                    |
+      | appChannel         | false                   |
+      | physicalChannel    | "Canale Fisico"         |
+      | cbill              | "CBI1234"               |
+      | posteAccountNumber | "000000123456"          |
+      | logo               | "./resources/logo1.png" |
     When I send a GET request to "/notices/templates"
     Then the response status should be 200
     And the response list should contain a template "TemplateInstalmentsPoste"
@@ -109,7 +109,7 @@ Feature: Single Generation - 2 Installments with Poste
       | Avviso.Rata2.Codice        | "470000008800999073"       |
       | Avviso.Rata2.Importo       | 140000                     |
       | Avviso.Rata2.Data          | "31/12/2025"               |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
@@ -160,7 +160,7 @@ Feature: Single Generation - 2 Installments with Poste
   Scenario: FT_13_RateMultiple2Poste_AllFields_KOBadRequestDueDate: Rate multiple 2 - Tutti campi valorizzati KO per mancanza data scadenza
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | "Settore di Test"                      |
       | info               | "Info di Test"                         |
@@ -187,7 +187,7 @@ Feature: Single Generation - 2 Installments with Poste
       | Avviso.Rata2.Codice        | "470000008800999073"       |
       | Avviso.Rata2.Importo       | 140000                     |
       | Avviso.Rata2.Data          | "31/12/2025"               |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
@@ -237,7 +237,7 @@ Feature: Single Generation - 2 Installments with Poste
   Scenario: FT_14_RateMultiple2Poste_SomeFields: Rate multiple 2 - Solo alcuni campi valorizzati
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | null                                   |
       | info               | "Info di Test"                         |
@@ -264,7 +264,7 @@ Feature: Single Generation - 2 Installments with Poste
       | Avviso.Rata2.Codice        | "470000008800999063"       |
       | Avviso.Rata2.Importo       | 150000                     |
       | Avviso.Rata2.Data          | "31/12/2025"               |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
