@@ -1,6 +1,6 @@
 Feature: Massive Generation
 
-  Scenario: MT_01_RataSingola_AllFields: Rata singola - Tutti campi valorizzati
+  Scenario: MT_01_MultipleTemplates Massive Generation Test with multiple templates
     Given the creditor institution in the storage:
       | variableName       | value                                  |
       | taxCode            | "80034390585"                          |
@@ -19,7 +19,6 @@ Feature: Massive Generation
     And the response should contain "TemplateSingleInstalment"
     Given I have the following variables:
       | variableName               | value                      |
-      | template_id                | "TemplateSingleInstalment" |
       | Avviso.Oggetto             | "Avviso Pagamento di TEST" |
       | Avviso.Importo             | 150000                     |
       | Avviso.Data                | "31/12/2024"               |
@@ -35,7 +34,7 @@ Feature: Massive Generation
     When I send a POST request to "/notices/generate" with body:
     """
       {"notices":[{
-        "templateId": <template_id>,
+        "templateId": TemplateSingleInstalment,
         "data": {
           "notice": {
             "subject": <Avviso.Oggetto>,
