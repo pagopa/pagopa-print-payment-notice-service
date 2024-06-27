@@ -1,10 +1,10 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "description" : "@project.description@",
+    "description" : "Microservice to expose the APIs for Print Payment Notices",
     "termsOfService" : "https://www.pagopa.gov.it/",
-    "title" : "@project.name@",
-    "version" : "0.5.2"
+    "title" : "Print Payment Notices - Service",
+    "version" : "0.5.4"
   },
   "servers" : [ {
     "url" : "http://localhost:8080"
@@ -1558,7 +1558,7 @@
         }
       },
       "InstallmentData" : {
-        "required" : [ "amount", "code", "dueDate" ],
+        "required" : [ "amount", "code" ],
         "type" : "object",
         "properties" : {
           "amount" : {
@@ -1580,7 +1580,7 @@
         "description" : "Notice Installments"
       },
       "Notice" : {
-        "required" : [ "paymentAmount", "subject" ],
+        "required" : [ "subject" ],
         "type" : "object",
         "properties" : {
           "code" : {
@@ -1590,10 +1590,7 @@
             "description" : "Notice code, mandatory whenever the template contains a general payment"
           },
           "discountedAmount" : {
-            "maximum" : 99999999999,
-            "type" : "integer",
-            "description" : "Notice discounted amount to pay (used for example in discounted amount for infractions)",
-            "format" : "int64"
+            "$ref" : "#/components/schemas/InstallmentData"
           },
           "dueDate" : {
             "type" : "string",
@@ -1615,10 +1612,7 @@
             "format" : "int64"
           },
           "reducedAmount" : {
-            "maximum" : 99999999999,
-            "type" : "integer",
-            "description" : "Notice reduced amount to pay (used for example in reduced amount for infractions)",
-            "format" : "int64"
+            "$ref" : "#/components/schemas/InstallmentData"
           },
           "subject" : {
             "maxLength" : 90,
