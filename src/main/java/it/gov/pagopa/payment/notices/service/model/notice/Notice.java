@@ -30,10 +30,10 @@ public class Notice {
     private Long paymentAmount;
 
     @Schema(description = "Notice reduced amount to pay (used for example in reduced amount for infractions)")
-    private InstallmentData reducedAmount;
+    private InstallmentData reduced;
 
     @Schema(description = "Notice discounted amount to pay (used for example in discounted amount for infractions)")
-    private InstallmentData discountedAmount;
+    private InstallmentData discounted;
 
     @Schema(description = "Notice due date", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String dueDate;

@@ -4,7 +4,7 @@
     "description" : "Microservice to expose the APIs for Print Payment Notices",
     "termsOfService" : "https://www.pagopa.gov.it/",
     "title" : "Print Payment Notices - Service - Payment Notice Service (External)",
-    "version" : "0.5.4"
+    "version" : "0.5.5"
   },
   "servers" : [ {
     "url" : "http://localhost:8080"
@@ -1331,7 +1331,7 @@
             "type" : "string",
             "description" : "Notice code, mandatory whenever the template contains a general payment"
           },
-          "discountedAmount" : {
+          "discounted" : {
             "$ref" : "#/components/schemas/InstallmentData"
           },
           "dueDate" : {
@@ -1353,7 +1353,7 @@
             "description" : "Notice total amount to pay",
             "format" : "int64"
           },
-          "reducedAmount" : {
+          "reduced" : {
             "$ref" : "#/components/schemas/InstallmentData"
           },
           "subject" : {
