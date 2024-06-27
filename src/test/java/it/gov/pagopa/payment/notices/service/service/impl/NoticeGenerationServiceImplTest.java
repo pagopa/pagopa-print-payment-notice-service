@@ -218,6 +218,31 @@ class NoticeGenerationServiceImplTest {
     }
 
     @Test
+    void generateMassiveRequestShouldSaveErrorEventOnSendFailureForAllowance() {
+        NoticeGenerationRequestItem noticeGenerationRequestItem = NoticeGenerationRequestItem.builder()
+                .templateId("testTemplate")
+                .data(NoticeRequestData.builder()
+                        .creditorInstitution(CreditorInstitution.builder().taxCode("testUserId").build())
+                        .notice(
+                                Notice.builder().code("testCode")
+                                        .build()
+                        ).build()
+                ).build();
+        NoticeGenerationMassiveRequest noticeGenerationMassiveRequest =
+                NoticeGenerationMassiveRequest.builder().notices(
+                        Collections.singletonList(noticeGenerationRequestItem)).build();
+        when(paymentGenerationRequestRepository.save(any())).thenReturn(
+                PaymentNoticeGenerationRequest.builder().id("testFolderId").build());
+        when(noticeGenerationRequestProducer.noticeGeneration(any())).thenReturn(false);
+        String folderId = noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "wrongUserId");
+        assertNotNull(folderId);
+        assertEquals("testFolderId", folderId);
+        verify(paymentGenerationRequestRepository).save(any());
+        verify(paymentGenerationRequestErrorRepository).save(any());
+    }
+
+
+    @Test
     void shouldReturnDataOnValidNoticeGenerationRequest() throws IOException {
         when(noticeGenerationClient.generateNotice(any(), any()))
                 .thenReturn(Response.builder().status(200)
@@ -290,7 +315,7 @@ class NoticeGenerationServiceImplTest {
     }
 
     @Test
-    void getFileSignedUrlSholdReturnExceptionOnClientKo() {
+    void getFileSignedUrlShouldReturnExceptionOnClientKo() {
         when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any())).thenReturn(
                 Optional.of(PaymentNoticeGenerationRequest.builder().build()));
         when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(
