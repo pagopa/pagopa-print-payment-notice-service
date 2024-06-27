@@ -1,10 +1,10 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "description": "Microservice to expose the APIs for Print Payment Notices",
+    "description": "@project.description@",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "title": "Print Payment Notices - Service - Payment Notice Service (External)",
-    "version": "0.5.4"
+    "title": "@project.name@ - Payment Notice Service (External)",
+    "version": "0.5.5"
   },
   "servers": [
     {
@@ -1424,7 +1424,6 @@
       },
       "Notice": {
         "required": [
-          "code",
           "paymentAmount",
           "subject"
         ],
@@ -1434,7 +1433,7 @@
             "maxLength": 18,
             "minLength": 18,
             "type": "string",
-            "description": "Notice code"
+            "description": "Notice code, mandatory whenever the template contains a general payment"
           },
           "discountedAmount": {
             "maximum": 99999999999,

@@ -41,9 +41,8 @@ public class Notice {
     @Schema(description = "Notice due date", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String dueDate;
 
-    @Schema(description = "Notice code", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
-    @NotEmpty
+    @Schema(description = "Notice code, mandatory whenever the template contains a general payment",
+            requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @Size(min = 18, max = 18)
     private String code;
 

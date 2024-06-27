@@ -72,6 +72,7 @@ public class AsyncService {
             } catch (Exception e) {
                 saveErrorEvent(folderId, noticeGenerationRequestItem);
             }
+
         });
     }
 
@@ -81,10 +82,15 @@ public class AsyncService {
                     PaymentNoticeGenerationRequestError.builder()
                             .errorDescription("Encountered error sending notice on EH")
                             .folderId(folderId)
+                            .errorId(String.format("%s-%s-%s-%s", "pagopa-avviso",
+                                    noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode(),
+                                    noticeGenerationRequestItem.getData().getNotice().getCode(),
+                                    noticeGenerationRequestItem.getTemplateId()))
                             .data(aes256Utils.encrypt(objectMapper
                                     .writeValueAsString(noticeGenerationRequestItem)))
                             .createdAt(Instant.now())
                             .numberOfAttempts(0)
+                            .compressionError(false)
                             .build()
             );
             paymentGenerationRequestRepository.findAndIncrementNumberOfElementsFailedById(folderId);

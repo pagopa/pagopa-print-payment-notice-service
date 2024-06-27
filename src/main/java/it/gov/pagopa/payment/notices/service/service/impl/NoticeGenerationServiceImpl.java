@@ -70,6 +70,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
         List<String> errors = paymentGenerationRequestErrorRepository.findErrors(folderId)
                 .stream()
+                .filter(item -> !item.isCompressionError())
                 .map(PaymentNoticeGenerationRequestError::getId)
                 .toList();
 
@@ -105,7 +106,8 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
         String ciTaxCode = noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode();
 
-        if(!userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode,
+        if (!"ADMIN".equals(userId) &&
+                !userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode,
                 noticeGenerationRequestItem.getData().getNotice().getCode())) {
             throw new AppException(AppError.NOT_ALLOWED_ON_CI_CODE);
         }
