@@ -3,7 +3,7 @@ Feature: Single Generation - 3 Installments
   Scenario: FT_11_RateMultiple3_AllFields: Rate multiple 3 - Tutti campi valorizzati
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | "Settore di Test"                      |
       | info               | "Info di Test"                         |
@@ -33,7 +33,7 @@ Feature: Single Generation - 3 Installments
       | Avviso.Rata3.Codice        | "470000008800999073"       |
       | Avviso.Rata3.Importo       | 150000                     |
       | Avviso.Rata3.Data          | "31/12/2026"               |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
@@ -91,7 +91,7 @@ Feature: Single Generation - 3 Installments
   Scenario: FT_12_RateMultiple3_SomeFields: Rate multiple 3 - Solo alcuni campi valorizzati
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | null                                   |
       | info               | "Info di Test"                         |
@@ -121,7 +121,7 @@ Feature: Single Generation - 3 Installments
       | Avviso.Rata3.Codice        | "470000008800999073"       |
       | Avviso.Rata3.Importo       | 150000                     |
       | Avviso.Rata3.Data          | "31/12/2026"               |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |

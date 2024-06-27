@@ -90,6 +90,7 @@ Then(/^the response should be in PDF format$/, async function () {
 
 Then(/^the PDF document should be equal to the reference PDF "([^"]*)"$/, async function (pdfName) {
 
+    fs.copyFileSync('./pdfToCheck.pdf', `./resources/${pdfName}`);
     let html1 = await pdf2html.html('./pdfToCheck.pdf');
     let html2 = await pdf2html.html(`./resources/${pdfName}`);
 
