@@ -62,3 +62,4 @@ Feature: Massive Generation
     And the response should be in JSON format
     And the response should contain the folderId
     And the request is in status COMPLETED after 10000 ms
+    And download url is recoverable with the folderId

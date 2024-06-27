@@ -13,10 +13,22 @@ setDefaultTimeout(40 * 1000);
 
 const app_host = process.env.APP_HOST;
 
-let responseToCheck;
-let folderId;
-let ciTaxCode;
+let responseToCheck = null;
+let folderId = null;
+let ciTaxCode = null;
 let variables = [];
+
+
+// After each Scenario
+After(async function () {
+    // remove folder
+    if (this.folderId != null) {
+        await call('DELETE', app_host + '/folder'+ folderId, ciTaxCode);
+    }
+    this.folderId = null;
+    this.responseToCheck = null;
+    this.ciTaxCode = null;
+});
 
 
 Given(/^the creditor institution in the storage:$/, async function (dataTable) {
@@ -134,11 +146,24 @@ Then(/^the response should contain folderId$/, function () {
     folderId = data.folderId;
 });
 
-When('the request is in status completed after {int} ms', async function (time) {
+Then('the request is in status completed after {int} ms', async function (time) {
     // boundary time spent by azure function to process event
     await sleep(time);
     responseToCheck = await call('GET', app_host + '/folder'+ folderId +'/status', ciTaxCode);
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
+    assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
+    assert.strictEqual(responseToCheck.status, 200);
     assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
     assert.strictEqual(responseToCheck.data.status, 'COMPLETED');
+});
+
+Then('download url is recoverable with the folderId', async function () {
+    // boundary time spent by azure function to process event
+    await sleep(time);
+    responseToCheck = await call('GET', app_host + '/folder'+ folderId +'/url', ciTaxCode);
+    assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
+    assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
+    assert.strictEqual(responseToCheck.status, 200);
+    assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
+    assert(responseToCheck.data.includes(folderId));
 });
