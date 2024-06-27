@@ -87,7 +87,6 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
         try {
 
-
             String folderId = paymentGenerationRequestRepository.save(PaymentNoticeGenerationRequest.builder()
                     .status(PaymentGenerationRequestStatus.INSERTED)
                     .createdAt(Instant.now())

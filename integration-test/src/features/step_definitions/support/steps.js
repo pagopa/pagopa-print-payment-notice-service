@@ -14,6 +14,8 @@ setDefaultTimeout(40 * 1000);
 const app_host = process.env.APP_HOST;
 
 let responseToCheck;
+let folderId;
+let ciTaxCode;
 let variables = [];
 
 
@@ -23,6 +25,9 @@ Given(/^the creditor institution in the storage:$/, async function (dataTable) {
     dataTable.rows().forEach(([key, value]) => {
         if (key !== 'logo') {
             jsonBody[key] = JSON.parse(value);
+            if (key == 'taxCode') {
+                ciTaxCode = JSON.parse(value);
+            }
         } else {
             logoPath = JSON.parse(value);
         }
@@ -48,7 +53,7 @@ Given(/^I have the following variables:$/, function (dataTable) {
 });
 
 When(/^I send a (GET|DELETE) request to "([^"]*)"$/, async function (method, url) {
-    responseToCheck = await call(method, app_host + url);
+    responseToCheck = await call(method, app_host + url, ciTaxCode);
 });
 
 When(/^I send a (POST|PUT) request to "([^"]*)" with body:$/, async function (method, url, jsonBody) {
@@ -58,7 +63,7 @@ When(/^I send a (POST|PUT) request to "([^"]*)" with body:$/, async function (me
         jsonBody = jsonBody.replace(regex, value);
     }
     console.log(jsonBody);
-    responseToCheck = await call(method, app_host + url, jsonBody);
+    responseToCheck = await call(method, app_host + url, jsonBody, ciTaxCode);
 });
 
 Then(/^the response should be in PDF format$/, async function () {
@@ -112,4 +117,28 @@ Then(/^the response list should contain a template "([^"]*)"$/, function (templa
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
     assert(JSON.stringify(responseToCheck.data).includes(`"${templateId}"`));
+});
+
+Then(/^the response should be in JSON format$/, async function () {
+    assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
+    assert.strictEqual(responseToCheck.hasOwnProperty('headers'), true);
+    assert.strictEqual(responseToCheck.headers.hasOwnProperty('content-type'), true);
+    assert.equal(responseToCheck.headers['content-type'], 'application/json');
+});
+
+Then(/^the response should contain folderId$/, function () {
+    assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
+    assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
+    let data = responseToCheck.data;
+    assert.strictEqual(responseToCheck.hasOwnProperty("folderId"));
+    folderId = data.folderId;
+});
+
+When('the request is in status completed after {int} ms', async function (time) {
+    // boundary time spent by azure function to process event
+    await sleep(time);
+    responseToCheck = await call('GET', app_host + '/folder'+ folderId +'/status', ciTaxCode);
+    assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
+    assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
+    assert.strictEqual(responseToCheck.data.status, 'COMPLETED');
 });

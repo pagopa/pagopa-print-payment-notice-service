@@ -25,7 +25,7 @@ public class Notice {
     @Size(max = 90)
     private String subject;
 
-    @Schema(description = "Notice total amount to pay", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Notice total amount to pay", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull
     @Max(value = 99999999999L)
     private Long paymentAmount;
