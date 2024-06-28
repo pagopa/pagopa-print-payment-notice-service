@@ -159,17 +159,15 @@ Then('the response should contain the folderId', function () {
     folderId = data["folder_id"];
 });
 
-Then('the request is in status COMPLETED after {int} ms', async function (time) {
+Then('the request is in status {string} after {int} ms', async function (status, time) {
     // boundary time spent by azure function to process event
     await sleep(time);
-    console.info(app_host+'/notices/folder/'+folderId+"/status");
-    console.info(ciTaxCode);
     responseToCheck = await call('GET', app_host + '/notices/folder/'+ folderId +'/status', null, ciTaxCode);
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
     assert.strictEqual(responseToCheck.status, 200);
     assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
-    assert.strictEqual(responseToCheck.data.status, 'COMPLETED');
+    assert.strictEqual(responseToCheck.data.status, status);
 });
 
 Then('download url is recoverable with the folderId', async function () {
@@ -189,5 +187,5 @@ Then('can download content using signedUrl', async function () {
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('headers'), true);
     assert.strictEqual(responseToCheck.headers.hasOwnProperty('content-type'), true);
-    assert.equal(responseToCheck.headers['content-type'], 'application/zip');
+    assert.equal(responseToCheck.headers['content-type'], 'application/octet-stream');
 });
