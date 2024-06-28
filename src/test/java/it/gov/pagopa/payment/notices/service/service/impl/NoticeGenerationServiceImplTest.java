@@ -260,6 +260,21 @@ class NoticeGenerationServiceImplTest {
     }
 
     @Test
+    void shouldReturnKOWithStatusCodeOnFailedNoticeGenerationRequest() throws IOException {
+        when(noticeGenerationClient.generateNotice(any(), any()))
+                .thenReturn(Response.builder().status(400)
+                        .request(Request.create(
+                                Request.HttpMethod.GET, "test", new HashMap<>(),
+                                "".getBytes(), Charset.defaultCharset(), null))
+                        .body("".getBytes()).build());
+        assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(NoticeGenerationRequestItem
+                        .builder().data(NoticeRequestData.builder().creditorInstitution(
+                                CreditorInstitution.builder().taxCode("userId").build()).build()).build(),
+                null, "userId"));
+        verify(noticeGenerationClient).generateNotice(any(), any());
+    }
+
+    @Test
     void shouldReturnExceptionOnMissingFolderRequest() {
         NoticeGenerationRequestItem generationRequestItem = NoticeGenerationRequestItem.builder().data(
                         NoticeRequestData.builder().creditorInstitution(

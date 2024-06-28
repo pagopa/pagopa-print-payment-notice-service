@@ -23,7 +23,7 @@ public class InstallmentData {
     @NotNull
     private Long amount;
 
-    @Schema(description = "Installment dueDate", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Installment dueDate", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull
     private String dueDate;
 

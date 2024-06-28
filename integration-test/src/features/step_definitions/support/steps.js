@@ -111,5 +111,5 @@ Then(/^the response should contain "([^"]*)"$/, function (templateId) {
 Then(/^the response list should contain a template "([^"]*)"$/, function (templateId) {
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
-    assert(JSON.stringify(responseToCheck.data).includes(templateId));
+    assert(JSON.stringify(responseToCheck.data).includes(`"${templateId}"`));
 });
