@@ -86,6 +86,7 @@ public class NoticesController {
         if(folderId != null && userId == null) {
             throw new AppException(AppError.BAD_REQUEST, "Invalid Data");
         }
+
         File file = noticeGenerationService.generateNotice(noticeGenerationRequestItem, folderId, userId);
         try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             HttpHeaders headers = new HttpHeaders();

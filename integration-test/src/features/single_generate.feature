@@ -3,7 +3,7 @@ Feature: Single Generation
   Scenario: FT_01_RataSingola_AllFields_BadRequest: Rata singola - Tutti campi valorizzati Bad Request
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | "Settore di Test"                      |
       | info               | "Info di Test"                         |
@@ -27,7 +27,7 @@ Feature: Single Generation
       | Avviso.Rata1.Codice        | "470000008800999052"       |
       | Avviso.Rata1.Importo       | 150000                     |
       | Avviso.Rata1.Data          | "31/12/2024"               |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
@@ -73,7 +73,7 @@ Feature: Single Generation
   Scenario: FT_01_RataSingola_AllFields: Rata singola - Tutti campi valorizzati
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | "Settore di Test"                      |
       | info               | "Info di Test"                         |
@@ -94,7 +94,7 @@ Feature: Single Generation
       | Avviso.Importo             | 150000                     |
       | Avviso.Data                | "31/12/2024"               |
       | Avviso.Codice              | "470000008800999051"       |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
@@ -135,7 +135,7 @@ Feature: Single Generation
   Scenario: FT_02_RataSingola_SomeFields: Rata singola - Solo alcuni campi valorizzati
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | null                                   |
       | info               | "Info di Test"                         |
@@ -156,7 +156,7 @@ Feature: Single Generation
       | Avviso.Importo             | 150000                     |
       | Avviso.Data                | "31/12/2024"               |
       | Avviso.Codice              | "470000008800999051"       |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
@@ -198,7 +198,7 @@ Feature: Single Generation
   Scenario: FT_05_RataSingola_AllFields_NoDueDate: Rata singola -Tutti campi valorizzati - avviso senza data scadenza
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | "Settore di Test"                      |
       | info               | "Info di Test"                         |
@@ -220,7 +220,7 @@ Feature: Single Generation
       | Avviso.Importo             | 150000                     |
       | Avviso.Data                | null                       |
       | Avviso.Codice              | "470000008800999051"       |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
@@ -262,7 +262,7 @@ Feature: Single Generation
   Scenario: FT_06_RataSingola_SomeFields_NoDueDate: Rata singola -Solo alcuni campi valorizzati - avviso senza data scadenza
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | null                                   |
       | info               | "Info di Test"                         |
@@ -283,7 +283,7 @@ Feature: Single Generation
       | Avviso.Importo             | 150000                     |
       | Avviso.Data                | null                       |
       | Avviso.Codice              | "470000008800999051"       |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |

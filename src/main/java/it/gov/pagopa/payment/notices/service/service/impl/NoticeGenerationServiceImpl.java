@@ -1,5 +1,6 @@
 package it.gov.pagopa.payment.notices.service.service.impl;
 
+import feign.FeignException;
 import feign.Response;
 import it.gov.pagopa.payment.notices.service.client.NoticeGenerationClient;
 import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationRequest;
@@ -85,24 +86,33 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     @Override
     @Transactional
     public String generateMassive(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId) {
-        String folderId = paymentGenerationRequestRepository.save(PaymentNoticeGenerationRequest.builder()
-                .status(PaymentGenerationRequestStatus.INSERTED)
-                .createdAt(Instant.now())
-                .items(new ArrayList<>())
-                .userId(userId)
-                .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
-                .numberOfElementsFailed(0)
-                .requestDate(Instant.now())
-                .build()).getId();
 
-        asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
+        try {
 
-        return folderId;
+            String folderId = paymentGenerationRequestRepository.save(PaymentNoticeGenerationRequest.builder()
+                    .status(PaymentGenerationRequestStatus.INSERTED)
+                    .createdAt(Instant.now())
+                    .items(new ArrayList<>())
+                    .userId(userId)
+                    .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
+                    .numberOfElementsFailed(0)
+                    .requestDate(Instant.now())
+                    .build()).getId();
+
+            asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
+
+            return folderId;
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new AppException(AppError.ERROR_ON_MASSIVE_GENERATION_REQUEST, e);
+        }
 
     }
 
     @Override
-    public File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId) throws IOException {
+    public File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId) {
+        try {
 
         String ciTaxCode = noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode();
 
@@ -121,17 +131,30 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                 .normalize()
                 .toAbsolutePath();
 
-        try (Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem)) {
-            if(generationResponse.status() != HttpStatus.OK.value()) {
-                log.error("Feign Client Response {}", generationResponse);
-                throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR);
-            }
+            try (Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem)) {
+                if(generationResponse.status() != HttpStatus.OK.value()) {
+                    log.error("Feign Client Response {}", generationResponse);
 
-            try (InputStream inputStream = generationResponse.body().asInputStream()) {
-                File targetFile = File.createTempFile("tempFile", ".pdf", tempDirectory.toFile());
-                FileUtils.copyInputStreamToFile(inputStream, targetFile);
-                return targetFile;
+                    if(generationResponse.status() != HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+                        throw new AppException(HttpStatus.valueOf(generationResponse.status()),
+                                "Error on generation request",
+                                new String(generationResponse.body().asInputStream().readAllBytes()));
+                    }
+
+                    throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR);
+                }
+
+                try (InputStream inputStream = generationResponse.body().asInputStream()) {
+                    File targetFile = File.createTempFile("tempFile", ".pdf", tempDirectory.toFile());
+                    FileUtils.copyInputStreamToFile(inputStream, targetFile);
+                    return targetFile;
+                }
             }
+        } catch (AppException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new AppException(AppError.ERROR_ON_GENERATION_REQUEST, e);
         }
 
     }

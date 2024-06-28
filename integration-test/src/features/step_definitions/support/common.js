@@ -7,24 +7,39 @@ if (process.env.CANARY) {
     axios.defaults.headers.common['X-Canary'] = 'canary' // for all requests
 }
 
-function get(url) {
+function get(url, userId) {
 
-    return axios.get(url)
+    let config = {
+        headers: {
+            'X-User-Id': userId,
+        },
+   }
+
+    return axios.get(url, config)
         .then(res => {
+            console.info("STATUS");
+            console.info(res);
             return res;
         })
         .catch(error => {
+            console.info("ERROR");
+            console.info(error.response);
             return error.response;
         });
 }
 
-function post(url, body) {
+function post(url, body, userId, stream) {
     let config = {
         headers: {
             'Content-Type': 'application/json',
+            'X-User-Id': userId,
         },
-        responseType: 'stream'
     };
+
+    if (stream) {
+        config.responseType = 'stream';
+    }
+
     return axios.post(url, body, config)
         .then(res => {
             return res;
@@ -34,8 +49,16 @@ function post(url, body) {
         });
 }
 
-function put(url, body) {
-    return axios.put(url, body)
+
+function put(url, body, userId) {
+
+    let config = {
+        headers: {
+            'X-User-Id': userId,
+        },
+   }
+
+    return axios.put(url, body, config)
         .then(res => {
             return res;
         })
@@ -44,8 +67,15 @@ function put(url, body) {
         });
 }
 
-function del(url) {
-    return axios.delete(url)
+function del(url, userId) {
+
+    let config = {
+        headers: {
+            'X-User-Id': userId,
+        },
+   }
+
+    return axios.delete(url, config)
         .then(res => {
             return res;
         })
@@ -54,18 +84,18 @@ function del(url) {
         });
 }
 
-function call(method, url, body) {
+function call(method, url, body, userId = "ADMIN", stream = false) {
     if (method === 'GET') {
-        return get(url)
+        return get(url, userId)
     }
     if (method === 'POST') {
-        return post(url, body)
+        return post(url, body, userId, stream)
     }
     if (method === 'PUT') {
-        return put(url, body)
+        return put(url, body, userId)
     }
     if (method === 'DELETE') {
-        return del(url)
+        return del(url, userId)
     }
 
 }
@@ -93,5 +123,10 @@ function formData(url, data) {
         });
 }
 
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-module.exports = {get, post, put, del, call, formData}
+
+
+module.exports = {get, post, put, del, call, formData, sleep}
