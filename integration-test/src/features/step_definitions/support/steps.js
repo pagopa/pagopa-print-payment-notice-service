@@ -1,6 +1,6 @@
-const {Given, When, Then, setDefaultTimeout} = require('@cucumber/cucumber')
+const {Given, When, Then, After, setDefaultTimeout} = require('@cucumber/cucumber')
 const assert = require("assert");
-const {call, post, formData} = require("./common");
+const {call, post, formData, sleep} = require("./common");
 const FormData = require("form-data");
 const fs = require("fs");
 const util = require('util');
@@ -16,6 +16,7 @@ const app_host = process.env.APP_HOST;
 let responseToCheck = null;
 let folderId = null;
 let ciTaxCode = null;
+let signedUrl = null;
 let variables = [];
 
 
@@ -28,6 +29,7 @@ After(async function () {
     this.folderId = null;
     this.responseToCheck = null;
     this.ciTaxCode = null;
+    this.signedUrl = null;
 });
 
 
@@ -75,7 +77,17 @@ When(/^I send a (POST|PUT) request to "([^"]*)" with body:$/, async function (me
         jsonBody = jsonBody.replace(regex, value);
     }
     console.log(jsonBody);
-    responseToCheck = await call(method, app_host + url, jsonBody, ciTaxCode);
+    responseToCheck = await call(method, app_host + url, jsonBody, ciTaxCode, true);
+});
+
+When(/^I send a (POST|PUT) request to "([^"]*)" without stream, with body:$/, async function (method, url, jsonBody) {
+    // Replace variables in JSON body
+    for (const [key, value] of Object.entries(variables)) {
+        const regex = new RegExp(`<${key}>`, 'g');
+        jsonBody = jsonBody.replace(regex, value);
+    }
+    console.log(jsonBody);
+    responseToCheck = await call(method, app_host + url, jsonBody, ciTaxCode, false);
 });
 
 Then(/^the response should be in PDF format$/, async function () {
@@ -139,18 +151,20 @@ Then(/^the response should be in JSON format$/, async function () {
     assert.equal(responseToCheck.headers['content-type'], 'application/json');
 });
 
-Then(/^the response should contain folderId$/, function () {
+Then('the response should contain the folderId', function () {
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
     let data = responseToCheck.data;
-    assert.strictEqual(responseToCheck.hasOwnProperty("folderId"));
-    folderId = data.folderId;
+    assert.strictEqual(data.hasOwnProperty("folder_id"), true);
+    folderId = data["folder_id"];
 });
 
 Then('the request is in status COMPLETED after {int} ms', async function (time) {
     // boundary time spent by azure function to process event
     await sleep(time);
-    responseToCheck = await call('GET', app_host + '/folder'+ folderId +'/status', ciTaxCode);
+    console.info(app_host+'/notices/folder/'+folderId+"/status");
+    console.info(ciTaxCode);
+    responseToCheck = await call('GET', app_host + '/notices/folder/'+ folderId +'/status', null, ciTaxCode);
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
     assert.strictEqual(responseToCheck.status, 200);
@@ -160,11 +174,20 @@ Then('the request is in status COMPLETED after {int} ms', async function (time) 
 
 Then('download url is recoverable with the folderId', async function () {
     // boundary time spent by azure function to process event
-    await sleep(time);
-    responseToCheck = await call('GET', app_host + '/folder'+ folderId +'/url', ciTaxCode);
+    responseToCheck = await call('GET', app_host + '/notices/folder/'+ folderId +'/url', null, ciTaxCode);
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
     assert.strictEqual(responseToCheck.status, 200);
     assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
-    assert(responseToCheck.data.includes(folderId));
+    assert.strictEqual(responseToCheck.data.hasOwnProperty('signedUrl'), true);
+    signedUrl = responseToCheck.data.signedUrl;
+});
+
+Then('can download content using signedUrl', async function () {
+    // boundary time spent by azure function to process event
+    responseToCheck = await call('GET', signedUrl, null, ciTaxCode);
+    assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
+    assert.strictEqual(responseToCheck.hasOwnProperty('headers'), true);
+    assert.strictEqual(responseToCheck.headers.hasOwnProperty('content-type'), true);
+    assert.equal(responseToCheck.headers['content-type'], 'application/zip');
 });
