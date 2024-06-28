@@ -23,15 +23,6 @@ Feature: Massive Generation
       | Avviso.Importo             | 450000                     |
       | Avviso.Data                | "31/12/2024"               |
       | Avviso.Codice              | "470000008800999050"       |
-      | Avviso.Rata1.Codice        | "470000008800999051"       |
-      | Avviso.Rata1.Importo       | 150000                     |
-      | Avviso.Rata1.Data          | "31/12/2024"               |
-      | Avviso.Rata2.Codice        | "470000008800999062"       |
-      | Avviso.Rata2.Importo       | 150000                     |
-      | Avviso.Rata2.Data          | "31/12/2025"               |
-      | Avviso.Rata3.Codice        | "470000008800999073"       |
-      | Avviso.Rata3.Importo       | 150000                     |
-      | Avviso.Rata3.Data          | "31/12/2026"               |
       | Ente.CF                    | "80034390585"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
@@ -100,18 +91,10 @@ Feature: Massive Generation
       | Avviso.Importo             | 450000                     |
       | Avviso.Data                | "31/12/2024"               |
       | Avviso.Codice              | "470000008800999050"       |
-      | Avviso.Rata1.Codice        | "470000008800999051"       |
-      | Avviso.Rata1.Importo       | 150000                     |
-      | Avviso.Rata1.Data          | "31/12/2024"               |
-      | Avviso.Rata2.Codice        | "470000008800999062"       |
-      | Avviso.Rata2.Importo       | 150000                     |
-      | Avviso.Rata2.Data          | "31/12/2025"               |
-      | Avviso.Rata3.Codice        | "470000008800999073"       |
-      | Avviso.Rata3.Importo       | 150000                     |
-      | Avviso.Rata3.Data          | "31/12/2026"               |
-      | Avviso.Rata4.Codice        | "470000008800999074"       |
-      | Avviso.Rata4.Importo       | 150000                     |
-      | Avviso.Rata4.Data          | "31/12/2026"               |
+      | Avviso2.Codice             | "470000008800999051"       |
+      | Avviso3.Codice             | "470000008800999062"       |
+      | Avviso4.Codice             | "470000008800999073"       |
+      | Avviso5.Codice             | "470000008800999074"       |
       | Ente.CF                    | "80034390585"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
@@ -154,7 +137,7 @@ Feature: Massive Generation
                 "subject": <Avviso.Oggetto>,
                 "paymentAmount": <Avviso.Importo>,
                 "dueDate": <Avviso.Data>,
-                "code": <Avviso.Rata1.Codice>
+                "code": <Avviso2.Codice>
               },
               "creditorInstitution": {
                 "taxCode": <Ente.CF>
@@ -177,7 +160,7 @@ Feature: Massive Generation
                 "subject": <Avviso.Oggetto>,
                 "paymentAmount": <Avviso.Importo>,
                 "dueDate": <Avviso.Data>,
-                "code": <Avviso.Rata2.Codice>
+                "code": <Avviso3.Codice>
               },
               "creditorInstitution": {
                 "taxCode": <Ente.CF>
@@ -200,7 +183,7 @@ Feature: Massive Generation
                 "subject": <Avviso.Oggetto>,
                 "paymentAmount": <Avviso.Importo>,
                 "dueDate": <Avviso.Data>,
-                "code": <Avviso.Rata3.Codice>
+                "code": <Avviso4.Codice>
               },
               "creditorInstitution": {
                 "taxCode": <Ente.CF>
@@ -223,7 +206,7 @@ Feature: Massive Generation
                 "subject": <Avviso.Oggetto>,
                 "paymentAmount": <Avviso.Importo>,
                 "dueDate": <Avviso.Data>,
-                "code": <Avviso.Rata4.Codice>
+                "code": <Avviso5.Codice>
               },
               "creditorInstitution": {
                 "taxCode": <Ente.CF>
