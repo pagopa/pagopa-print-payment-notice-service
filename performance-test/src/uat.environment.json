@@ -7,8 +7,8 @@
       "blobStorageNoticeContainerID": "notices",
       "noticesDb": "noticesMongoDb",
       "noticesCollection": "payment_notice_generation_request",
-      "noticeServiceUri": "https://api.uat.platform.pagopa.it/print-payment-notice-service/v1",
-      "ciTaxCode": "000000000000"
+      "noticeServiceUri": "https://api.uat.platform.pagopa.it/print-payment-notice-service/external/v1",
+      "ciTaxCode": "99999000013"
     }
   ]
 }

@@ -17,6 +17,7 @@ parameters:
       - "spike"
       - "stress"
       - "constant"
+      - "smoke"
     default: "constant"
   - name: "SCRIPT"
     displayName: "Script name"
@@ -30,7 +31,7 @@ parameters:
     displayName: "DB name"
     type: string
     values:
-      - pagopa_print-payment-notice-servicek6
+      - printnoticek6
   - name: "TEMPLATE_ID"
     displayName: "Template to use"
     type: string
@@ -54,14 +55,14 @@ variables:
     API_SUBSCRIPTION_KEY: "$(DEV_API_SUBSCRIPTION_KEY)"
     blobInstitutionsConnectionString: "$(DEV_BLOB_INSTITUTIONS_CONNECTION_STRING)"
     blobNoticesConnectionString: "$(DEV_BLOB_NOTICES_CONNECTION_STRING)"
-    mongoNoticesConnectionString: "${DEV_MONGO_NOTICES_CONNECTION_STRING)"
+    mongoNoticesConnectionString: "$(DEV_MONGO_NOTICES_CONNECTION_STRING)"
 
   ${{ if eq(parameters['ENVIRONMENT'], 'uat') }}:
     poolImage: 'pagopa-uat-loadtest-linux'
     API_SUBSCRIPTION_KEY: "$(UAT_API_SUBSCRIPTION_KEY)"
     blobInstitutionsConnectionString: "$(UAT_BLOB_INSTITUTIONS_CONNECTION_STRING)"
     blobNoticesConnectionString: "$(UAT_BLOB_NOTICES_CONNECTION_STRING)"
-    mongoNoticesConnectionString: "${UAT_MONGO_NOTICES_CONNECTION_STRING)"
+    mongoNoticesConnectionString: "$(UAT_MONGO_NOTICES_CONNECTION_STRING)"
 
 pool:
   name: $(poolImage)
@@ -82,12 +83,14 @@ steps:
       NOTICES_MONGO_CONN_STRING: ${{ variables.mongoNoticesConnectionString }}
       NUMBER_OF_MASSIVE_ELEMENTS: ${{ parameters.NUMBER_OF_MASSIVE_ELEMENTS }}
       ENVIRONMENT_STRING: ${{ parameters.ENVIRONMENT }}
+
   - script: |
       cd ./performance-test
       sh ./run_performance_test.sh ${{ parameters.ENVIRONMENT }} ${{ parameters.TEST_TYPE }} ${{ parameters.SCRIPT }} ${{ parameters.DB_NAME}} $OCP_APIM_SUBSCRIPTION_KEY ${{ parameters.TEMPLATE_ID }}
     displayName: Run k6 ${{ parameters.SCRIPT }} on ${{ parameters.ENVIRONMENT }}
     env:
       OCP_APIM_SUBSCRIPTION_KEY: ${{ variables.API_SUBSCRIPTION_KEY }}
+
   - script: |
       cd ./performance-test/src
       docker build -f ./DockerfilePost -t exec-node .
