@@ -1,6 +1,7 @@
 package it.gov.pagopa.payment.notices.service.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import feign.Request;
 import feign.Response;
 import it.gov.pagopa.payment.notices.service.client.NoticeGenerationClient;
@@ -23,6 +24,7 @@ import it.gov.pagopa.payment.notices.service.service.BrokerService;
 import it.gov.pagopa.payment.notices.service.service.async.AsyncService;
 import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
 import it.gov.pagopa.payment.notices.service.util.Aes256Utils;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -268,6 +270,27 @@ class NoticeGenerationServiceImplTest {
         verify(paymentGenerationRequestErrorRepository).save(any());
     }
 
+    @Test
+    void generateMassiveRequestShouldThrowOnSendFailureForIdempotencyRequest() {
+        NoticeGenerationRequestItem noticeGenerationRequestItem = NoticeGenerationRequestItem.builder()
+                .templateId("testTemplate")
+                .data(NoticeRequestData.builder()
+                        .creditorInstitution(CreditorInstitution.builder().taxCode("testUserId").build())
+                        .notice(
+                                Notice.builder().code("testCode")
+                                        .build()
+                        ).build()
+                ).build();
+        NoticeGenerationMassiveRequest noticeGenerationMassiveRequest =
+                NoticeGenerationMassiveRequest.builder().notices(
+                        Collections.singletonList(noticeGenerationRequestItem)).build();
+        when(paymentGenerationRequestRepository.save(any())).thenReturn(
+                PaymentNoticeGenerationRequest.builder().id("testFolderId").build());
+        when(paymentGenerationRequestRepository.findByIdempotencyKeyAndUserId(any(),any())).thenThrow( new AppException(AppError.INTERNAL_SERVER_ERROR));
+        when(noticeGenerationRequestProducer.noticeGeneration(any())).thenReturn(false);
+        Assert.assertThrows(AppException.class, () -> noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "wrongUserId", "test"));
+    }
+
 
     @Test
     void shouldReturnDataOnValidNoticeGenerationRequest() throws IOException {
@@ -295,6 +318,17 @@ class NoticeGenerationServiceImplTest {
                                 Request.HttpMethod.GET, "test", new HashMap<>(),
                                 "".getBytes(), Charset.defaultCharset(), null))
                         .body("".getBytes()).build());
+        assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(NoticeGenerationRequestItem
+                        .builder().data(NoticeRequestData.builder().creditorInstitution(
+                                CreditorInstitution.builder().taxCode("userId").build()).build()).build(),
+                null, "userId"));
+        verify(noticeGenerationClient).generateNotice(any(), any());
+    }
+
+    @Test
+    void shouldReturnKOWithStatusCodeOnExceptionThrownNoticeGenerationRequest() {
+        when(noticeGenerationClient.generateNotice(any(), any()))
+                .thenThrow(FeignException.class);
         assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(NoticeGenerationRequestItem
                         .builder().data(NoticeRequestData.builder().creditorInstitution(
                                 CreditorInstitution.builder().taxCode("userId").build()).build()).build(),
@@ -363,6 +397,18 @@ class NoticeGenerationServiceImplTest {
                 Optional.of(PaymentNoticeGenerationRequest.builder().build()));
         when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(
                 new AppException(AppError.NOTICE_CLIENT_UNAVAILABLE));
+        assertThrows(AppException.class, () -> noticeGenerationService
+                .getFileSignedUrl("test", "test", "test"));
+        verify(noticeStorageClient).getFileSignedUrl(any(), any());
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
+    }
+
+    @Test
+    void getFileSignedUrlShouldReturnExceptionOnClientException() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any())).thenReturn(
+                Optional.of(PaymentNoticeGenerationRequest.builder().build()));
+        when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(
+                FeignException.class);
         assertThrows(AppException.class, () -> noticeGenerationService
                 .getFileSignedUrl("test", "test", "test"));
         verify(noticeStorageClient).getFileSignedUrl(any(), any());
