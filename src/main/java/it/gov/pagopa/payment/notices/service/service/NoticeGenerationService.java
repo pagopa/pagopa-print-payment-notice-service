@@ -35,7 +35,7 @@ public interface NoticeGenerationService {
      *                                       the folder is executed
      * @return folderId produced when inserting the request
      */
-    String generateMassive(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId);
+    String generateMassive(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId, String idempotencyKey);
 
     /**
      * Kickstarts and returns the notice using the services provided by the generator API,

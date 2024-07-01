@@ -14,4 +14,5 @@ public interface PaymentGenerationRequestRepository extends MongoRepository<Paym
     @Update("{ '$inc' : { 'numberOfElementsFailed' : 1 } }")
     long findAndIncrementNumberOfElementsFailedById(String folderId);
 
+    Optional<PaymentNoticeGenerationRequest> findByIdempotencyKeyAndUserId(String idempotencyKey, String userId);
 }

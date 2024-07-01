@@ -9,6 +9,7 @@ import it.gov.pagopa.payment.notices.service.model.notice.Debtor;
 import it.gov.pagopa.payment.notices.service.model.notice.Notice;
 import it.gov.pagopa.payment.notices.service.model.notice.NoticeRequestData;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
+import it.gov.pagopa.payment.notices.service.util.Constants;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -93,7 +94,7 @@ class GenerationRequestControllerTest {
                 });
         String url = "/notices/folder/folderTest/status";
         mvc.perform(get(url)
-                        .header("X-User-Id", "userTest")
+                        .header(Constants.X_USER_ID, "userTest")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json"));
@@ -108,7 +109,7 @@ class GenerationRequestControllerTest {
                 });
         String url = "/notices/folder/folderTest/status";
         mvc.perform(get(url)
-                        .header("X-User-Id", "userTest")
+                        .header(Constants.X_USER_ID, "userTest")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is5xxServerError())
                 .andExpect(content().contentType("application/json"));
@@ -117,7 +118,7 @@ class GenerationRequestControllerTest {
 
     @Test
     void generateMassiveShouldReturnFolderIdOn200() throws Exception {
-        when(noticeGenerationService.generateMassive(any(), any()))
+        when(noticeGenerationService.generateMassive(any(), any(), any()))
                 .thenReturn("folderTests");
         String url = "/notices/generate-massive";
         String bodyStr = mvc.perform(post(url)
@@ -127,7 +128,8 @@ class GenerationRequestControllerTest {
                                                 NoticeGenerationRequestItem.builder().build()
                                         )).build()
                         ))
-                        .header("X-User-Id", "userTest")
+                        .header(Constants.X_USER_ID, "userTest")
+                        .header(Constants.IDEMPOTENCY_KEY, "key")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType("application/json"))
@@ -137,7 +139,7 @@ class GenerationRequestControllerTest {
                 bodyStr, NoticeGenerationMassiveResource.class);
         Assertions.assertNotNull(resource.getFolderId());
         Assertions.assertEquals("folderTests", resource.getFolderId());
-        verify(noticeGenerationService).generateMassive(any(), any());
+        verify(noticeGenerationService).generateMassive(any(), any(), any());
     }
 
     @Test
@@ -166,7 +168,7 @@ class GenerationRequestControllerTest {
 
     @Test
     void generateMassiveShouldReturn400OnMissingUserId() throws Exception {
-        when(noticeGenerationService.generateMassive(any(), any()))
+        when(noticeGenerationService.generateMassive(any(), any(), any()))
                 .thenReturn("folderTests");
         String url = "/notices/generate-massive";
         mvc.perform(post(url)
