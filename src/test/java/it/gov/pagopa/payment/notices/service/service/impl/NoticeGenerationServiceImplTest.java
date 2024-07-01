@@ -405,6 +405,7 @@ class NoticeGenerationServiceImplTest {
 
     @Test
     void getFileSignedUrlShouldReturnExceptionOnClientException() {
+
         when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any())).thenReturn(
                 Optional.of(PaymentNoticeGenerationRequest.builder().build()));
         when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(
