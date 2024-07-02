@@ -59,7 +59,7 @@ public enum AppError {
             "Exception has been thrown while managing the logo file passed as input," +
                     " could not create either the working directory or the file"),
 
-     INSTITUTION_CLIENT_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE,
+    INSTITUTION_CLIENT_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE,
             "Institution Storage Not Available",
             "Institution Storage client temporarily not available"),
 
@@ -72,9 +72,7 @@ public enum AppError {
     INSTITUTION_RETRIEVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Error while retrieving Institution data",
             "Unexpected error occurred while retrieving institution data"),
 
-    NOT_ALLOWED_ON_CI_CODE(HttpStatus.FORBIDDEN, "Not allowed for notice ci tax code",
-        "The request has been executed for a creditor institution having a different tax code to the one onboarded, and" +
-                "without having allowance to manage notices for said ci"),
+    NOT_ALLOWED_ON_CI_CODE(HttpStatus.FORBIDDEN, "Not allowed for notice ci tax code", "The request has been executed for a creditor institution having a different tax code to the one onboarded, and without having allowance to manage notices for said ci"),
 
     ERROR_ON_PT_ALLOWANCE_CHECK(HttpStatus.INTERNAL_SERVER_ERROR,
             "Error on pt allowance check", "Error occured during allowance check for PT"),

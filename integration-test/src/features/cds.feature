@@ -4,7 +4,7 @@ Feature: Single Generation CDS
   Scenario Outline: <scenario_id>
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | "Settore di Test"                      |
       | info               | "<ec.info>"                            |
@@ -23,10 +23,10 @@ Feature: Single Generation CDS
       | template_id                | "TemplateCdsInfraction"    |
       | Avviso.Oggetto             | "Avviso Pagamento di TEST" |
       | Avviso.ImportoRidotto      | 150000                     |
-      | Avviso.CodiceRidotto       | "47000000880099905"        |
+      | Avviso.CodiceRidotto       | "470000008800999051"       |
       | Avviso.ImportoScontato     | 170000                     |
-      | Avviso.CodiceScontato      | "47000000880099906"        |
-      | Ente.CF                    | "80034390585"              |
+      | Avviso.CodiceScontato      | "470000008800999052"       |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
@@ -44,14 +44,15 @@ Feature: Single Generation CDS
             "reducedAmount": <Avviso.ImportoRidotto>,
             "discountedAmount": <Avviso.ImportoScontato>,
             "installments": [
-            {
+              {
                   "code":  <Avviso.CodiceRidotto>,
                   "amount": <Avviso.ImportoRidotto>
-            },
-            {
+              },
+              {
                   "code": <Avviso.CodiceScontato>,
                   "amount": <Avviso.ImportoScontato>
-            }
+              }
+            ]
           },
           "creditorInstitution": {
             "taxCode": <Ente.CF>
