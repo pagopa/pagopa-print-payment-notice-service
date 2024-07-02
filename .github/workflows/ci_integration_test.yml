@@ -20,6 +20,8 @@ on:
         required: false
         type: boolean
         default: true
+
+
   workflow_dispatch:
     inputs:
       environment:
@@ -59,6 +61,8 @@ jobs:
       - name: setup
         id: setup
         run: |
+          echo "RUN_ENV=${{ (github.event.inputs == null && 'dev') || inputs.environment }}" >> $GITHUB_ENV 
+          
           echo "CLIENT_ID=${{secrets.DEV_CLIENT_ID}}" >> $GITHUB_ENV 
           echo "TENANT_ID=${{secrets.DEV_TENANT_ID}}" >> $GITHUB_ENV 
           echo "SUBSCRIPTION_ID=${{secrets.DEV_SUBSCRIPTION_ID}}" >> $GITHUB_ENV 
@@ -86,7 +90,7 @@ jobs:
         run: |
           cd ./docker
           chmod +x ./run_docker.sh
-          ./run_docker.sh ${{ inputs.environment }}
+          ./run_docker.sh ${{ env.RUN_ENV }}
 
       - name: Run Integration Tests
         shell: bash
@@ -97,7 +101,7 @@ jobs:
 
           cd ./integration-test
           chmod +x ./run_integration_test.sh
-          ./run_integration_test.sh ${{( github.event.inputs == null && 'dev') || inputs.environment }}
+          ./run_integration_test.sh ${{ env.RUN_ENV }}
 
   notify:
     needs: [ integration_test ]
