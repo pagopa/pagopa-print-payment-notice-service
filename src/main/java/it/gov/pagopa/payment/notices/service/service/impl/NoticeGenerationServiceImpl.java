@@ -1,5 +1,6 @@
 package it.gov.pagopa.payment.notices.service.service.impl;
 
+import feign.FeignException;
 import feign.Response;
 import it.gov.pagopa.payment.notices.service.client.NoticeGenerationClient;
 import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationRequest;
