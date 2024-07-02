@@ -24,7 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -85,53 +84,75 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     @Override
     @Transactional
     public String generateMassive(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId) {
-        String folderId = paymentGenerationRequestRepository.save(PaymentNoticeGenerationRequest.builder()
-                .status(PaymentGenerationRequestStatus.INSERTED)
-                .createdAt(Instant.now())
-                .items(new ArrayList<>())
-                .userId(userId)
-                .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
-                .numberOfElementsFailed(0)
-                .requestDate(Instant.now())
-                .build()).getId();
 
-        asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
+        try {
 
-        return folderId;
+            String folderId = paymentGenerationRequestRepository.save(PaymentNoticeGenerationRequest.builder()
+                    .status(PaymentGenerationRequestStatus.INSERTED)
+                    .createdAt(Instant.now())
+                    .items(new ArrayList<>())
+                    .userId(userId)
+                    .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
+                    .numberOfElementsFailed(0)
+                    .requestDate(Instant.now())
+                    .build()).getId();
+
+            asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
+
+            return folderId;
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new AppException(AppError.ERROR_ON_MASSIVE_GENERATION_REQUEST, e);
+        }
 
     }
 
     @Override
-    public File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId) throws IOException {
+    public File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId) {
+        try {
 
-        String ciTaxCode = noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode();
+            String ciTaxCode = noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode();
 
-        if (!"ADMIN".equals(userId) &&
-                !userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode,
-                noticeGenerationRequestItem.getData().getNotice().getCode())) {
-            throw new AppException(AppError.NOT_ALLOWED_ON_CI_CODE);
-        }
-
-        if(folderId != null) {
-            findFolderIfExists(folderId, userId);
-        }
-
-        File workingDirectory = createWorkingDirectory();
-        Path tempDirectory = Files.createTempDirectory(workingDirectory.toPath(), "notice-generation-service")
-                .normalize()
-                .toAbsolutePath();
-
-        try (Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem)) {
-            if(generationResponse.status() != HttpStatus.OK.value()) {
-                log.error("Feign Client Response {}", generationResponse);
-                throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR);
+            if(userId != null && !userId.toUpperCase().startsWith("ADMIN") &&
+                    !userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode,
+                    noticeGenerationRequestItem.getData().getNotice().getCode())) {
+                throw new AppException(AppError.NOT_ALLOWED_ON_CI_CODE);
             }
 
-            try (InputStream inputStream = generationResponse.body().asInputStream()) {
-                File targetFile = File.createTempFile("tempFile", ".pdf", tempDirectory.toFile());
-                FileUtils.copyInputStreamToFile(inputStream, targetFile);
-                return targetFile;
+            if(folderId != null) {
+                findFolderIfExists(folderId, userId);
             }
+
+            File workingDirectory = createWorkingDirectory();
+            Path tempDirectory = Files.createTempDirectory(workingDirectory.toPath(), "notice-generation-service")
+                    .normalize()
+                    .toAbsolutePath();
+
+            try (Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem)) {
+                if(generationResponse.status() != HttpStatus.OK.value()) {
+                    log.error("Feign Client Response {}", generationResponse);
+
+                    if(generationResponse.status() != HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+                        throw new AppException(HttpStatus.valueOf(generationResponse.status()),
+                                "Error on generation request",
+                                new String(generationResponse.body().asInputStream().readAllBytes()));
+                    }
+
+                    throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR);
+                }
+
+                try (InputStream inputStream = generationResponse.body().asInputStream()) {
+                    File targetFile = File.createTempFile("tempFile", ".pdf", tempDirectory.toFile());
+                    FileUtils.copyInputStreamToFile(inputStream, targetFile);
+                    return targetFile;
+                }
+            }
+        } catch (AppException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new AppException(AppError.ERROR_ON_GENERATION_REQUEST, e);
         }
 
     }
