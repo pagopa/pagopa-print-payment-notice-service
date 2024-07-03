@@ -218,6 +218,26 @@ class NoticeGenerationServiceImplTest {
     }
 
     @Test
+    void generateMassiveRequestShouldReturnExceptionOnRequestInsertKO() {
+        NoticeGenerationRequestItem noticeGenerationRequestItem = NoticeGenerationRequestItem.builder()
+                .templateId("testTemplate")
+                .data(NoticeRequestData.builder()
+                        .creditorInstitution(CreditorInstitution.builder().taxCode("testUserId").build())
+                        .notice(
+                                Notice.builder().code("testCode")
+                                        .build()
+                        ).build()
+                ).build();
+        NoticeGenerationMassiveRequest noticeGenerationMassiveRequest =
+                NoticeGenerationMassiveRequest.builder().notices(
+                        Collections.singletonList(noticeGenerationRequestItem)).build();
+        when(paymentGenerationRequestRepository.save(any())).thenThrow(new RuntimeException("test"));
+        when(noticeGenerationRequestProducer.noticeGeneration(any())).thenReturn(false);
+        assertThrows(AppException.class, () -> noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "testUserId"));
+        verify(paymentGenerationRequestRepository).save(any());
+    }
+
+    @Test
     void generateMassiveRequestShouldSaveErrorEventOnSendFailureForAllowance() {
         NoticeGenerationRequestItem noticeGenerationRequestItem = NoticeGenerationRequestItem.builder()
                 .templateId("testTemplate")
@@ -257,6 +277,21 @@ class NoticeGenerationServiceImplTest {
         assertNotNull(returnFile);
         verify(noticeGenerationClient).generateNotice(any(), any());
         verifyNoInteractions(paymentGenerationRequestRepository);
+    }
+
+    @Test
+    void shouldReturnKOWithStatusCodeOnFailedNoticeGenerationRequest() throws IOException {
+        when(noticeGenerationClient.generateNotice(any(), any()))
+                .thenReturn(Response.builder().status(400)
+                        .request(Request.create(
+                                Request.HttpMethod.GET, "test", new HashMap<>(),
+                                "".getBytes(), Charset.defaultCharset(), null))
+                        .body("".getBytes()).build());
+        assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(NoticeGenerationRequestItem
+                        .builder().data(NoticeRequestData.builder().creditorInstitution(
+                                CreditorInstitution.builder().taxCode("userId").build()).build()).build(),
+                null, "userId"));
+        verify(noticeGenerationClient).generateNotice(any(), any());
     }
 
     @Test
