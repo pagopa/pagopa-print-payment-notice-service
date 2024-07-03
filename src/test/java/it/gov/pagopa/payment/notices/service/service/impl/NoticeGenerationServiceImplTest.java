@@ -259,7 +259,8 @@ class NoticeGenerationServiceImplTest {
                         Collections.singletonList(noticeGenerationRequestItem)).build();
         when(paymentGenerationRequestRepository.save(any())).thenThrow(new RuntimeException("test"));
         when(noticeGenerationRequestProducer.noticeGeneration(any())).thenReturn(false);
-        assertThrows(AppException.class, () -> noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "testUserId"));
+        assertThrows(AppException.class, () -> noticeGenerationService.generateMassive(
+                noticeGenerationMassiveRequest, "testUserId", "key"));
         verify(paymentGenerationRequestRepository).save(any());
     }
 

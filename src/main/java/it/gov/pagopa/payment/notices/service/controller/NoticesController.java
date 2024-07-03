@@ -184,7 +184,7 @@ public class NoticesController {
             @Valid @NotNull @RequestBody NoticeGenerationMassiveRequest noticeGenerationMassiveRequest,
             @Parameter(description = "userId to use for request status retrieval")
             @Valid @NotNull @RequestHeader(Constants.X_USER_ID) String userId,
-            @Parameter(description = "userId to use for request status retrieval")
+            @Parameter(description = "key to be used for idempotency checks of pre-existing requests having the same key")
             @Valid @NotNull @RequestHeader(Constants.IDEMPOTENCY_KEY) String idempotencyKey) {
         return NoticeGenerationMassiveResource.builder().folderId(
                 noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, userId, idempotencyKey))
