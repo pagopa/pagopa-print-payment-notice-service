@@ -3,7 +3,7 @@ Feature: Single Generation - 2 Installments
   Scenario: FT_22_RateMultiple2_AllFields: Rate multiple 4 - Tutti campi valorizzati
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | "Settore di Test"                      |
       | info               | "Info di Test"                         |
@@ -36,7 +36,7 @@ Feature: Single Generation - 2 Installments
       | Avviso.Rata4.Codice        | "470000008800999074"       |
       | Avviso.Rata4.Importo       | 140000                     |
       | Avviso.Rata4.Data          | "31/12/2025"               |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
@@ -100,7 +100,7 @@ Feature: Single Generation - 2 Installments
   Scenario: FT_23_RateMultiple2_SomeFields: Rate multiple 5 - Solo alcuni campi valorizzati
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | null                                   |
       | info               | "Info di Test"                         |
@@ -136,7 +136,7 @@ Feature: Single Generation - 2 Installments
       | Avviso.Rata5.Codice        | "570000008800999074"       |
       | Avviso.Rata5.Importo       | 50000                      |
       | Avviso.Rata5.Data          | "5/12/2025"                |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |

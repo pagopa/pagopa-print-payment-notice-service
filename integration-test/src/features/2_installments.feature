@@ -3,7 +3,7 @@ Feature: Single Generation - 2 Installments
   Scenario: FT_09_RateMultiple2_AllFields: Rate multiple 2 - Tutti campi valorizzati
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | "Settore di Test"                      |
       | info               | "Info di Test"                         |
@@ -30,7 +30,7 @@ Feature: Single Generation - 2 Installments
       | Avviso.Rata2.Codice        | "470000008800999073"       |
       | Avviso.Rata2.Importo       | 140000                     |
       | Avviso.Rata2.Data          | "31/12/2025"               |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
@@ -83,7 +83,7 @@ Feature: Single Generation - 2 Installments
   Scenario: FT_09_RateMultiple2_AllFields_BadRequestDueDate: Rate multiple 2 - Tutti campi valorizzati KO per mancata data scadenza
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | "Settore di Test"                      |
       | info               | "Info di Test"                         |
@@ -237,7 +237,7 @@ Feature: Single Generation - 2 Installments
   Scenario: FT_10_RateMultiple2_SomeFields: Rate multiple 2 - Solo alcuni campi valorizzati
     Given the creditor institution in the storage:
       | variableName       | value                                  |
-      | taxCode            | "80034390585"                          |
+      | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
       | organization       | null                                   |
       | info               | "Info di Test"                         |
@@ -264,7 +264,7 @@ Feature: Single Generation - 2 Installments
       | Avviso.Rata2.Codice        | "470000008800999063"       |
       | Avviso.Rata2.Importo       | 150000                     |
       | Avviso.Rata2.Data          | "31/12/2025"               |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
