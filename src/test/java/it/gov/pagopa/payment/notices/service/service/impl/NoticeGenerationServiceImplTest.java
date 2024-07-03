@@ -1,6 +1,7 @@
 package it.gov.pagopa.payment.notices.service.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import feign.Request;
 import feign.Response;
 import it.gov.pagopa.payment.notices.service.client.NoticeGenerationClient;
@@ -23,6 +24,7 @@ import it.gov.pagopa.payment.notices.service.service.BrokerService;
 import it.gov.pagopa.payment.notices.service.service.async.AsyncService;
 import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
 import it.gov.pagopa.payment.notices.service.util.Aes256Utils;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -183,12 +185,37 @@ class NoticeGenerationServiceImplTest {
                         Collections.singletonList(noticeGenerationRequestItem)).build();
         when(paymentGenerationRequestRepository.save(any())).thenReturn(
                 PaymentNoticeGenerationRequest.builder().id("testFolderId").build());
+        when(paymentGenerationRequestRepository.findByIdempotencyKeyAndUserId(any(),any())).thenReturn(Optional.empty());
         when(noticeGenerationRequestProducer.noticeGeneration(any())).thenReturn(true);
-        String folderId = noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "testUserId");
+        String folderId = noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "testUserId", "test");
         assertNotNull(folderId);
         assertEquals("testFolderId", folderId);
         verify(paymentGenerationRequestRepository).save(any());
         verify(noticeGenerationRequestProducer).noticeGeneration(any());
+        verifyNoInteractions(paymentGenerationRequestErrorRepository);
+    }
+
+    @Test
+    void generateMassiveRequestShouldRetrieveIdempotentFolderIdIfAvailable() {
+        NoticeGenerationRequestItem noticeGenerationRequestItem = NoticeGenerationRequestItem.builder()
+                .templateId("testTemplate")
+                .data(NoticeRequestData.builder().
+                        notice(
+                                Notice.builder().code("testCode")
+                                        .build()
+                        ).
+                        creditorInstitution(CreditorInstitution.builder().taxCode("testUserId").build())
+                        .build()
+                ).build();
+        NoticeGenerationMassiveRequest noticeGenerationMassiveRequest =
+                NoticeGenerationMassiveRequest.builder().notices(
+                        Collections.singletonList(noticeGenerationRequestItem)).build();
+        when(paymentGenerationRequestRepository.findByIdempotencyKeyAndUserId(any(),any())).thenReturn(
+                Optional.of(PaymentNoticeGenerationRequest.builder().id("testFolderId").build()));
+        String folderId = noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "testUserId", "test");
+        assertNotNull(folderId);
+        assertEquals("testFolderId", folderId);
+        verify(paymentGenerationRequestRepository).findByIdempotencyKeyAndUserId(any(),any());
         verifyNoInteractions(paymentGenerationRequestErrorRepository);
     }
 
@@ -206,10 +233,11 @@ class NoticeGenerationServiceImplTest {
         NoticeGenerationMassiveRequest noticeGenerationMassiveRequest =
                 NoticeGenerationMassiveRequest.builder().notices(
                         Collections.singletonList(noticeGenerationRequestItem)).build();
+        when(paymentGenerationRequestRepository.findByIdempotencyKeyAndUserId(any(),any())).thenReturn(Optional.empty());
         when(paymentGenerationRequestRepository.save(any())).thenReturn(
                 PaymentNoticeGenerationRequest.builder().id("testFolderId").build());
         when(noticeGenerationRequestProducer.noticeGeneration(any())).thenReturn(false);
-        String folderId = noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "testUserId");
+        String folderId = noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "testUserId", "key");
         assertNotNull(folderId);
         assertEquals("testFolderId", folderId);
         verify(paymentGenerationRequestRepository).save(any());
@@ -233,7 +261,8 @@ class NoticeGenerationServiceImplTest {
                         Collections.singletonList(noticeGenerationRequestItem)).build();
         when(paymentGenerationRequestRepository.save(any())).thenThrow(new RuntimeException("test"));
         when(noticeGenerationRequestProducer.noticeGeneration(any())).thenReturn(false);
-        assertThrows(AppException.class, () -> noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "testUserId"));
+        assertThrows(AppException.class, () -> noticeGenerationService.generateMassive(
+                noticeGenerationMassiveRequest, "testUserId", "key"));
         verify(paymentGenerationRequestRepository).save(any());
     }
 
@@ -253,12 +282,34 @@ class NoticeGenerationServiceImplTest {
                         Collections.singletonList(noticeGenerationRequestItem)).build();
         when(paymentGenerationRequestRepository.save(any())).thenReturn(
                 PaymentNoticeGenerationRequest.builder().id("testFolderId").build());
+        when(paymentGenerationRequestRepository.findByIdempotencyKeyAndUserId(any(),any())).thenReturn(Optional.empty());
         when(noticeGenerationRequestProducer.noticeGeneration(any())).thenReturn(false);
-        String folderId = noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "wrongUserId");
+        String folderId = noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "wrongUserId", "test");
         assertNotNull(folderId);
         assertEquals("testFolderId", folderId);
         verify(paymentGenerationRequestRepository).save(any());
         verify(paymentGenerationRequestErrorRepository).save(any());
+    }
+
+    @Test
+    void generateMassiveRequestShouldThrowOnSendFailureForIdempotencyRequest() {
+        NoticeGenerationRequestItem noticeGenerationRequestItem = NoticeGenerationRequestItem.builder()
+                .templateId("testTemplate")
+                .data(NoticeRequestData.builder()
+                        .creditorInstitution(CreditorInstitution.builder().taxCode("testUserId").build())
+                        .notice(
+                                Notice.builder().code("testCode")
+                                        .build()
+                        ).build()
+                ).build();
+        NoticeGenerationMassiveRequest noticeGenerationMassiveRequest =
+                NoticeGenerationMassiveRequest.builder().notices(
+                        Collections.singletonList(noticeGenerationRequestItem)).build();
+        when(paymentGenerationRequestRepository.save(any())).thenReturn(
+                PaymentNoticeGenerationRequest.builder().id("testFolderId").build());
+        when(paymentGenerationRequestRepository.findByIdempotencyKeyAndUserId(any(),any())).thenThrow( new AppException(AppError.INTERNAL_SERVER_ERROR));
+        when(noticeGenerationRequestProducer.noticeGeneration(any())).thenReturn(false);
+        Assert.assertThrows(AppException.class, () -> noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, "wrongUserId", "test"));
     }
 
 
@@ -279,6 +330,7 @@ class NoticeGenerationServiceImplTest {
         verifyNoInteractions(paymentGenerationRequestRepository);
     }
 
+
     @Test
     void shouldReturnKOWithStatusCodeOnFailedNoticeGenerationRequest() throws IOException {
         when(noticeGenerationClient.generateNotice(any(), any()))
@@ -287,6 +339,17 @@ class NoticeGenerationServiceImplTest {
                                 Request.HttpMethod.GET, "test", new HashMap<>(),
                                 "".getBytes(), Charset.defaultCharset(), null))
                         .body("".getBytes()).build());
+        assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(NoticeGenerationRequestItem
+                        .builder().data(NoticeRequestData.builder().creditorInstitution(
+                                CreditorInstitution.builder().taxCode("userId").build()).build()).build(),
+                null, "userId"));
+        verify(noticeGenerationClient).generateNotice(any(), any());
+    }
+
+    @Test
+    void shouldReturnKOWithStatusCodeOnExceptionThrownNoticeGenerationRequest() {
+        when(noticeGenerationClient.generateNotice(any(), any()))
+                .thenThrow(FeignException.class);
         assertThrows(AppException.class, () -> noticeGenerationService.generateNotice(NoticeGenerationRequestItem
                         .builder().data(NoticeRequestData.builder().creditorInstitution(
                                 CreditorInstitution.builder().taxCode("userId").build()).build()).build(),
@@ -355,6 +418,19 @@ class NoticeGenerationServiceImplTest {
                 Optional.of(PaymentNoticeGenerationRequest.builder().build()));
         when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(
                 new AppException(AppError.NOTICE_CLIENT_UNAVAILABLE));
+        assertThrows(AppException.class, () -> noticeGenerationService
+                .getFileSignedUrl("test", "test", "test"));
+        verify(noticeStorageClient).getFileSignedUrl(any(), any());
+        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
+    }
+
+    @Test
+    void getFileSignedUrlShouldReturnExceptionOnClientException() {
+
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any())).thenReturn(
+                Optional.of(PaymentNoticeGenerationRequest.builder().build()));
+        when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(
+                FeignException.class);
         assertThrows(AppException.class, () -> noticeGenerationService
                 .getFileSignedUrl("test", "test", "test"));
         verify(noticeStorageClient).getFileSignedUrl(any(), any());

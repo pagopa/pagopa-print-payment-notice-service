@@ -25,6 +25,9 @@ public class PaymentNoticeGenerationRequest {
     @Indexed()
     private String userId;
 
+    @Indexed()
+    private String idempotencyKey;
+
     @CreatedDate
     private Instant createdAt;
 

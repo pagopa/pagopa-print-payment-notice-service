@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.createWorkingDirectory;
 
@@ -84,21 +85,31 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
     @Override
     @Transactional
-    public String generateMassive(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId) {
+    public String generateMassive(
+            NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId, String idempotencyKey) {
 
-        try {
+    try {
 
-            String folderId = paymentGenerationRequestRepository.save(PaymentNoticeGenerationRequest.builder()
-                    .status(PaymentGenerationRequestStatus.INSERTED)
-                    .createdAt(Instant.now())
-                    .items(new ArrayList<>())
-                    .userId(userId)
-                    .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
-                    .numberOfElementsFailed(0)
-                    .requestDate(Instant.now())
-                    .build()).getId();
+            String folderId;
 
-            asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
+            Optional<PaymentNoticeGenerationRequest> existingRequest = paymentGenerationRequestRepository
+                    .findByIdempotencyKeyAndUserId(idempotencyKey, userId);
+
+            if (existingRequest.isEmpty()) {
+                folderId = paymentGenerationRequestRepository.save(PaymentNoticeGenerationRequest.builder()
+                        .status(PaymentGenerationRequestStatus.INSERTED)
+                        .createdAt(Instant.now())
+                        .items(new ArrayList<>())
+                        .userId(userId)
+                        .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
+                        .numberOfElementsFailed(0)
+                        .requestDate(Instant.now())
+                        .build()).getId();
+
+                asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
+            } else {
+                folderId = existingRequest.get().getId();
+            }
 
             return folderId;
 
