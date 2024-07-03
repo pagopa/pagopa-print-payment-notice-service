@@ -24,7 +24,7 @@ let variables = [];
 After(async function () {
     // remove folder
     if (this.folderId != null) {
-        await call('DELETE', app_host + '/folder'+ folderId, ciTaxCode);
+        await call('DELETE', app_host + '/folder' + folderId, ciTaxCode);
     }
     this.folderId = null;
     this.responseToCheck = null;
@@ -76,7 +76,7 @@ When(/^I send a (POST|PUT) request to "([^"]*)" with body:$/, async function (me
         const regex = new RegExp(`<${key}>`, 'g');
         jsonBody = jsonBody.replace(regex, value);
     }
-    console.log(jsonBody);
+    // console.log(jsonBody);
     responseToCheck = await call(method, app_host + url, jsonBody, ciTaxCode, true);
 });
 
@@ -86,7 +86,7 @@ When(/^I send a (POST|PUT) request to "([^"]*)" without stream, with body:$/, as
         const regex = new RegExp(`<${key}>`, 'g');
         jsonBody = jsonBody.replace(regex, value);
     }
-    console.log(jsonBody);
+    // console.log(jsonBody);
     responseToCheck = await call(method, app_host + url, jsonBody, ciTaxCode, false);
 });
 
@@ -102,7 +102,7 @@ Then(/^the response should be in PDF format$/, async function () {
 
 Then(/^the PDF document should be equal to the reference PDF "([^"]*)"$/, async function (pdfName) {
 
-    fs.copyFileSync('./pdfToCheck.pdf', `./resources/${pdfName}`);
+    // fs.copyFileSync('./pdfToCheck.pdf', `./resources/${pdfName}`);
     let html1 = await pdf2html.html('./pdfToCheck.pdf');
     let html2 = await pdf2html.html(`./resources/${pdfName}`);
 
@@ -126,7 +126,7 @@ Then(/^check response body is$/, function (payload) {
 });
 
 Then(/^the response status should be (\d+)$/, function (statusCode) {
-    console.log(responseToCheck);
+    // console.log(responseToCheck);
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
     assert.strictEqual(responseToCheck.status, statusCode);
@@ -162,7 +162,7 @@ Then('the response should contain the folderId', function () {
 Then('the request is in status {string} after {int} ms', async function (status, time) {
     // boundary time spent by azure function to process event
     await sleep(time);
-    responseToCheck = await call('GET', app_host + '/notices/folder/'+ folderId +'/status', null, ciTaxCode);
+    responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/status', null, ciTaxCode);
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
     assert.strictEqual(responseToCheck.status, 200);
@@ -172,7 +172,7 @@ Then('the request is in status {string} after {int} ms', async function (status,
 
 Then('download url is recoverable with the folderId', async function () {
     // boundary time spent by azure function to process event
-    responseToCheck = await call('GET', app_host + '/notices/folder/'+ folderId +'/url', null, ciTaxCode);
+    responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/url', null, ciTaxCode);
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
     assert.strictEqual(responseToCheck.status, 200);
