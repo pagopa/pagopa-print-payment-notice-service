@@ -88,7 +88,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public String generateMassive(
             NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId, String idempotencyKey) {
 
-        try {
+    try {
 
             String folderId;
 
