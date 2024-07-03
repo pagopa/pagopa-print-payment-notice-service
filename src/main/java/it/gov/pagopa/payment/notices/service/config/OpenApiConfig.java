@@ -26,7 +26,10 @@ import static it.gov.pagopa.payment.notices.service.util.Constants.HEADER_REQUES
 @Configuration
 public class OpenApiConfig {
 
-    public static final String BASE_PATH = "/print-payment-notice-service/v1";
+    public static final String INTERNAL_PATH = "/print-payment-notice-service/internal/v1";
+
+    public static final String EXTERNAL_PATH = "/print-payment-notice-service/external/v1";
+
     public static final String LOCAL_PATH = "http://localhost:8080";
     public static final String APIM_DEV = "https://api.dev.platform.pagopa.it";
     public static final String APIM_UAT = "https://api.uat.platform.pagopa.it";
@@ -47,7 +50,7 @@ public class OpenApiConfig {
                                                         List.of(APIM_DEV, APIM_UAT, APIM_PROD))
                                                         ._default(APIM_PROD))
                                         .addServerVariable("basePath",
-                                                new ServerVariable()._enum(List.of(BASE_PATH)))
+                                                new ServerVariable()._enum(List.of(INTERNAL_PATH))._default(INTERNAL_PATH))
                                 )))
                 .components(new Components().addSecuritySchemes("ApiKey",
                         new SecurityScheme()
@@ -130,8 +133,8 @@ public class OpenApiConfig {
                     var baseTitle = openApi.getInfo().getTitle();
                     var group = groupedOpenApi.getDisplayName();
                     openApi.getInfo().setTitle(baseTitle + " - " + group);
-                    if("apim".equals(id)) {
-                        openApi.setServers(Collections.singletonList(new Server().url(APIM_PROD + BASE_PATH)));
+                    if("external".equals(id)) {
+                        openApi.setServers(Collections.singletonList(new Server().url(APIM_PROD + EXTERNAL_PATH)));
                         openApi.getPaths().forEach((key, value) -> {
                           if (value.getPost() != null && value.getPost().getParameters() != null) {
                               value.getPost().getParameters().removeIf(parameter ->
