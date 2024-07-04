@@ -16,8 +16,11 @@ import lombok.NoArgsConstructor;
 public class NoticeGenerationRequestItem {
 
     @Schema(description = "The template identifier. Use the appropriate GET service to retrieve the list of the ids", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
     private String templateId;
+
+    private Boolean withPoste;
+
+    private Boolean withThermal;
 
     @Schema(description = "The data used to fill the template", requiredMode = Schema.RequiredMode.REQUIRED)
     @Valid

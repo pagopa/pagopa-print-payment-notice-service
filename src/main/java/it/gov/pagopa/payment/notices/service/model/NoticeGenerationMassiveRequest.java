@@ -19,4 +19,10 @@ public class NoticeGenerationMassiveRequest {
     @Size(min = 1)
     private List<NoticeGenerationRequestItem> notices;
 
+    private Boolean withPoste;
+
+    private Boolean withThermal;
+
+    private String templateId;
+
 }

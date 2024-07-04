@@ -12,6 +12,7 @@ import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequest
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestRepository;
 import it.gov.pagopa.payment.notices.service.service.BrokerService;
 import it.gov.pagopa.payment.notices.service.util.Aes256Utils;
+import it.gov.pagopa.payment.notices.service.util.TemplateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,20 @@ public class AsyncService {
             try {
 
                 checkUserId(userId, noticeGenerationRequestItem, brokerService);
+
+                if (noticeGenerationRequestItem.getWithPoste() == null) {
+                    noticeGenerationRequestItem.setWithPoste(noticeGenerationMassiveRequest.getWithPoste());
+                }
+
+                if (noticeGenerationRequestItem.getWithThermal() == null) {
+                    noticeGenerationRequestItem.setWithThermal(noticeGenerationMassiveRequest.getWithThermal());
+                }
+
+                if (noticeGenerationRequestItem.getTemplateId() == null) {
+                    noticeGenerationRequestItem.setTemplateId(noticeGenerationMassiveRequest.getTemplateId() != null ?
+                            noticeGenerationRequestItem.getTemplateId() :
+                            TemplateUtils.retrieveTemplateId(noticeGenerationRequestItem));
+                }
 
                 if(!noticeGenerationRequestProducer.noticeGeneration(
                         NoticeGenerationRequestEH.builder()

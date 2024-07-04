@@ -77,6 +77,9 @@ public enum AppError {
     ERROR_ON_PT_ALLOWANCE_CHECK(HttpStatus.INTERNAL_SERVER_ERROR,
             "Error on pt allowance check", "Error occured during allowance check for PT"),
 
+    MISSING_TEMPLATE_DATA(HttpStatus.BAD_REQUEST, "Missing Template Data", "Not provided a templateId," +
+            " or the flags useful to determine template type (withPoste, withThermal)"),
+
     UNKNOWN(null, null, null);
 
 

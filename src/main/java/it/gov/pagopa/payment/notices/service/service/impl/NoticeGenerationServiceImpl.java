@@ -17,6 +17,7 @@ import it.gov.pagopa.payment.notices.service.service.BrokerService;
 import it.gov.pagopa.payment.notices.service.service.NoticeGenerationService;
 import it.gov.pagopa.payment.notices.service.service.async.AsyncService;
 import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
+import it.gov.pagopa.payment.notices.service.util.TemplateUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -108,6 +109,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                         .build()).getId();
 
                 asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
+
             } else {
                 folderId = existingRequest.get().getId();
             }
@@ -135,6 +137,11 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             Path tempDirectory = Files.createTempDirectory(workingDirectory.toPath(), "notice-generation-service")
                     .normalize()
                     .toAbsolutePath();
+
+            if (noticeGenerationRequestItem.getTemplateId() == null) {
+                noticeGenerationRequestItem.setTemplateId(TemplateUtils.retrieveTemplateId(
+                        noticeGenerationRequestItem));
+            }
 
             try (Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem)) {
                 if(generationResponse.status() != HttpStatus.OK.value()) {
