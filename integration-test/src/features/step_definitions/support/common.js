@@ -7,12 +7,10 @@ if (process.env.CANARY) {
     axios.defaults.headers.common['X-Canary'] = 'canary' // for all requests
 }
 
-function get(url, userId) {
+function get(url, headers) {
 
     let config = {
-        headers: {
-            'X-User-Id': userId,
-        },
+        headers
     }
 
     return axios.get(url, config)
@@ -28,11 +26,13 @@ function get(url, userId) {
         });
 }
 
-function post(url, body, userId, stream) {
+function post(url, body, headers, stream) {
+    console.log('config axios', headers)
+
     let config = {
         headers: {
             'Content-Type': 'application/json',
-            'X-User-Id': userId,
+            ...headers
         },
     };
 
@@ -40,22 +40,23 @@ function post(url, body, userId, stream) {
         config.responseType = 'stream';
     }
 
+    console.log('config axios', config)
     return axios.post(url, body, config)
         .then(res => {
+            console.log(res);
             return res;
         })
         .catch(error => {
+            console.log(error.response);
             return error.response;
         });
 }
 
 
-function put(url, body, userId) {
+function put(url, body, headers) {
 
     let config = {
-        headers: {
-            'X-User-Id': userId,
-        },
+        headers
     }
 
     return axios.put(url, body, config)
@@ -67,12 +68,10 @@ function put(url, body, userId) {
         });
 }
 
-function del(url, userId) {
+function del(url, headers) {
 
     let config = {
-        headers: {
-            'X-User-Id': userId,
-        },
+        headers
     }
 
     return axios.delete(url, config)
@@ -84,18 +83,18 @@ function del(url, userId) {
         });
 }
 
-function call(method, url, body, userId = "ADMIN", stream = false) {
+function call(method, url, body, headers, stream = false) {
     if (method === 'GET') {
-        return get(url, userId)
+        return get(url, headers)
     }
     if (method === 'POST') {
-        return post(url, body, userId, stream)
+        return post(url, body, headers, stream)
     }
     if (method === 'PUT') {
-        return put(url, body, userId)
+        return put(url, body, headers)
     }
     if (method === 'DELETE') {
-        return del(url, userId)
+        return del(url, headers)
     }
 
 }
