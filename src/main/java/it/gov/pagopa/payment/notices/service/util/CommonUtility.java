@@ -1,5 +1,9 @@
 package it.gov.pagopa.payment.notices.service.util;
 
+import it.gov.pagopa.payment.notices.service.exception.AppError;
+import it.gov.pagopa.payment.notices.service.exception.AppException;
+import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
+import it.gov.pagopa.payment.notices.service.service.BrokerService;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -63,5 +67,15 @@ public class CommonUtility {
             return logParam;
         }
         return "suspicious log param";
+    }
+
+    public static void checkUserId(String userId, NoticeGenerationRequestItem noticeGenerationRequestItem, BrokerService brokerService) {
+        String ciTaxCode = noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode();
+
+        if(userId != null && !userId.toUpperCase().startsWith("ADMIN") &&
+                !userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode,
+                noticeGenerationRequestItem.getData().getNotice().getCode())) {
+            throw new AppException(AppError.NOT_ALLOWED_ON_CI_CODE);
+        }
     }
 }

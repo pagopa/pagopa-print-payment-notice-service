@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationRequestError;
 import it.gov.pagopa.payment.notices.service.events.NoticeGenerationRequestProducer;
 import it.gov.pagopa.payment.notices.service.exception.Aes256Exception;
-import it.gov.pagopa.payment.notices.service.exception.AppError;
-import it.gov.pagopa.payment.notices.service.exception.AppException;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestEH;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
@@ -20,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 
+import static it.gov.pagopa.payment.notices.service.util.CommonUtility.checkUserId;
 import static it.gov.pagopa.payment.notices.service.util.CommonUtility.sanitizeLogParam;
 
 @Service
@@ -53,13 +52,7 @@ public class AsyncService {
         noticeGenerationMassiveRequest.getNotices().parallelStream().forEach(noticeGenerationRequestItem -> {
             try {
 
-                String ciTaxCode = noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode();
-
-                if (!"ADMIN".equals(userId) &&
-                        !userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode,
-                        noticeGenerationRequestItem.getData().getNotice().getCode())) {
-                    throw new AppException(AppError.NOT_ALLOWED_ON_CI_CODE);
-                }
+                checkUserId(userId, noticeGenerationRequestItem, brokerService);
 
                 if(!noticeGenerationRequestProducer.noticeGeneration(
                         NoticeGenerationRequestEH.builder()
@@ -70,6 +63,7 @@ public class AsyncService {
                     saveErrorEvent(folderId, noticeGenerationRequestItem);
                 }
             } catch (Exception e) {
+                log.warn("SendNotices Failure {}", sanitizeLogParam(folderId), e);
                 saveErrorEvent(folderId, noticeGenerationRequestItem);
             }
 
