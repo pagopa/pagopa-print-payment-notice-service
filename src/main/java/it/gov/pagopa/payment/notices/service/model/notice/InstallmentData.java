@@ -26,7 +26,6 @@ public class InstallmentData {
     private Long amount;
 
     @Schema(description = "Installment dueDate", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @NotNull
     private String dueDate;
 
 }

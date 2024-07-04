@@ -4,7 +4,7 @@
     "description": "Microservice to expose the APIs for Print Payment Notices",
     "termsOfService": "https://www.pagopa.gov.it/",
     "title": "Print Payment Notices - Service",
-    "version": "0.6.0"
+    "version": "0.6.1"
   },
   "servers": [
     {
@@ -1688,6 +1688,7 @@
         "type": "object",
         "properties": {
           "amount": {
+            "maximum": 99999999999,
             "type": "integer",
             "description": "Installment amount",
             "format": "int64"
@@ -1764,6 +1765,13 @@
             "items": {
               "$ref": "#/components/schemas/NoticeGenerationRequestItem"
             }
+          },
+          "templateId": {
+            "type": "string",
+            "description": "The template identifier. Use the appropriate GET service to retrieve the list of the ids"
+          },
+          "withPosteSection": {
+            "type": "boolean"
           }
         },
         "description": "massive notice generation request data"
@@ -1782,8 +1790,7 @@
       },
       "NoticeGenerationRequestItem": {
         "required": [
-          "data",
-          "templateId"
+          "data"
         ],
         "type": "object",
         "properties": {
@@ -1793,6 +1800,12 @@
           "templateId": {
             "type": "string",
             "description": "The template identifier. Use the appropriate GET service to retrieve the list of the ids"
+          },
+          "withPosteSection": {
+            "type": "boolean"
+          },
+          "withThermal": {
+            "type": "boolean"
           }
         },
         "description": "templateId to use for retrieval"
