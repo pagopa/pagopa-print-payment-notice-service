@@ -24,7 +24,9 @@ let variables = [];
 After(async function () {
     // remove folder
     if (this.folderId != null) {
-        await call('DELETE', app_host + '/folder' + folderId, ciTaxCode);
+        await call('DELETE', app_host + '/folder' + folderId, {
+            'X-User-Id': ciTaxCode ?? 'ADMIN'
+        });
     }
     this.folderId = null;
     this.responseToCheck = null;
@@ -39,13 +41,15 @@ Given(/^the creditor institution in the storage:$/, async function (dataTable) {
     dataTable.rows().forEach(([key, value]) => {
         if (key !== 'logo') {
             jsonBody[key] = JSON.parse(value);
-            if (key == 'taxCode') {
+            if (key === 'taxCode') {
                 ciTaxCode = JSON.parse(value);
             }
         } else {
             logoPath = JSON.parse(value);
         }
     });
+    console.log(jsonBody);
+    console.log(JSON.stringify(jsonBody));
 
     let data = new FormData();
 
@@ -54,6 +58,7 @@ Given(/^the creditor institution in the storage:$/, async function (dataTable) {
 
 
     const response = await formData(app_host + '/institutions/data', data);
+    console.log(response);
     assert.strictEqual(response !== null && response !== undefined, true);
     assert.strictEqual(response.hasOwnProperty('status'), true);
     assert.strictEqual(response.status, 200);
@@ -67,7 +72,7 @@ Given(/^I have the following variables:$/, function (dataTable) {
 });
 
 When(/^I send a (GET|DELETE) request to "([^"]*)"$/, async function (method, url) {
-    responseToCheck = await call(method, app_host + url, ciTaxCode);
+    responseToCheck = await call(method, app_host + url, ciTaxCode, {'X-User-Id': "ADMIN"});
 });
 
 When(/^I send a (POST|PUT) request to "([^"]*)" with body:$/, async function (method, url, jsonBody) {
@@ -76,8 +81,26 @@ When(/^I send a (POST|PUT) request to "([^"]*)" with body:$/, async function (me
         const regex = new RegExp(`<${key}>`, 'g');
         jsonBody = jsonBody.replace(regex, value);
     }
-    // console.log(jsonBody);
-    responseToCheck = await call(method, app_host + url, jsonBody, ciTaxCode, true);
+    console.log(jsonBody);
+    let idempotencyKey = (Math.random() + 1).toString(36).substring(7);
+    console.log(idempotencyKey);
+    responseToCheck = await call(method, app_host + url, jsonBody, {
+        'X-User-Id': ciTaxCode ?? 'ADMIN',
+        'Idempotency-Key': idempotencyKey
+    }, true);
+});
+
+When(/^I send a POST request to "([^"]*)" with idempotency_key "([^"]*)" and with body:$/, async function (method, url, idempotencyKey, jsonBody) {
+    // Replace variables in JSON body
+    for (const [key, value] of Object.entries(variables)) {
+        const regex = new RegExp(`<${key}>`, 'g');
+        jsonBody = jsonBody.replace(regex, value);
+    }
+    console.log(jsonBody);
+    responseToCheck = await call(method, app_host + url, jsonBody, {
+        'X-User-Id': ciTaxCode ?? 'ADMIN',
+        'Idempotency-Key': idempotencyKey
+    }, true);
 });
 
 When(/^I send a (POST|PUT) request to "([^"]*)" without stream, with body:$/, async function (method, url, jsonBody) {
@@ -86,8 +109,13 @@ When(/^I send a (POST|PUT) request to "([^"]*)" without stream, with body:$/, as
         const regex = new RegExp(`<${key}>`, 'g');
         jsonBody = jsonBody.replace(regex, value);
     }
-    // console.log(jsonBody);
-    responseToCheck = await call(method, app_host + url, jsonBody, ciTaxCode, false);
+    console.log(jsonBody);
+    let idempotencyKey = (Math.random() + 1).toString(36).substring(7);
+    console.log(idempotencyKey);
+    responseToCheck = await call(method, app_host + url, jsonBody, {
+        'X-User-Id': ciTaxCode ?? 'ADMIN',
+        'Idempotency-Key': idempotencyKey
+    }, false);
 });
 
 Then(/^the response should be in PDF format$/, async function () {
@@ -162,7 +190,10 @@ Then('the response should contain the folderId', function () {
 Then('the request is in status {string} after {int} ms', async function (status, time) {
     // boundary time spent by azure function to process event
     await sleep(time);
-    responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/status', null, ciTaxCode);
+    responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/status', null, {
+        'X-User-Id': ciTaxCode ?? 'ADMIN'
+    });
+    console.log(responseToCheck)
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
     assert.strictEqual(responseToCheck.status, 200);
@@ -172,7 +203,9 @@ Then('the request is in status {string} after {int} ms', async function (status,
 
 Then('download url is recoverable with the folderId', async function () {
     // boundary time spent by azure function to process event
-    responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/url', null, ciTaxCode);
+    responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/url', null, {
+        'X-User-Id': ciTaxCode ?? 'ADMIN'
+    });
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
     assert.strictEqual(responseToCheck.status, 200);
@@ -183,7 +216,9 @@ Then('download url is recoverable with the folderId', async function () {
 
 Then('can download content using signedUrl', async function () {
     // boundary time spent by azure function to process event
-    responseToCheck = await call('GET', signedUrl, null, ciTaxCode);
+    responseToCheck = await call('GET', signedUrl, null, {
+        'X-User-Id': ciTaxCode ?? 'ADMIN'
+    });
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('headers'), true);
     assert.strictEqual(responseToCheck.headers.hasOwnProperty('content-type'), true);

@@ -320,3 +320,65 @@ Feature: Single Generation
     Then the response status should be 201
     And the response should be in PDF format
     And the PDF document should be equal to the reference PDF "scenario_ft_06.pdf"
+
+  Scenario: FT_21_RataSingola_EdgeCases: Rata singola con campi valorizzati tutti al massimo dell’estensione possibile
+    Given the creditor institution in the storage:
+      | variableName       | value                                                                                                  |
+      | taxCode            | "12345678911"                                                                                          |
+      | fullName           | "Comune di test test test test test test test   end"                                                   |
+      | organization       | "Settore di test test test test test test test  end"                                                   |
+      | info               | "Info di test test test test test test test test test test test test test test test testtest test end" |
+      | webChannel         | true                                                                                                   |
+      | appChannel         | false                                                                                                  |
+      | physicalChannel    | "Canale Fisico"                                                                                        |
+      | cbill              | "CBI1234"                                                                                              |
+      | posteAccountNumber | "000000123456"                                                                                         |
+      | posteAuth          | "AUT. 08/5 S3/81 53079 08129.07.20211"                                                                 |
+      | logo               | "./resources/logo1.png"                                                                                |
+    When I send a GET request to "/notices/templates"
+    Then the response status should be 200
+    And the response should contain "TemplateSingleInstalment"
+    Given I have the following variables:
+      | variableName               | value                                                                                                                                          |
+      | template_id                | "TemplateSingleInstalment"                                                                                                                     |
+      | Avviso.Oggetto             | "Avviso di pagamento Avviso di pagamento Avviso di pagamento Avviso di pagamento Avviso end"                                                   |
+      | Avviso.Importo             | 99999999999                                                                                                                                    |
+      | Avviso.Data                | "31/12/2024"                                                                                                                                   |
+      | Avviso.Codice              | "470000008800999071"                                                                                                                           |
+      | Ente.CF                    | "12345678911"                                                                                                                                  |
+      | Destinatario.CF            | "AAACST83A15L113V"                                                                                                                             |
+      | Destinatario.NomeCompleto  | "Mario Rossi Rossi Rossi Mario Rossi Rossi RossiMario Rossi Rossi   end"                                                                       |
+      | Destinatario.Indirizzo     | "Via Romaaaaa Romaaaaa Romaaaaa Romaaaaa Romaaaaa Romaaaaa Romaaaaa Romaaaaa Romaaaaa Romaaaaa Romaaaaa Romaaaaa Romaaaaa Romaaaaa Romaaa end" |
+      | Destinatario.CodicePostale | "00100"                                                                                                                                        |
+      | Destinatario.Citta         | "Roma"                                                                                                                                         |
+      | Destinatario.Building      | "1"                                                                                                                                            |
+      | Destinatario.Provincia     | "RM"                                                                                                                                           |
+    When I send a POST request to "/notices/generate" with body:
+    """
+      {
+        "templateId": <template_id>,
+        "data": {
+          "notice": {
+            "subject": <Avviso.Oggetto>,
+            "paymentAmount": <Avviso.Importo>,
+            "dueDate": <Avviso.Data>,
+            "code": <Avviso.Codice>
+          },
+          "creditorInstitution": {
+            "taxCode": <Ente.CF>
+          },
+          "debtor": {
+            "taxCode": <Destinatario.CF>,
+            "fullName": <Destinatario.NomeCompleto>,
+            "address": <Destinatario.Indirizzo>,
+            "postalCode": <Destinatario.CodicePostale>,
+            "city": <Destinatario.Citta>,
+            "buildingNumber": <Destinatario.Building>,
+            "province": <Destinatario.Provincia>
+          }
+        }
+      }
+      """
+    Then the response status should be 201
+    And the response should be in PDF format
+    And the PDF document should be equal to the reference PDF "scenario_ft_21.pdf"
