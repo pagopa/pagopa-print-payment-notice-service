@@ -86,7 +86,7 @@ Feature: Single Generation - 3 Installments with Poste
       """
     Then the response status should be 201
     And the response should be in PDF format
-    And the PDF document should be equal to the reference PDF "scenario_ft_11.pdf"
+    And the PDF document should be equal to the reference PDF "scenario_ft_15.pdf"
 
   Scenario: FT_16_RateMultiple3Poste_SomeFields: Rate multiple 3 con bollettino postale - solo alcuni campi valorizzati
     Given the creditor institution in the storage:
@@ -174,5 +174,5 @@ Feature: Single Generation - 3 Installments with Poste
       """
     Then the response status should be 201
     And the response should be in PDF format
-    And the PDF document should be equal to the reference PDF "scenario_ft_11.pdf"
+    And the PDF document should be equal to the reference PDF "scenario_ft_16.pdf"
 

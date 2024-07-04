@@ -13,12 +13,12 @@ function get(url, userId) {
         headers: {
             'X-User-Id': userId,
         },
-   }
+    }
 
     return axios.get(url, config)
         .then(res => {
-            console.info("STATUS");
-            console.info(res);
+            // console.info("STATUS");
+            // console.info(res);
             return res;
         })
         .catch(error => {
@@ -56,7 +56,7 @@ function put(url, body, userId) {
         headers: {
             'X-User-Id': userId,
         },
-   }
+    }
 
     return axios.put(url, body, config)
         .then(res => {
@@ -73,7 +73,7 @@ function del(url, userId) {
         headers: {
             'X-User-Id': userId,
         },
-   }
+    }
 
     return axios.delete(url, config)
         .then(res => {
@@ -124,9 +124,8 @@ function formData(url, data) {
 }
 
 function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
-
 
 
 module.exports = {get, post, put, del, call, formData, sleep}

@@ -78,7 +78,7 @@ Feature: Single Generation - 2 Installments with Poste
       """
     Then the response status should be 201
     And the response should be in PDF format
-    And the PDF document should be equal to the reference PDF "scenario_ft_09.pdf"
+    And the PDF document should be equal to the reference PDF "scenario_ft_13.pdf"
 
   Scenario: FT_13_RateMultiple2Poste_AllFields_KOBadRequestPoste: Rate multiple 2 - Tutti campi valorizzati KO per dati poste
     Given the creditor institution in the storage:

@@ -174,5 +174,5 @@ Feature: Single Generation - 3 Installments
       """
     Then the response status should be 201
     And the response should be in PDF format
-    And the PDF document should be equal to the reference PDF "scenario_ft_11.pdf"
+    And the PDF document should be equal to the reference PDF "scenario_ft_12.pdf"
 

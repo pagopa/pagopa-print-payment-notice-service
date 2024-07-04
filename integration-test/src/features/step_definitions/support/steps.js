@@ -39,13 +39,15 @@ Given(/^the creditor institution in the storage:$/, async function (dataTable) {
     dataTable.rows().forEach(([key, value]) => {
         if (key !== 'logo') {
             jsonBody[key] = JSON.parse(value);
-            if (key == 'taxCode') {
+            if (key === 'taxCode') {
                 ciTaxCode = JSON.parse(value);
             }
         } else {
             logoPath = JSON.parse(value);
         }
     });
+    // console.log(jsonBody);
+    // console.log(JSON.stringify(jsonBody));
 
     let data = new FormData();
 
@@ -76,7 +78,7 @@ When(/^I send a (POST|PUT) request to "([^"]*)" with body:$/, async function (me
         const regex = new RegExp(`<${key}>`, 'g');
         jsonBody = jsonBody.replace(regex, value);
     }
-    // console.log(jsonBody);
+    console.log(jsonBody);
     responseToCheck = await call(method, app_host + url, jsonBody, ciTaxCode, true);
 });
 
