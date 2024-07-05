@@ -98,6 +98,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             if(existingRequest.isEmpty()) {
                 folderId = paymentGenerationRequestRepository.save(PaymentNoticeGenerationRequest.builder()
                         .status(PaymentGenerationRequestStatus.INSERTED)
+                        .idempotencyKey(idempotencyKey)
                         .createdAt(Instant.now())
                         .items(new ArrayList<>())
                         .userId(userId)
