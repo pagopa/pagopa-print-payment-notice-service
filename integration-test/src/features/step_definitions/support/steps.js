@@ -137,12 +137,15 @@ Then(/^the PDF document should be equal to the reference PDF "([^"]*)"$/, async 
     // we need to remove some metadata (like createDate) to check only the body of the file
     const timestampPattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/g;
     const metaPattern = /<meta name="resourceName" content=".*\.pdf"\/>/g;
+    const metaLengthPattern = /<meta name="Content-Length" content=".*"\/>/g;
 
     html1 = html1.replace(timestampPattern, '');
     html1 = html1.replace(metaPattern, '');
+    html1 = html1.replace(metaLengthPattern, '');
 
     html2 = html2.replace(timestampPattern, '');
     html2 = html2.replace(metaPattern, '');
+    html2 = html2.replace(metaLengthPattern, '');
 
     assert.equal(html1, html2);
 });
