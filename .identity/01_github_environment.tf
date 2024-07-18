@@ -44,7 +44,7 @@ locals {
       "value" : data.azurerm_user_assigned_identity.identity_pr_01.client_id
     },
     "CLIENT_ID_BRANCH" : {
-      "key" : "${upper(var.env)}_CLIENT_ID_PR",
+      "key" : "${upper(var.env)}_CLIENT_ID_BRANCH",
       "value" : data.azurerm_user_assigned_identity.identity_ref_01.client_id
     },
     "TENANT_ID_PR" : {
