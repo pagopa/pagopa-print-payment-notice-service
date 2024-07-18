@@ -97,16 +97,30 @@ jobs:
         run: |
           echo "RUN_ENV=${{ inputs.environment || 'dev' }}" >> $GITHUB_ENV 
           
-          echo "CLIENT_ID=${{secrets.DEV_CLIENT_ID}}" >> $GITHUB_ENV 
-          echo "TENANT_ID=${{secrets.DEV_TENANT_ID}}" >> $GITHUB_ENV 
-          echo "SUBSCRIPTION_ID=${{secrets.DEV_SUBSCRIPTION_ID}}" >> $GITHUB_ENV 
-          echo "SUBKEY=${{secrets.DEV_SUBKEY}}" >> $GITHUB_ENV 
+          if [[ ${{ github.event_name }} == "pull_request" ]];
+            echo "CLIENT_ID=${{secrets.DEV_CLIENT_ID_PR}}" >> $GITHUB_ENV 
+            echo "TENANT_ID=${{secrets.DEV_TENANT_ID_PR}}" >> $GITHUB_ENV 
+            echo "SUBSCRIPTION_ID=${{secrets.DEV_SUBSCRIPTION_ID}}" >> $GITHUB_ENV 
+            echo "SUBKEY=${{secrets.DEV_SUBKEY}}" >> $GITHUB_ENV 
           
-          if [[ ${{ inputs.environment || 'dev' }} == "uat" ]]; then
-            echo "CLIENT_ID=${{secrets.UAT_CLIENT_ID}}" >> $GITHUB_ENV 
-            echo "TENANT_ID=${{secrets.UAT_TENANT_ID}}" >> $GITHUB_ENV 
-            echo "SUBSCRIPTION_ID=${{secrets.UAT_SUBSCRIPTION_ID}}" >> $GITHUB_ENV 
-            echo "SUBKEY=${{secrets.UAT_SUBKEY}}" >> $GITHUB_ENV 
+            if [[ ${{ inputs.environment || 'dev' }} == "uat" ]]; then
+              echo "CLIENT_ID=${{secrets.UAT_CLIENT_ID_PR}}" >> $GITHUB_ENV 
+              echo "TENANT_ID=${{secrets.UAT_TENANT_ID_PR}}" >> $GITHUB_ENV 
+              echo "SUBSCRIPTION_ID=${{secrets.UAT_SUBSCRIPTION_ID}}" >> $GITHUB_ENV 
+              echo "SUBKEY=${{secrets.UAT_SUBKEY}}" >> $GITHUB_ENV 
+            fi          
+          elif
+            echo "CLIENT_ID=${{secrets.DEV_CLIENT_ID_BRANCH}}" >> $GITHUB_ENV 
+            echo "TENANT_ID=${{secrets.DEV_TENANT_ID_BRANCH}}" >> $GITHUB_ENV 
+            echo "SUBSCRIPTION_ID=${{secrets.DEV_SUBSCRIPTION_ID}}" >> $GITHUB_ENV 
+            echo "SUBKEY=${{secrets.DEV_SUBKEY}}" >> $GITHUB_ENV 
+          
+            if [[ ${{ inputs.environment || 'dev' }} == "uat" ]]; then
+              echo "CLIENT_ID=${{secrets.UAT_CLIENT_ID_BRANCH}}" >> $GITHUB_ENV 
+              echo "TENANT_ID=${{secrets.UAT_TENANT_ID_BRANCH}}" >> $GITHUB_ENV 
+              echo "SUBSCRIPTION_ID=${{secrets.UAT_SUBSCRIPTION_ID}}" >> $GITHUB_ENV 
+              echo "SUBKEY=${{secrets.UAT_SUBKEY}}" >> $GITHUB_ENV 
+            fi
           fi
 
       - name: Login

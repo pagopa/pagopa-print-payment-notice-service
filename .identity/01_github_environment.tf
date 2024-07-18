@@ -39,13 +39,21 @@ locals {
     "CUCUMBER_PUBLISH_TOKEN" : data.azurerm_key_vault_secret.key_vault_cucumber_token.value,
   }
   special_repo_secrets = {
-    "CLIENT_ID" : {
-      "key" : "${upper(var.env)}_CLIENT_ID",
+    "CLIENT_ID_PR" : {
+      "key" : "${upper(var.env)}_CLIENT_ID_PR",
       "value" : data.azurerm_user_assigned_identity.identity_pr_01.client_id
     },
-    "TENANT_ID" : {
-      "key" : "${upper(var.env)}_TENANT_ID",
+    "CLIENT_ID_BRANCH" : {
+      "key" : "${upper(var.env)}_CLIENT_ID_PR",
+      "value" : data.azurerm_user_assigned_identity.identity_ref_01.client_id
+    },
+    "TENANT_ID_PR" : {
+      "key" : "${upper(var.env)}_TENANT_ID_PR",
       "value" : data.azurerm_user_assigned_identity.identity_pr_01.tenant_id
+    },
+    "TENANT_ID_BRANCH" : {
+      "key" : "${upper(var.env)}_TENANT_ID_BRANCH",
+      "value" : data.azurerm_user_assigned_identity.identity_ref_01.tenant_id
     },
     "SUBSCRIPTION_ID" : {
       "key" : "${upper(var.env)}_SUBSCRIPTION_ID",

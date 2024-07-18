@@ -27,6 +27,11 @@ data "azurerm_user_assigned_identity" "identity_pr_01" {
   resource_group_name = "${local.prefix}-${var.env_short}-identity-rg"
 }
 
+data "azurerm_user_assigned_identity" "identity_ref_01" {
+  name                = "${local.prefix}-${var.env_short}-${local.domain}-01-ref-github-cd-identity"
+  resource_group_name = "${local.prefix}-${var.env_short}-identity-rg"
+}
+
 data "azurerm_key_vault" "key_vault" {
   name                = "pagopa-${var.env_short}-kv"
   resource_group_name = "pagopa-${var.env_short}-sec-rg"
