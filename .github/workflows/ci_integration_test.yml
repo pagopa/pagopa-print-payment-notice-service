@@ -109,7 +109,7 @@ jobs:
               echo "SUBSCRIPTION_ID=${{secrets.UAT_SUBSCRIPTION_ID}}" >> $GITHUB_ENV 
               echo "SUBKEY=${{secrets.UAT_SUBKEY}}" >> $GITHUB_ENV 
             fi          
-          elif
+          else
             echo "CLIENT_ID=${{secrets.DEV_CLIENT_ID_BRANCH}}" >> $GITHUB_ENV 
             echo "TENANT_ID=${{secrets.DEV_TENANT_ID_BRANCH}}" >> $GITHUB_ENV 
             echo "SUBSCRIPTION_ID=${{secrets.DEV_SUBSCRIPTION_ID}}" >> $GITHUB_ENV 
