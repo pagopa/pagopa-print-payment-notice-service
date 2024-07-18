@@ -10,4 +10,5 @@ public class Constants {
 
     public static final String APIM_SUBSCRIPTION_KEY = "Ocp-Apim-Subscription-Key";
 
+    public static final String IDEMPOTENCY_KEY = "Idempotency-Key";
 }

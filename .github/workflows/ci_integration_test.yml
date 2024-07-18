@@ -2,7 +2,7 @@ name: Integration Tests
 
 on:
   schedule:
-    - cron: '00 08 * * *'
+    - cron: '00 09 * * *'
 
   workflow_call:
     inputs:
@@ -85,7 +85,7 @@ jobs:
         run: echo "$MATRIX_CONTEXT"
 
   integration_test:
-    name: Test ${{(github.event.inputs == null && 'dev') || inputs.environment }}
+    name: Test ${{ inputs.environment || 'dev' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -95,18 +95,31 @@ jobs:
       - name: setup
         id: setup
         run: |
-          echo "RUN_ENV=${{ (inputs == null && 'dev') || inputs.environment }}" >> $GITHUB_ENV 
+          echo "RUN_ENV=${{ inputs.environment || 'dev' }}" >> $GITHUB_ENV 
           
-          echo "CLIENT_ID=${{secrets.DEV_CLIENT_ID}}" >> $GITHUB_ENV 
-          echo "TENANT_ID=${{secrets.DEV_TENANT_ID}}" >> $GITHUB_ENV 
-          echo "SUBSCRIPTION_ID=${{secrets.DEV_SUBSCRIPTION_ID}}" >> $GITHUB_ENV 
-          echo "SUBKEY=${{secrets.DEV_SUBKEY}}" >> $GITHUB_ENV 
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "CLIENT_ID=${{ secrets.DEV_CLIENT_ID_PR }}" >> $GITHUB_ENV
+            echo "TENANT_ID=${{ secrets.DEV_TENANT_ID_PR }}" >> $GITHUB_ENV
+            echo "SUBSCRIPTION_ID=${{ secrets.DEV_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+            echo "SUBKEY=${{ secrets.DEV_SUBKEY }}" >> $GITHUB_ENV   
+            if [[ "${{ inputs.environment || 'dev' }}" == "uat" ]]; then
+              echo "CLIENT_ID=${{ secrets.UAT_CLIENT_ID_PR }}" >> $GITHUB_ENV
+              echo "TENANT_ID=${{ secrets.UAT_TENANT_ID_PR }}" >> $GITHUB_ENV
+              echo "SUBSCRIPTION_ID=${{ secrets.UAT_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+              echo "SUBKEY=${{ secrets.UAT_SUBKEY }}" >> $GITHUB_ENV
+            fi
+          else
+            echo "CLIENT_ID=${{ secrets.DEV_CLIENT_ID_BRANCH }}" >> $GITHUB_ENV
+            echo "TENANT_ID=${{ secrets.DEV_TENANT_ID_BRANCH }}" >> $GITHUB_ENV
+            echo "SUBSCRIPTION_ID=${{ secrets.DEV_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+            echo "SUBKEY=${{ secrets.DEV_SUBKEY }}" >> $GITHUB_ENV
           
-          if [[ ${{ inputs.environment }} == "uat" ]]; then
-            echo "CLIENT_ID=${{secrets.UAT_CLIENT_ID}}" >> $GITHUB_ENV 
-            echo "TENANT_ID=${{secrets.UAT_TENANT_ID}}" >> $GITHUB_ENV 
-            echo "SUBSCRIPTION_ID=${{secrets.UAT_SUBSCRIPTION_ID}}" >> $GITHUB_ENV 
-            echo "SUBKEY=${{secrets.UAT_SUBKEY}}" >> $GITHUB_ENV 
+            if [[ "${{ inputs.environment || 'dev' }}" == "uat" ]]; then
+              echo "CLIENT_ID=${{ secrets.UAT_CLIENT_ID_BRANCH }}" >> $GITHUB_ENV
+              echo "TENANT_ID=${{ secrets.UAT_TENANT_ID_BRANCH }}" >> $GITHUB_ENV
+              echo "SUBSCRIPTION_ID=${{ secrets.UAT_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+              echo "SUBKEY=${{ secrets.UAT_SUBKEY }}" >> $GITHUB_ENV
+            fi
           fi
 
       - name: Login
@@ -137,11 +150,12 @@ jobs:
           chmod +x ./run_integration_test.sh
           ./run_integration_test.sh ${{ env.RUN_ENV }}
 
+
   notify:
     needs: [ integration_test ]
     runs-on: ubuntu-latest
     name: Notify
-    if: ${{ always() && inputs.notify == 'true' }}
+    if: ${{ always() && (github.event_name == 'schedule' || inputs.notify == true ) }}
     steps:
       - name: Report Status
         uses: ravsamhq/notify-slack-action@be814b201e233b2dc673608aa46e5447c8ab13f2 # v2
@@ -149,7 +163,7 @@ jobs:
           status: ${{ needs.integration_test.result }}
           token: ${{ secrets.GITHUB_TOKEN }}
           notify_when: 'success,failure,skipped'
-          notification_title: '<{run_url}| Integration Test> has {status_message} in ${{ inputs.environment }}'
+          notification_title: "<{run_url}| Integration Test> has {status_message} in ${{ inputs.environment || 'dev' }}"
           message_format: '{emoji} <{run_url}|{workflow}> {status_message} in <{repo_url}|{repo}>'
           footer: 'Linked to <{workflow_url}| workflow file>'
         env:

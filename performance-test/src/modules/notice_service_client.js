@@ -24,11 +24,13 @@ export function generateSingleNotice(noticeServiceUri, subKey, inputData, folder
 }
 
 export function generateMassiveNotice(noticeServiceUri, subKey, inputData, userId) {
+    let idempotencyKey = (Math.random() + 1).toString(36).substring(7);
 
     let headers = {
         'Ocp-Apim-Subscription-Key': subKey,
         'X-User-Id': userId,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Idempotency-Key': idempotencyKey
     };
 
     return http.post(`${noticeServiceUri}/notices/generate-massive`, JSON.stringify(inputData), {

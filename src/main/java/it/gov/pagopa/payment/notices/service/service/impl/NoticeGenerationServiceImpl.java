@@ -30,7 +30,9 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static it.gov.pagopa.payment.notices.service.util.CommonUtility.checkUserId;
 import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.createWorkingDirectory;
 
 /**
@@ -70,7 +72,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         List<String> errors = paymentGenerationRequestErrorRepository.findErrors(folderId)
                 .stream()
                 .filter(item -> !item.isCompressionError())
-                .map(PaymentNoticeGenerationRequestError::getId)
+                .map(PaymentNoticeGenerationRequestError::getErrorId)
                 .toList();
 
         return GetGenerationRequestStatusResource
@@ -83,21 +85,32 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
     @Override
     @Transactional
-    public String generateMassive(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId) {
+    public String generateMassive(
+            NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId, String idempotencyKey) {
 
         try {
 
-            String folderId = paymentGenerationRequestRepository.save(PaymentNoticeGenerationRequest.builder()
-                    .status(PaymentGenerationRequestStatus.INSERTED)
-                    .createdAt(Instant.now())
-                    .items(new ArrayList<>())
-                    .userId(userId)
-                    .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
-                    .numberOfElementsFailed(0)
-                    .requestDate(Instant.now())
-                    .build()).getId();
+            String folderId;
 
-            asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
+            Optional<PaymentNoticeGenerationRequest> existingRequest = paymentGenerationRequestRepository
+                    .findByIdempotencyKeyAndUserId(idempotencyKey, userId);
+
+            if(existingRequest.isEmpty()) {
+                folderId = paymentGenerationRequestRepository.save(PaymentNoticeGenerationRequest.builder()
+                        .status(PaymentGenerationRequestStatus.INSERTED)
+                        .idempotencyKey(idempotencyKey)
+                        .createdAt(Instant.now())
+                        .items(new ArrayList<>())
+                        .userId(userId)
+                        .numberOfElementsTotal(noticeGenerationMassiveRequest.getNotices().size())
+                        .numberOfElementsFailed(0)
+                        .requestDate(Instant.now())
+                        .build()).getId();
+
+                asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
+            } else {
+                folderId = existingRequest.get().getId();
+            }
 
             return folderId;
 
@@ -112,13 +125,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public File generateNotice(NoticeGenerationRequestItem noticeGenerationRequestItem, String folderId, String userId) {
         try {
 
-            String ciTaxCode = noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode();
-
-            if(userId != null && !userId.toUpperCase().startsWith("ADMIN") &&
-                    !userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode,
-                    noticeGenerationRequestItem.getData().getNotice().getCode())) {
-                throw new AppException(AppError.NOT_ALLOWED_ON_CI_CODE);
-            }
+            checkUserId(userId, noticeGenerationRequestItem, brokerService);
 
             if(folderId != null) {
                 findFolderIfExists(folderId, userId);

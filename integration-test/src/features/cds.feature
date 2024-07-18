@@ -6,8 +6,8 @@ Feature: Single Generation CDS
       | variableName       | value                                  |
       | taxCode            | "99999000013"                          |
       | fullName           | "Comune di Test"                       |
-      | organization       | "Settore di Test"                      |
-      | info               | "<ec.info>"                            |
+      | organization       | <ec.settore>                           |
+      | info               | "Info di Test"                         |
       | webChannel         | true                                   |
       | appChannel         | false                                  |
       | physicalChannel    | "Canale Fisico"                        |
@@ -41,18 +41,14 @@ Feature: Single Generation CDS
         "data": {
           "notice": {
             "subject": <Avviso.Oggetto>,
-            "reducedAmount": <Avviso.ImportoRidotto>,
-            "discountedAmount": <Avviso.ImportoScontato>,
-            "installments": [
-              {
-                  "code":  <Avviso.CodiceRidotto>,
-                  "amount": <Avviso.ImportoRidotto>
-              },
-              {
-                  "code": <Avviso.CodiceScontato>,
-                  "amount": <Avviso.ImportoScontato>
-              }
-            ]
+            "reduced": {
+              "amount": <Avviso.ImportoRidotto>,
+              "code": <Avviso.CodiceRidotto>
+            },
+            "discounted": {
+                "amount": <Avviso.ImportoScontato>,
+                "code": <Avviso.CodiceScontato>
+            }
           },
           "creditorInstitution": {
             "taxCode": <Ente.CF>
@@ -73,9 +69,9 @@ Feature: Single Generation CDS
     And the response should be in PDF format
     And the PDF document should be equal to the reference PDF "<pdf_name>"
     Examples:
-      | scenario_id                | template_id                   | ec.info      | pdf_name           |
-      | FT_17_CDS_AllFields        | TemplateCdsInfraction         | Info di Test | scenario_ft_17.pdf |
-      | FT_18_CDS_Poste_AllFields  | TemplateCdsInfractionExtended | Info di Test | scenario_ft_18.pdf |
-      | FT_19_CDS_SomeFields       | TemplateCdsInfraction         | null         | scenario_ft_19.pdf |
-      | FT_20_CDS_Poste_SomeFields | TemplateCdsInfractionExtended | null         | scenario_ft_20.pdf |
+      | scenario_id                | template_id                | ec.settore        | pdf_name           |
+      | FT_17_CDS_AllFields        | TemplateCdsInfraction      | "Settore di Test" | scenario_ft_17.pdf |
+      | FT_18_CDS_Poste_AllFields  | TemplateCdsInfractionPoste | "Settore di Test" | scenario_ft_18.pdf |
+      | FT_19_CDS_SomeFields       | TemplateCdsInfraction      | null              | scenario_ft_19.pdf |
+      | FT_20_CDS_Poste_SomeFields | TemplateCdsInfractionPoste | null              | scenario_ft_20.pdf |
 

@@ -94,7 +94,7 @@ Feature: Single Generation - 2 Installments
       """
     Then the response status should be 201
     And the response should be in PDF format
-    And the PDF document should be equal to the reference PDF "scenario_ft_09.pdf"
+    And the PDF document should be equal to the reference PDF "scenario_ft_22.pdf"
 
 
   Scenario: FT_23_RateMultiple2_SomeFields: Rate multiple 5 - Solo alcuni campi valorizzati
@@ -198,4 +198,4 @@ Feature: Single Generation - 2 Installments
       """
     Then the response status should be 201
     And the response should be in PDF format
-    And the PDF document should be equal to the reference PDF "scenario_ft_10.pdf"
+    And the PDF document should be equal to the reference PDF "scenario_ft_23.pdf"
