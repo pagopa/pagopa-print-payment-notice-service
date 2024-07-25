@@ -54,7 +54,7 @@ export default function () {
         'Generate Massive Request body not null': (response) => response.body !== null
     });
 
-    sleep(processTime * numberOfElements);
+    sleep(processTime);
     postcondition(JSON.parse(response.body).folderId);
 
 }
