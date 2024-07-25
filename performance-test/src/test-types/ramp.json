@@ -1,0 +1,20 @@
+{
+  "discardResponseBodies": true,
+  "scenarios": {
+    "contacts": {
+      "executor": "ramping-vus",
+      "startVUs": 0,
+      "stages": [
+        {
+          "duration": "15m",
+          "target": 100
+        },
+        {
+          "duration": "2m",
+          "target": 0
+        }
+      ],
+      "gracefulRampDown": "0s"
+    }
+  }
+}
