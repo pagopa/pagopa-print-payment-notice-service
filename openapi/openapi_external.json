@@ -1,32 +1,14 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "description": "@project.description@",
+    "description": "Microservice to expose the APIs for Print Payment Notices",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "title": "@project.name@ - Payment Notice Service (External)",
-    "version": "0.5.7"
+    "title": "Print Payment Notices - Service - Payment Notice Service (External)",
+    "version": "0.6.6"
   },
   "servers": [
     {
-      "url": "http://localhost:8080"
-    },
-    {
-      "url": "{host}{basePath}",
-      "variables": {
-        "basePath": {
-          "enum": [
-            "/print-payment-notice-service/v1"
-          ]
-        },
-        "host": {
-          "default": "https://api.platform.pagopa.it",
-          "enum": [
-            "https://api.dev.platform.pagopa.it",
-            "https://api.uat.platform.pagopa.it",
-            "https://api.platform.pagopa.it"
-          ]
-        }
-      }
+      "url": "https://api.platform.pagopa.it/print-payment-notice-service/external/v1"
     }
   ],
   "paths": {
@@ -39,15 +21,6 @@
             "description": "folderId to use for request retrieval",
             "in": "path",
             "name": "folderId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "userId to use for request retrieval",
-            "in": "header",
-            "name": "X-User-Id",
             "required": true,
             "schema": {
               "type": "string"
@@ -202,15 +175,6 @@
             "description": "folderId to use for request retrieval",
             "in": "path",
             "name": "folderId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "userId to use for request retrieval",
-            "in": "header",
-            "name": "X-User-Id",
             "required": true,
             "schema": {
               "type": "string"
@@ -385,15 +349,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "description": "userId to use for request retrieval",
-            "in": "header",
-            "name": "X-User-Id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -555,15 +510,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "description": "userId to use for request status retrieval",
-            "in": "header",
-            "name": "X-User-Id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -718,16 +664,6 @@
               "type": "string",
               "description": "If the file exists you can specify the folder id. Pass it if you want to regenerate the file"
             }
-          },
-          {
-            "description": "User ID. Required if `folderId` is provided",
-            "in": "header",
-            "name": "X-User-Id",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "description": "User ID. Required if `folderId` is provided"
-            }
           }
         ],
         "requestBody": {
@@ -857,9 +793,9 @@
         "operationId": "generateNoticeMassiveRequest",
         "parameters": [
           {
-            "description": "userId to use for request status retrieval",
+            "description": "key to be used for idempotency checks of pre-existing requests having the same key",
             "in": "header",
-            "name": "X-User-Id",
+            "name": "Idempotency-Key",
             "required": true,
             "schema": {
               "type": "string"
@@ -1399,12 +1335,12 @@
       "InstallmentData": {
         "required": [
           "amount",
-          "code",
-          "dueDate"
+          "code"
         ],
         "type": "object",
         "properties": {
           "amount": {
+            "maximum": 99999999999,
             "type": "integer",
             "description": "Installment amount",
             "format": "int64"
@@ -1420,11 +1356,10 @@
             "description": "Installment dueDate"
           }
         },
-        "description": "Notice Installments"
+        "description": "Notice reduced amount to pay (used in reduced amount for infractions).  Mandatory for CDS infraction notices"
       },
       "Notice": {
         "required": [
-          "paymentAmount",
           "subject"
         ],
         "type": "object",
@@ -1435,11 +1370,8 @@
             "type": "string",
             "description": "Notice code, mandatory whenever the template contains a general payment"
           },
-          "discountedAmount": {
-            "maximum": 99999999999,
-            "type": "integer",
-            "description": "Notice discounted amount to pay (used for example in discounted amount for infractions)",
-            "format": "int64"
+          "discounted": {
+            "$ref": "#/components/schemas/InstallmentData"
           },
           "dueDate": {
             "type": "string",
@@ -1460,11 +1392,8 @@
             "description": "Notice total amount to pay",
             "format": "int64"
           },
-          "reducedAmount": {
-            "maximum": 99999999999,
-            "type": "integer",
-            "description": "Notice reduced amount to pay (used for example in reduced amount for infractions)",
-            "format": "int64"
+          "reduced": {
+            "$ref": "#/components/schemas/InstallmentData"
           },
           "subject": {
             "maxLength": 90,

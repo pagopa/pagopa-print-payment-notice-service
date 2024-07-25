@@ -25,18 +25,17 @@ public class Notice {
     @Size(max = 90)
     private String subject;
 
-    @Schema(description = "Notice total amount to pay", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull
+    @Schema(description = "Notice total amount to pay", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @Max(value = 99999999999L)
     private Long paymentAmount;
 
-    @Schema(description = "Notice reduced amount to pay (used for example in reduced amount for infractions)")
-    @Max(value = 99999999999L)
-    private Long reducedAmount;
+    @Schema(description = "Notice reduced amount to pay (used in reduced amount for infractions). " +
+            " Mandatory for CDS infraction notices")
+    private InstallmentData reduced;
 
-    @Schema(description = "Notice discounted amount to pay (used for example in discounted amount for infractions)")
-    @Max(value = 99999999999L)
-    private Long discountedAmount;
+    @Schema(description = "Notice discounted amount to pay (used in discounted amount for infractions)." +
+            " Mandatory for CDS infraction notices")
+    private InstallmentData discounted;
 
     @Schema(description = "Notice due date", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String dueDate;

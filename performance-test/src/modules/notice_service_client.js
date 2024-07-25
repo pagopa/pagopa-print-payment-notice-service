@@ -16,19 +16,28 @@ export function generateSingleNotice(noticeServiceUri, subKey, inputData, folder
     console.log(`k=`, subKey.charAt(0));
 
     return folderId !== null ?
-        http.post(path,
-            folderId, JSON.stringify(inputData), {headers}) :
+        http.post(path, folderId, JSON.stringify(inputData), {
+            headers,
+            timeout: '180s'
+        }) :
         http.post(noticeServiceUri + "/notices/generate",
-            JSON.stringify(inputData), {headers, responseType: "text"});
+            JSON.stringify(inputData),
+            {
+                headers,
+                responseType: "text",
+                timeout: '180s'
+            });
 
 }
 
 export function generateMassiveNotice(noticeServiceUri, subKey, inputData, userId) {
+    let idempotencyKey = (Math.random() + 1).toString(36).substring(7);
 
     let headers = {
         'Ocp-Apim-Subscription-Key': subKey,
         'X-User-Id': userId,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Idempotency-Key': idempotencyKey
     };
 
     return http.post(`${noticeServiceUri}/notices/generate-massive`, JSON.stringify(inputData), {
@@ -46,7 +55,10 @@ export function getNoticeRequest(noticeServiceUri, subKey, folderId, userId) {
     };
 
     return http.get(`${noticeServiceUri}/notices/folder/${folderId}/status`,
-        {headers, responseType: "text"});
+        {
+            headers,
+            responseType: "text"
+        });
 
 }
 
