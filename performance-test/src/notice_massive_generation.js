@@ -55,6 +55,9 @@ export default function () {
     });
 
     sleep(processTime);
-    postcondition(JSON.parse(response.body).folderId);
+    console.log(response.body);
+    console.log(JSON.parse(response.body));
+    console.log(JSON.parse(response.body).folderId);
+    postcondition(JSON.parse(response.body)['folderId']);
 
 }
