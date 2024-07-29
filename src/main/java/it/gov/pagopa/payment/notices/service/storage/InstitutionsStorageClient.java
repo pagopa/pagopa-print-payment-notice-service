@@ -30,8 +30,8 @@ public class InstitutionsStorageClient {
 
     private BlobContainerClient blobContainerClient;
     private BlobContainerClient logoBlobContainerClient;
-
     private ObjectMapper objectMapper;
+    private String externalUrl;
 
     @Autowired
     public InstitutionsStorageClient(
@@ -39,6 +39,7 @@ public class InstitutionsStorageClient {
             @Value("${spring.cloud.azure.storage.blob.institutions.connection_string}") String connectionString,
             @Value("${spring.cloud.azure.storage.blob.institutions.containerName}") String containerName,
             @Value("${spring.cloud.azure.storage.blob.institutions.logoContainerName}") String logoContainerName,
+            @Value("${spring.cloud.azure.storage.blob.institutions.externalUrl}") String externalUrl,
             ObjectMapper objectMapper) {
         if (Boolean.TRUE.toString().equals(enabled)) {
             BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
@@ -47,16 +48,19 @@ public class InstitutionsStorageClient {
             this.logoBlobContainerClient = blobContainerClient.getServiceClient()
                     .getBlobContainerClient(logoContainerName);
             this.objectMapper = objectMapper;
+            this.externalUrl = externalUrl;
         }
     }
 
     public InstitutionsStorageClient(
             Boolean enabled,
-            BlobContainerClient blobContainerClient) {
+            BlobContainerClient blobContainerClient,
+            String externalUrl) {
         if(Boolean.TRUE.equals(enabled)) {
             this.blobContainerClient = blobContainerClient;
             this.logoBlobContainerClient = blobContainerClient;
             this.objectMapper = new ObjectMapper();
+            this.externalUrl = externalUrl;
         }
     }
 
@@ -87,7 +91,10 @@ public class InstitutionsStorageClient {
                                 logo
                         ), null, null);
 
-                data.setLogo(blobClient.getBlobUrl());
+                String[] blobUrl = blobClient.getBlobUrl().split("/",4);
+                blobUrl[3] = externalUrl;
+
+                data.setLogo(String.join("/",blobUrl));
             }
 
 
