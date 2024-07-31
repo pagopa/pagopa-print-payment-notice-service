@@ -3,7 +3,7 @@ name: pagopa-print-payment-notice-service
 description: Microservice that handles services for notice print
 type: application
 version: 0.42.0
-appVersion: 0.6.6-2-perf-test
+appVersion: 0.6.8
 dependencies:
   - name: microservice-chart
     version: 5.9.0
