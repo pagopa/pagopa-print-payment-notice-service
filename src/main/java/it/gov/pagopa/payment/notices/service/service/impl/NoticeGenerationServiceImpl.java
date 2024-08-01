@@ -109,6 +109,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                         .build()).getId();
 
                 MDC.put("folderId", folderId);
+                MDC.put("massiveStatus", "INSERTED");
                 log.info("Massive Request INSERTED: {}", folderId);
 
                 asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
