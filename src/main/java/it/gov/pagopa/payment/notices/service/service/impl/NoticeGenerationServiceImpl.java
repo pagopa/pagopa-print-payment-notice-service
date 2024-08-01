@@ -120,6 +120,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             return folderId;
 
         } catch (Exception e) {
+            MDC.put("massiveStatus", "EXCEPTION");
             log.error("Exception Massive Request: {}", e.getMessage(), e);
             throw new AppException(AppError.ERROR_ON_MASSIVE_GENERATION_REQUEST, e);
         }
