@@ -20,6 +20,7 @@ import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -107,6 +108,9 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                         .requestDate(Instant.now())
                         .build()).getId();
 
+                MDC.put("folderId", folderId);
+                log.info("Massive Request INSERTED: {}", folderId);
+
                 asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
             } else {
                 folderId = existingRequest.get().getId();
@@ -115,9 +119,10 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             return folderId;
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("Exception Massive Request: {}", e.getMessage(), e);
             throw new AppException(AppError.ERROR_ON_MASSIVE_GENERATION_REQUEST, e);
         }
+
 
     }
 
