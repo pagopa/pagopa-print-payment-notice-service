@@ -32,14 +32,16 @@ public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequ
 
     @Override
     public boolean noticeGeneration(NoticeGenerationRequestEH noticeGenerationRequestEH) {
+        var res = streamBridge.send("noticeGeneration-out-0",
+                buildMessage(noticeGenerationRequestEH));
+
         MDC.put("topic", "generation");
         MDC.put("messageId", getMessageId(noticeGenerationRequestEH));
         log.info("New Generation Message Sent: notice {}", getMessageId(noticeGenerationRequestEH));
         MDC.remove("topic");
         MDC.remove("messageId");
 
-        return streamBridge.send("noticeGeneration-out-0",
-                buildMessage(noticeGenerationRequestEH));
+        return res;
     }
 
 
