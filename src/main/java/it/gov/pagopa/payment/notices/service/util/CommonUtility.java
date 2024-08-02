@@ -2,10 +2,13 @@ package it.gov.pagopa.payment.notices.service.util;
 
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
+import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestEH;
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
 import it.gov.pagopa.payment.notices.service.service.BrokerService;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Calendar;
 import java.util.List;
@@ -14,6 +17,8 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommonUtility {
 
+
+    private static final Logger log = LoggerFactory.getLogger(CommonUtility.class);
 
     /**
      * @param value value to deNullify.
@@ -63,7 +68,7 @@ public class CommonUtility {
      * @return the sanitized param
      */
     public static String sanitizeLogParam(String logParam) {
-        if(logParam.matches("\\w*")) {
+        if (logParam.matches("\\w*")) {
             return logParam;
         }
         return "suspicious log param";
@@ -72,10 +77,24 @@ public class CommonUtility {
     public static void checkUserId(String userId, NoticeGenerationRequestItem noticeGenerationRequestItem, BrokerService brokerService) {
         String ciTaxCode = noticeGenerationRequestItem.getData().getCreditorInstitution().getTaxCode();
 
-        if(userId != null && !userId.toUpperCase().startsWith("ADMIN") &&
+        if (userId != null && !userId.toUpperCase().startsWith("ADMIN") &&
                 !userId.equals(ciTaxCode) && !brokerService.checkBrokerAllowance(userId, ciTaxCode,
                 noticeGenerationRequestItem.getData().getNotice().getCode())) {
             throw new AppException(AppError.NOT_ALLOWED_ON_CI_CODE);
+        }
+    }
+
+
+    public static String getMessageId(NoticeGenerationRequestEH noticeGenerationRequestEH) {
+        try {
+            String code = noticeGenerationRequestEH.getNoticeData().getData().getNotice().getCode();
+            if (code == null) {
+                code = noticeGenerationRequestEH.getNoticeData().getData().getNotice().getInstallments().get(0).getCode();
+            }
+            return code;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return null;
         }
     }
 }

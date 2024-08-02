@@ -13,6 +13,8 @@ import reactor.core.publisher.Flux;
 
 import java.util.function.Supplier;
 
+import static it.gov.pagopa.payment.notices.service.util.CommonUtility.getMessageId;
+
 @Service
 @Slf4j
 public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequestProducer {
@@ -31,12 +33,14 @@ public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequ
     @Override
     public boolean noticeGeneration(NoticeGenerationRequestEH noticeGenerationRequestEH) {
         MDC.put("topic", "generation");
-        log.info("New Generation Message Sent: notice {}", noticeGenerationRequestEH.getNoticeData().getData().getNotice());
+        MDC.put("messageId", getMessageId(noticeGenerationRequestEH));
+        log.info("New Generation Message Sent: notice {}", getMessageId(noticeGenerationRequestEH));
         MDC.remove("topic");
 
         return streamBridge.send("noticeGeneration-out-0",
                 buildMessage(noticeGenerationRequestEH));
     }
+
 
     /**
      * Declared just to let know Spring to connect the producer at startup
