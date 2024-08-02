@@ -36,6 +36,7 @@ public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequ
                 buildMessage(noticeGenerationRequestEH));
 
         MDC.put("topic", "generation");
+        MDC.put("folderId", noticeGenerationRequestEH.getFolderId());
         MDC.put("action", "sent");
         MDC.put("itemId", getItemId(noticeGenerationRequestEH));
         log.info("New Generation Message Sent: {}", getItemId(noticeGenerationRequestEH));
