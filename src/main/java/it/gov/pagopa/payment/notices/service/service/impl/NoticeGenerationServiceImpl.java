@@ -86,8 +86,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
     @Override
     @Transactional
-    public String generateMassive(
-            NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId, String idempotencyKey) {
+    public String generateMassive(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId, String idempotencyKey) {
 
         try {
 
