@@ -13,7 +13,7 @@ import reactor.core.publisher.Flux;
 
 import java.util.function.Supplier;
 
-import static it.gov.pagopa.payment.notices.service.util.CommonUtility.getMessageId;
+import static it.gov.pagopa.payment.notices.service.util.CommonUtility.getItemId;
 
 @Service
 @Slf4j
@@ -36,10 +36,12 @@ public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequ
                 buildMessage(noticeGenerationRequestEH));
 
         MDC.put("topic", "generation");
-        MDC.put("messageId", getMessageId(noticeGenerationRequestEH));
-        log.info("New Generation Message Sent: notice {}", getMessageId(noticeGenerationRequestEH));
+        MDC.put("action", "sent");
+        MDC.put("itemId", getItemId(noticeGenerationRequestEH));
+        log.info("New Generation Message Sent: {}", getItemId(noticeGenerationRequestEH));
         MDC.remove("topic");
-        MDC.remove("messageId");
+        MDC.remove("action");
+        MDC.remove("itemId");
 
         return res;
     }
