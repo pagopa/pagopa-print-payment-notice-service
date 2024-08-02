@@ -2,6 +2,7 @@ package it.gov.pagopa.payment.notices.service.events;
 
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestEH;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import reactor.core.publisher.Flux;
 import java.util.function.Supplier;
 
 @Service
+@Slf4j
 public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequestProducer {
 
     private final StreamBridge streamBridge;
@@ -28,6 +30,10 @@ public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequ
 
     @Override
     public boolean noticeGeneration(NoticeGenerationRequestEH noticeGenerationRequestEH) {
+        MDC.put("topic", "generation");
+        log.info("New Generation Message Sent: {}", noticeGenerationRequestEH);
+        MDC.remove("topic");
+
         return streamBridge.send("noticeGeneration-out-0",
                 buildMessage(noticeGenerationRequestEH));
     }
