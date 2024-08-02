@@ -39,10 +39,12 @@ public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequ
         MDC.put("folderId", noticeGenerationRequestEH.getFolderId());
         MDC.put("action", "sent");
         MDC.put("itemId", getItemId(noticeGenerationRequestEH));
+        MDC.put("itemStatus", "INSERTED");
         log.info("New Generation Message Sent: {}", getItemId(noticeGenerationRequestEH));
         MDC.remove("topic");
         MDC.remove("action");
         MDC.remove("itemId");
+        MDC.remove("itemStatus");
 
         return res;
     }
