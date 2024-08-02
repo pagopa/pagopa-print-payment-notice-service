@@ -36,6 +36,7 @@ public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequ
         MDC.put("messageId", getMessageId(noticeGenerationRequestEH));
         log.info("New Generation Message Sent: notice {}", getMessageId(noticeGenerationRequestEH));
         MDC.remove("topic");
+        MDC.remove("messageId");
 
         return streamBridge.send("noticeGeneration-out-0",
                 buildMessage(noticeGenerationRequestEH));
