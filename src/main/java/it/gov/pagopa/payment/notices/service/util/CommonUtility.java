@@ -86,9 +86,10 @@ public class CommonUtility {
 
 
     public static String getItemId(NoticeGenerationRequestEH noticeGenerationRequestEH) {
-        return String.format("%s-%s-%s-%s", "pagopa-avviso",
+        String res = String.format("%s-%s-%s-%s", "pagopa-avviso",
                 noticeGenerationRequestEH.getNoticeData().getData().getCreditorInstitution().getTaxCode(),
                 noticeGenerationRequestEH.getNoticeData().getData().getNotice().getCode(),
                 noticeGenerationRequestEH.getNoticeData().getTemplateId());
+        return sanitizeLogParam(res);
     }
 }

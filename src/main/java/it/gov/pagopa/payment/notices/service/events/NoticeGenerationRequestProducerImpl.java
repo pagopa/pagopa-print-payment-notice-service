@@ -35,6 +35,7 @@ public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequ
         var res = streamBridge.send("noticeGeneration-out-0",
                 buildMessage(noticeGenerationRequestEH));
 
+        // Log for dashboard
         MDC.put("topic", "generation");
         MDC.put("folderId", noticeGenerationRequestEH.getFolderId());
         MDC.put("action", "sent");

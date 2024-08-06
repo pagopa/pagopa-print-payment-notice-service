@@ -50,7 +50,7 @@ public class AsyncService {
     @Async
     public void sendNotices(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String folderId, String userId) {
         noticeGenerationMassiveRequest.getNotices()
-//                .parallelStream() TODO
+//                .parallelStream() - it's really fast without multithread
                 .forEach(noticeGenerationRequestItem -> {
                     try {
 
