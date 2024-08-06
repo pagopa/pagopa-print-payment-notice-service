@@ -83,7 +83,7 @@ public class NoticesController {
             @Parameter(description = "templateId to use for retrieval")
             @Valid @NotNull @RequestBody NoticeGenerationRequestItem noticeGenerationRequestItem,
             @Schema(description = "User ID. Required if `folderId` is provided") @RequestHeader(value = Constants.X_USER_ID, required = false) String userId) throws IOException {
-        if(folderId != null && userId == null) {
+        if (folderId != null && userId == null) {
             throw new AppException(AppError.BAD_REQUEST, "Invalid Data");
         }
 
@@ -93,7 +93,7 @@ public class NoticesController {
             headers.add(HttpHeaders.CONTENT_DISPOSITION,
                     "attachment; filename=\"" + file.getName() + ".pdf\"");
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentType(MediaType.APPLICATION_PDF)
                     .headers(headers)
                     .body(new ByteArrayResource(inputStream.readAllBytes()));
         } catch (Exception e) {
@@ -187,7 +187,7 @@ public class NoticesController {
             @Parameter(description = "key to be used for idempotency checks of pre-existing requests having the same key")
             @Valid @NotNull @RequestHeader(Constants.IDEMPOTENCY_KEY) String idempotencyKey) {
         return NoticeGenerationMassiveResource.builder().folderId(
-                noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, userId, idempotencyKey))
+                        noticeGenerationService.generateMassive(noticeGenerationMassiveRequest, userId, idempotencyKey))
                 .build();
     }
 

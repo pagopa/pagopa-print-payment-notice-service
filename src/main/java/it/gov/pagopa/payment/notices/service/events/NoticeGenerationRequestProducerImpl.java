@@ -2,6 +2,7 @@ package it.gov.pagopa.payment.notices.service.events;
 
 import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestEH;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +13,10 @@ import reactor.core.publisher.Flux;
 
 import java.util.function.Supplier;
 
+import static it.gov.pagopa.payment.notices.service.util.CommonUtility.getItemId;
+
 @Service
+@Slf4j
 public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequestProducer {
 
     private final StreamBridge streamBridge;
@@ -28,9 +32,24 @@ public class NoticeGenerationRequestProducerImpl implements NoticeGenerationRequ
 
     @Override
     public boolean noticeGeneration(NoticeGenerationRequestEH noticeGenerationRequestEH) {
-        return streamBridge.send("noticeGeneration-out-0",
+        var res = streamBridge.send("noticeGeneration-out-0",
                 buildMessage(noticeGenerationRequestEH));
+
+        // Log for dashboard
+        MDC.put("topic", "generation");
+        MDC.put("folderId", noticeGenerationRequestEH.getFolderId());
+        MDC.put("action", "sent");
+        MDC.put("itemId", getItemId(noticeGenerationRequestEH));
+        MDC.put("itemStatus", "INSERTED");
+        log.info("New Generation Message Sent: {}", getItemId(noticeGenerationRequestEH));
+        MDC.remove("topic");
+        MDC.remove("action");
+        MDC.remove("itemId");
+        MDC.remove("itemStatus");
+
+        return res;
     }
+
 
     /**
      * Declared just to let know Spring to connect the producer at startup

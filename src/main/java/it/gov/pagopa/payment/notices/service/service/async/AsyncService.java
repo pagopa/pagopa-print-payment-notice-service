@@ -49,25 +49,27 @@ public class AsyncService {
 
     @Async
     public void sendNotices(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String folderId, String userId) {
-        noticeGenerationMassiveRequest.getNotices().parallelStream().forEach(noticeGenerationRequestItem -> {
-            try {
+        noticeGenerationMassiveRequest.getNotices()
+//                .parallelStream() - it's really fast without multithread
+                .forEach(noticeGenerationRequestItem -> {
+                    try {
 
-                checkUserId(userId, noticeGenerationRequestItem, brokerService);
+                        checkUserId(userId, noticeGenerationRequestItem, brokerService);
 
-                if(!noticeGenerationRequestProducer.noticeGeneration(
-                        NoticeGenerationRequestEH.builder()
-                                .noticeData(noticeGenerationRequestItem)
-                                .folderId(folderId)
-                                .build())
-                ) {
-                    saveErrorEvent(folderId, noticeGenerationRequestItem);
-                }
-            } catch (Exception e) {
-                log.warn("SendNotices Failure {}", sanitizeLogParam(folderId), e);
-                saveErrorEvent(folderId, noticeGenerationRequestItem);
-            }
+                        if (!noticeGenerationRequestProducer.noticeGeneration(
+                                NoticeGenerationRequestEH.builder()
+                                        .noticeData(noticeGenerationRequestItem)
+                                        .folderId(folderId)
+                                        .build())
+                        ) {
+                            saveErrorEvent(folderId, noticeGenerationRequestItem);
+                        }
+                    } catch (Exception e) {
+                        log.warn("SendNotices Failure {}", sanitizeLogParam(folderId), e);
+                        saveErrorEvent(folderId, noticeGenerationRequestItem);
+                    }
 
-        });
+                });
     }
 
     private void saveErrorEvent(String folderId, NoticeGenerationRequestItem noticeGenerationRequestItem) {

@@ -26,12 +26,9 @@ public enum AppError {
     ERROR_ON_MASSIVE_GENERATION_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,
             "Exception on Massive Generation Request",
             "Encountered a blocking exception on the massive generation request"),
-    ERROR_ON_GENERATION_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR,
-            "Exception on Generation Request",
-            "Encountered a blocking exception on the generation request"),
+    ERROR_ON_GENERATION_REQUEST(HttpStatus.INTERNAL_SERVER_ERROR, "Exception on Generation Request", "Encountered a blocking exception on the generation request: %s"),
 
-    NOTICE_GEN_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,
-            "Exception on generation client", "Exception on generation client"),
+    NOTICE_GEN_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Exception on generation client", "%s"),
 
 
     COULD_NOT_GET_FILE_URL_ERROR(HttpStatus.NOT_FOUND, "Couldn't get file url",

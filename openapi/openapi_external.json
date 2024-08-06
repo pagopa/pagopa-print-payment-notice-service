@@ -4,7 +4,7 @@
     "description": "Microservice to expose the APIs for Print Payment Notices",
     "termsOfService": "https://www.pagopa.gov.it/",
     "title": "Print Payment Notices - Service - Payment Notice Service (External)",
-    "version": "0.6.8-1-PPANTT-69-feat-add-blob-rewrite"
+    "version": "0.7.0-1-PPANTT-69-feat-add-blob-rewrite"
   },
   "servers": [
     {
