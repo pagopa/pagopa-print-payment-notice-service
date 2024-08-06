@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: "print-payment-notice-service"
   image:
     repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
-    tag: "0.6.8-2-PPANTT-69-feat-add-blob-rewrite"
+    tag: "0.7.0"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -58,7 +58,7 @@ microservice-chart:
       memory: "512Mi"
       cpu: "0.25"
     limits:
-      memory: "512Mi"
+      memory: "728Mi"
       cpu: "0.25"
   autoscaling:
     enable: true

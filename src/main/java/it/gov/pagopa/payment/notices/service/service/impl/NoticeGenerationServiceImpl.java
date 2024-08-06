@@ -20,6 +20,7 @@ import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -85,8 +86,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
     @Override
     @Transactional
-    public String generateMassive(
-            NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId, String idempotencyKey) {
+    public String generateMassive(NoticeGenerationMassiveRequest noticeGenerationMassiveRequest, String userId, String idempotencyKey) {
 
         try {
 
@@ -95,7 +95,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             Optional<PaymentNoticeGenerationRequest> existingRequest = paymentGenerationRequestRepository
                     .findByIdempotencyKeyAndUserId(idempotencyKey, userId);
 
-            if(existingRequest.isEmpty()) {
+            if (existingRequest.isEmpty()) {
                 folderId = paymentGenerationRequestRepository.save(PaymentNoticeGenerationRequest.builder()
                         .status(PaymentGenerationRequestStatus.INSERTED)
                         .idempotencyKey(idempotencyKey)
@@ -107,6 +107,11 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                         .requestDate(Instant.now())
                         .build()).getId();
 
+                MDC.put("folderId", folderId);
+                MDC.put("massiveStatus", "INSERTED");
+                log.info("Massive Request INSERTED: {}", folderId);
+                MDC.remove("massiveStatus");
+
                 asyncService.sendNotices(noticeGenerationMassiveRequest, folderId, userId);
             } else {
                 folderId = existingRequest.get().getId();
@@ -115,9 +120,12 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             return folderId;
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            MDC.put("massiveStatus", "EXCEPTION");
+            log.error("Exception Massive Request: {}", e.getMessage(), e);
+            MDC.remove("massiveStatus");
             throw new AppException(AppError.ERROR_ON_MASSIVE_GENERATION_REQUEST, e);
         }
+
 
     }
 
@@ -127,7 +135,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
             checkUserId(userId, noticeGenerationRequestItem, brokerService);
 
-            if(folderId != null) {
+            if (folderId != null) {
                 findFolderIfExists(folderId, userId);
             }
 
@@ -137,16 +145,15 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                     .toAbsolutePath();
 
             try (Response generationResponse = noticeGenerationClient.generateNotice(folderId, noticeGenerationRequestItem)) {
-                if(generationResponse.status() != HttpStatus.OK.value()) {
+                if (generationResponse.status() != HttpStatus.OK.value()) {
                     log.error("Feign Client Response {}", generationResponse);
 
-                    if(generationResponse.status() != HttpStatus.INTERNAL_SERVER_ERROR.value()) {
-                        throw new AppException(HttpStatus.valueOf(generationResponse.status()),
-                                "Error on generation request",
-                                new String(generationResponse.body().asInputStream().readAllBytes()));
+                    String body = new String(generationResponse.body().asInputStream().readAllBytes());
+                    if (generationResponse.status() != HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+                        throw new AppException(HttpStatus.valueOf(generationResponse.status()), "Error on generation request", body);
                     }
 
-                    throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR);
+                    throw new AppException(AppError.NOTICE_GEN_CLIENT_ERROR, body);
                 }
 
                 try (InputStream inputStream = generationResponse.body().asInputStream()) {
@@ -159,7 +166,10 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             throw e;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new AppException(AppError.ERROR_ON_GENERATION_REQUEST, e);
+            String details = String.format(AppError.ERROR_ON_GENERATION_REQUEST.getTitle(), e.getMessage());
+            HttpStatus status = AppError.ERROR_ON_GENERATION_REQUEST.getHttpStatus();
+            AppError title = AppError.ERROR_ON_GENERATION_REQUEST;
+            throw new AppException(status, title.getTitle(), details, e);
         }
 
     }
@@ -202,7 +212,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public GetSignedUrlResource getFolderSignedUrl(String folderId, String userId) {
 
         PaymentNoticeGenerationRequest paymentNoticeGenerationRequest = findFolderIfExists(folderId, userId);
-        if(!PaymentGenerationRequestStatus.PROCESSED.equals(paymentNoticeGenerationRequest.getStatus())) {
+        if (!PaymentGenerationRequestStatus.PROCESSED.equals(paymentNoticeGenerationRequest.getStatus())) {
             throw new AppException(AppError.NOTICE_REQUEST_YET_TO_PROCESS);
         }
 

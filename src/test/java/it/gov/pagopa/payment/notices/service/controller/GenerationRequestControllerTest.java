@@ -198,7 +198,7 @@ class GenerationRequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM));
+                .andExpect(content().contentType(MediaType.APPLICATION_PDF));
         verify(noticeGenerationService).generateNotice(any(), any(), any());
     }
 
