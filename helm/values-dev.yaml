@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: "print-payment-notice-service"
   image:
     repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
-    tag: "0.7.0"
+    tag: "0.7.0-1-PPANTT-69-feat-add-blob-rewrite"
     pullPolicy: Always
   livenessProbe:
     httpGet:
