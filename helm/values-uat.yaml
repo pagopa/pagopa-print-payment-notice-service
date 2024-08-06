@@ -91,8 +91,8 @@ microservice-chart:
     KAFKA_NOTICE_GENERATION_TOPIC: 'pagopa-printit-evh'
     NOTICE_STORAGE_ENDPOINT: 'https://pagopauprintitnotices.blob.core.windows.net'
     REST_CLIENT_LOGGER_LEVEL: 'NONE'
-    NOTICE_STORAGE_HOST: 'pagopauprintitnotices.blob.core.windows.net'
-    INSTITUTION_STORAGE_HOST: 'pagopauprintitci.blob.core.windows.net'
+    NOTICE_STORAGE_HOST: 'api.uat.platform.pagopa.it/printit-blob/v1'
+    INSTITUTION_STORAGE_HOST: 'api.uat.platform.pagopa.it/printit-blob/v1'
   envSecret:
     # required
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'app-insight-connection-string'

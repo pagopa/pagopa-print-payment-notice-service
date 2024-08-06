@@ -46,7 +46,7 @@ class InstitutionsStorageClientTest {
         Response response = Mockito.mock(Response.class);
         when(response.getStatusCode()).thenReturn(200);
         doReturn(response).when(blobClientMock).uploadWithResponse(any(),any(),any());
-        doReturn("https://localhost:8080/test").when(blobClientMock).getBlobUrl();
+        doReturn("https://pagopadprintitci.blob.core.windows.net/institutionslogoblob/12345678911/logo.png").when(blobClientMock).getBlobUrl();
         try (ByteArrayInputStream bis = new ByteArrayInputStream("".getBytes())) {
             Boolean result = institutionsStorageClient.saveInstitutionsData(
                     "testFile", new UploadData(), bis);

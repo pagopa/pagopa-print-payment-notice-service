@@ -48,6 +48,7 @@ public class NoticeStorageClient {
             blobServiceClient = new BlobServiceClientBuilder()
                     .endpoint(endpoint).credential(clientSecretCredential).buildClient();
             blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
+            this.externalUrl = externalUrl;
         }
     }
 
