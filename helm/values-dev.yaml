@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: "print-payment-notice-service"
   image:
     repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
-    tag: "0.6.8"
+    tag: "0.6.8-9-perf-test"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -58,7 +58,7 @@ microservice-chart:
       memory: "512Mi"
       cpu: "0.25"
     limits:
-      memory: "512Mi"
+      memory: "728Mi"
       cpu: "0.25"
   autoscaling:
     enable: true
