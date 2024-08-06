@@ -90,7 +90,7 @@ public class NoticeStorageClient {
         try {
             String sasToken = blobClient.generateUserDelegationSas(sasSignatureValues, userDelegationKey);
 
-            String[] blobUrl = blobClient.getBlobUrl().split("/",4);
+            String[] blobUrl = blobClient.getBlobUrl().split("/");
             blobUrl[2] = externalUrl;
 
             return StringUtils.joinWith("?", String.join("/",blobUrl), sasToken);

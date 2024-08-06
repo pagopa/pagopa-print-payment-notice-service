@@ -91,7 +91,7 @@ public class InstitutionsStorageClient {
                                 logo
                         ), null, null);
 
-                String[] blobUrl = blobClient.getBlobUrl().split("/",4);
+                String[] blobUrl = blobClient.getBlobUrl().split("/");
                 blobUrl[2] = externalUrl;
 
                 data.setLogo(String.join("/",blobUrl));
