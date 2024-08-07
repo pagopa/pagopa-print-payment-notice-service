@@ -4,7 +4,7 @@
     "description": "Microservice to expose the APIs for Print Payment Notices",
     "termsOfService": "https://www.pagopa.gov.it/",
     "title": "Print Payment Notices - Service - Payment Notice Service (External)",
-    "version": "0.7.1"
+    "version": "0.8.0"
   },
   "servers": [
     {
