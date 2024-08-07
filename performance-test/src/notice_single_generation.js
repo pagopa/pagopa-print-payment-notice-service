@@ -1,7 +1,7 @@
-import { check } from 'k6';
-import { generateSingleNotice } from './modules/notice_service_client.js';
-import { SharedArray } from 'k6/data';
-import { retrieveNoticeItemData } from './modules/common.js';
+import {check} from 'k6';
+import {generateSingleNotice} from './modules/notice_service_client.js';
+import {SharedArray} from 'k6/data';
+import {retrieveNoticeItemData} from './modules/common.js';
 
 const varsArray = new SharedArray('vars', function () {
     return JSON.parse(open(`./${__ENV.VARS}`)).environment;
@@ -18,15 +18,15 @@ const ciTaxCode = `${vars.ciTaxCode}`;
 
 export default function () {
 
-      let inputData = retrieveNoticeItemData(ciTaxCode, templateId);
-      let response = generateSingleNotice(noticeServiceUri, subKey, inputData, null);
+    let inputData = retrieveNoticeItemData(ciTaxCode, templateId);
+    let response = generateSingleNotice(noticeServiceUri, subKey, inputData, null);
 
-      console.log("Generate PDF call, Status " + response.status);
+    console.log("Generate PDF call, Status " + response.status);
 
-      check(response, {
+    check(response, {
         'Generate PDF status is 200': (response) => response.status === 201,
         'Generate PDF content_type is the expected one':
-         (response) => response.headers["Content-Type"] === "application/octet-stream"
-      });
+            (response) => response.headers["Content-Type"] === "application/pdf"
+    });
 
 }

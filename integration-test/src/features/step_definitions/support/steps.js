@@ -122,7 +122,7 @@ Then(/^the response should be in PDF format$/, async function () {
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('headers'), true);
     assert.strictEqual(responseToCheck.headers.hasOwnProperty('content-type'), true);
-    assert.equal(responseToCheck.headers['content-type'], 'application/octet-stream');
+    assert.equal(responseToCheck.headers['content-type'], 'application/pdf');
 
     await pipeline(responseToCheck.data, fs.createWriteStream('./pdfToCheck.pdf'));
 
@@ -225,5 +225,5 @@ Then('can download content using signedUrl', async function () {
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('headers'), true);
     assert.strictEqual(responseToCheck.headers.hasOwnProperty('content-type'), true);
-    assert.equal(responseToCheck.headers['content-type'], 'application/octet-stream');
+    assert.equal(responseToCheck.headers['content-type'], 'application/pdf');
 });
