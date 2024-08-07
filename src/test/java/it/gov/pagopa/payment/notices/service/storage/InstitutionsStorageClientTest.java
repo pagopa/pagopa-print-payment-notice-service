@@ -46,7 +46,7 @@ class InstitutionsStorageClientTest {
         Response response = Mockito.mock(Response.class);
         when(response.getStatusCode()).thenReturn(200);
         doReturn(response).when(blobClientMock).uploadWithResponse(any(),any(),any());
-        doReturn("https://pagopadprintitci.blob.core.windows.net/institutionslogoblob/12345678911/logo.png").when(blobClientMock).getBlobUrl();
+        doReturn("https://api.dev.platform.pagopa.it/printit-blob/v1/institutionslogoblob/99999000013%2Flogo.png").when(blobClientMock).getBlobUrl();
         try (ByteArrayInputStream bis = new ByteArrayInputStream("".getBytes())) {
             Boolean result = institutionsStorageClient.saveInstitutionsData(
                     "testFile", new UploadData(), bis);

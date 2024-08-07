@@ -12,7 +12,7 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>print-payment-notices-service</artifactId>
-    <version>0.8.0</version>
+    <version>0.8.1</version>
     <name>Print Payment Notices - Service</name>
     <description>Microservice to expose the APIs for Print Payment Notices</description>
 
@@ -74,6 +74,12 @@
     <dependency>
       <groupId>com.github.ben-manes.caffeine</groupId>
       <artifactId>caffeine</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-text</artifactId>
+        <version>1.12.0</version>
     </dependency>
 
     <!-- OpenAPI -->

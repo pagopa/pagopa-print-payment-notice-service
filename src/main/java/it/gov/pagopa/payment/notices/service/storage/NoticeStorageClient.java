@@ -15,10 +15,13 @@ import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 
 @Component
@@ -93,7 +96,7 @@ public class NoticeStorageClient {
             String[] blobUrl = blobClient.getBlobUrl().split("/");
             blobUrl[2] = externalUrl;
 
-            return StringUtils.joinWith("?", String.join("/",blobUrl), sasToken);
+            return URLDecoder.decode(StringUtils.joinWith("?", String.join("/",blobUrl), sasToken), StandardCharsets.UTF_8);
         } catch (BlobStorageException blobStorageException) {
             throw new AppException(AppError.COULD_NOT_GET_FILE_URL_ERROR, blobStorageException);
         }
