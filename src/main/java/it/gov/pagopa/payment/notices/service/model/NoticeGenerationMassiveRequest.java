@@ -16,7 +16,7 @@ import java.util.List;
 public class NoticeGenerationMassiveRequest {
 
     @NotNull
-    @Size(min = 1)
+    @Size(min = 1, max = 1000)
     private List<NoticeGenerationRequestItem> notices;
 
 }
