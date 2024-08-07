@@ -2,8 +2,8 @@ apiVersion: v2
 name: pagopa-print-payment-notice-service
 description: Microservice that handles services for notice print
 type: application
-version: 0.54.0
-appVersion: 0.7.0-2-PPANTT-69-feat-add-blob-rewrite
+version: 0.55.0
+appVersion: 0.7.1
 dependencies:
   - name: microservice-chart
     version: 5.9.0
