@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 
 import static it.gov.pagopa.payment.notices.service.util.CommonUtility.checkUserId;
-import static it.gov.pagopa.payment.notices.service.util.CommonUtility.sanitizeLogParam;
 
 @Service
 @Slf4j
@@ -65,7 +64,7 @@ public class AsyncService {
                             saveErrorEvent(folderId, noticeGenerationRequestItem);
                         }
                     } catch (Exception e) {
-                        log.warn("SendNotices Failure {}", sanitizeLogParam(folderId), e);
+                        log.warn("SendNotices Failure {}", folderId, e);
                         saveErrorEvent(folderId, noticeGenerationRequestItem);
                     }
 
@@ -93,7 +92,7 @@ public class AsyncService {
         } catch (JsonProcessingException | Aes256Exception e) {
             log.error("Unable to save notice data into error repository for notice with folder {} and noticeId {}",
                     folderId,
-                    sanitizeLogParam(noticeGenerationRequestItem.getData().getNotice().getCode())
+                    noticeGenerationRequestItem.getData().getNotice().getCode()
             );
         }
     }
