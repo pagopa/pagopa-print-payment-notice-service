@@ -15,6 +15,7 @@ import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
 import it.gov.pagopa.payment.notices.service.model.institutions.UploadData;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,9 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 @Slf4j
@@ -94,9 +98,8 @@ public class InstitutionsStorageClient {
                 String[] blobUrl = blobClient.getBlobUrl().split("/");
                 blobUrl[2] = externalUrl;
 
-                data.setLogo(String.join("/",blobUrl));
+                data.setLogo(URLDecoder.decode(String.join("/",blobUrl), StandardCharsets.UTF_8));
             }
-
 
             //Get a reference to a blob
             BlobClient jsonBlobClient = blobContainerClient.getBlobClient(
