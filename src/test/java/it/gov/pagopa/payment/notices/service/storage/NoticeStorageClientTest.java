@@ -29,7 +29,7 @@ class NoticeStorageClientTest {
         blobServiceClient = mock(BlobServiceClient.class);
 
         noticeStorageClient = new NoticeStorageClient(
-                true, blobServiceClient, blobContainerClient);
+                true, blobServiceClient, blobContainerClient, "testurl");
         blobClientMock = mock(BlobClient.class);
         lenient().doReturn(blobClientMock).when(blobContainerClient).getBlobClient(anyString());
     }
@@ -54,7 +54,7 @@ class NoticeStorageClientTest {
 
     @Test
     void shouldReturnExceptionOnMissingClient() {
-        var noticeClient = new NoticeStorageClient(false, null, null);
+        var noticeClient = new NoticeStorageClient(false, null, null, "testUrl");
         assertThrows(AppException.class, () -> noticeClient.getFileSignedUrl("testFile", ""));
     }
 
@@ -70,7 +70,7 @@ class NoticeStorageClientTest {
     @Test
     void shouldReturnExceptionOnMissingClientForDelete() {
         assertThrows(AppException.class, () ->
-                new NoticeStorageClient(false, null, null)
+                new NoticeStorageClient(false, null, null, "testUrl")
                         .deleteFolder("testFile"));
     }
 

@@ -28,6 +28,8 @@ public class NoticeStorageClient {
 
     private BlobServiceClient blobServiceClient;
 
+    private String externalUrl;
+
     @Autowired
     public NoticeStorageClient(
             @Value("${spring.cloud.azure.storage.blob.notices.enabled}") String enabled,
@@ -35,7 +37,8 @@ public class NoticeStorageClient {
             @Value("${spring.cloud.azure.storage.blob.notices.tenantId}") String tenantId,
             @Value("${spring.cloud.azure.storage.blob.notices.clientId}") String clientId,
             @Value("${spring.cloud.azure.storage.blob.notices.clientSecret}") String clientSecret,
-            @Value("${spring.cloud.azure.storage.blob.notices.containerName}") String containerName) {
+            @Value("${spring.cloud.azure.storage.blob.notices.containerName}") String containerName,
+            @Value("${spring.cloud.azure.storage.blob.notices.externalUrl}") String externalUrl) {
         if(Boolean.TRUE.toString().equals(enabled)) {
             TokenCredential clientSecretCredential = new ClientSecretCredentialBuilder()
                     .tenantId(tenantId)
@@ -45,16 +48,19 @@ public class NoticeStorageClient {
             blobServiceClient = new BlobServiceClientBuilder()
                     .endpoint(endpoint).credential(clientSecretCredential).buildClient();
             blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
+            this.externalUrl = externalUrl;
         }
     }
 
     public NoticeStorageClient(
             Boolean enabled,
             BlobServiceClient blobServiceClient,
-            BlobContainerClient blobContainerClient) {
+            BlobContainerClient blobContainerClient,
+            String externalUrl) {
         if(Boolean.TRUE.equals(enabled)) {
             this.blobServiceClient = blobServiceClient;
             this.blobContainerClient = blobContainerClient;
+            this.externalUrl = externalUrl;
         }
     }
 
@@ -83,7 +89,11 @@ public class NoticeStorageClient {
 
         try {
             String sasToken = blobClient.generateUserDelegationSas(sasSignatureValues, userDelegationKey);
-            return StringUtils.joinWith("?", blobClient.getBlobUrl(), sasToken);
+
+            String[] blobUrl = blobClient.getBlobUrl().split("/");
+            blobUrl[2] = externalUrl;
+
+            return StringUtils.joinWith("?", String.join("/",blobUrl), sasToken);
         } catch (BlobStorageException blobStorageException) {
             throw new AppException(AppError.COULD_NOT_GET_FILE_URL_ERROR, blobStorageException);
         }

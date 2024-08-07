@@ -36,7 +36,7 @@ class InstitutionsStorageClientTest {
     public void init() {
         blobContainerClient = mock(BlobContainerClient.class);
         institutionsStorageClient = new InstitutionsStorageClient(
-                true, blobContainerClient);
+                true, blobContainerClient, "testUrl");
         blobClientMock = mock(BlobClient.class);
         lenient().doReturn(blobClientMock).when(blobContainerClient).getBlobClient(anyString());
     }
@@ -46,6 +46,7 @@ class InstitutionsStorageClientTest {
         Response response = Mockito.mock(Response.class);
         when(response.getStatusCode()).thenReturn(200);
         doReturn(response).when(blobClientMock).uploadWithResponse(any(),any(),any());
+        doReturn("https://pagopadprintitci.blob.core.windows.net/institutionslogoblob/12345678911/logo.png").when(blobClientMock).getBlobUrl();
         try (ByteArrayInputStream bis = new ByteArrayInputStream("".getBytes())) {
             Boolean result = institutionsStorageClient.saveInstitutionsData(
                     "testFile", new UploadData(), bis);
@@ -67,7 +68,7 @@ class InstitutionsStorageClientTest {
     void shouldReturnExceptionOnMissingClient() throws IOException {
         try (ByteArrayInputStream bis = new ByteArrayInputStream("".getBytes())) {
             assertThrows(AppException.class, () ->
-                    new InstitutionsStorageClient(false, null)
+                    new InstitutionsStorageClient(false, null, "testUrl")
                             .saveInstitutionsData("testFile", new UploadData(),
                                     bis));
         }
@@ -104,7 +105,7 @@ class InstitutionsStorageClientTest {
     @Test
     void shouldReturnExceptionOnMissingClientForDataRetrieve() {
         assertThrows(AppException.class, () ->
-                new InstitutionsStorageClient(false, null)
+                new InstitutionsStorageClient(false, null, "testUrl")
                         .getInstitutionData("testFile"));
     }
 

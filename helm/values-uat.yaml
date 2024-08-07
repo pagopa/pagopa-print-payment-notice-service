@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: "print-payment-notice-service"
   image:
     repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
-    tag: "0.7.0"
+    tag: "0.7.0-2-PPANTT-69-feat-add-blob-rewrite"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -91,6 +91,8 @@ microservice-chart:
     KAFKA_NOTICE_GENERATION_TOPIC: 'pagopa-printit-evh'
     NOTICE_STORAGE_ENDPOINT: 'https://pagopauprintitnotices.blob.core.windows.net'
     REST_CLIENT_LOGGER_LEVEL: 'NONE'
+    NOTICE_STORAGE_HOST: 'api.uat.platform.pagopa.it/printit-blob/v1'
+    INSTITUTION_STORAGE_HOST: 'api.uat.platform.pagopa.it/printit-blob/v1'
   envSecret:
     # required
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'app-insight-connection-string'
