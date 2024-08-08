@@ -96,7 +96,7 @@ public class NoticeStorageClient {
             String[] blobUrl = blobClient.getBlobUrl().split("/");
             blobUrl[2] = externalUrl;
 
-            return URLDecoder.decode(StringUtils.joinWith("?", String.join("/",blobUrl), sasToken), StandardCharsets.UTF_8);
+            return StringUtils.joinWith("?", URLDecoder.decode(String.join("/",blobUrl), StandardCharsets.UTF_8), sasToken);
         } catch (BlobStorageException blobStorageException) {
             throw new AppException(AppError.COULD_NOT_GET_FILE_URL_ERROR, blobStorageException);
         }
