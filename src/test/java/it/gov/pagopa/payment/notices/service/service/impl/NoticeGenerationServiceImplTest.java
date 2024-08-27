@@ -10,10 +10,7 @@ import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationReque
 import it.gov.pagopa.payment.notices.service.events.NoticeGenerationRequestProducer;
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
-import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
-import it.gov.pagopa.payment.notices.service.model.GetSignedUrlResource;
-import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
-import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
+import it.gov.pagopa.payment.notices.service.model.*;
 import it.gov.pagopa.payment.notices.service.model.enums.PaymentGenerationRequestStatus;
 import it.gov.pagopa.payment.notices.service.model.notice.CreditorInstitution;
 import it.gov.pagopa.payment.notices.service.model.notice.Notice;
@@ -37,6 +34,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
@@ -555,5 +553,65 @@ class NoticeGenerationServiceImplTest {
         verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         verifyNoInteractions(noticeStorageClient);
     }
+
+    @Test
+    void getErrorShouldReturnOk() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
+                .thenReturn(
+                        Optional.of(
+                                PaymentNoticeGenerationRequest.builder()
+                                        .status(PaymentGenerationRequestStatus.INSERTED)
+                                        .items(Collections.emptyList())
+                                        .build()
+                        )
+                );
+        when(paymentGenerationRequestErrorRepository.findByFolderIdAndErrorId(any(), any())).thenReturn(
+                Optional.of(PaymentNoticeGenerationRequestError.builder()
+                        .errorId("test")
+                                .errorCode(AppError.NOTICE_GEN_CLIENT_ERROR.getTitle())
+                                .errorDescription(AppError.NOTICE_CLIENT_UNAVAILABLE.getDetails())
+                                .createdAt(Instant.now())
+                                .compressionError(false)
+                        .build()
+                )
+        );
+        GetErrorResource resource = noticeGenerationService.getError("test", "test", "test");
+        assertNotNull(resource);
+        assertEquals(resource.getErrorCode(), AppError.NOTICE_GEN_CLIENT_ERROR.getTitle());
+        assertEquals(resource.getErrorDescription(), AppError.NOTICE_CLIENT_UNAVAILABLE.getDetails());
+    }
+
+    @Test
+    void getErrorShouldReturnKO() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
+                .thenReturn(
+                        Optional.of(
+                                PaymentNoticeGenerationRequest.builder()
+                                        .status(PaymentGenerationRequestStatus.INSERTED)
+                                        .items(Collections.emptyList())
+                                        .build()
+                        )
+                );
+        when(paymentGenerationRequestErrorRepository.findByFolderIdAndErrorId(any(), any())).thenReturn(
+                Optional.empty()
+        );
+        AppException exception =
+                assertThrows(AppException.class, () -> noticeGenerationService.getError("test", "test", "test"));
+        assertNotNull(exception);
+        assertEquals(exception.getTitle(), AppError.ERROR_NOT_FOUND.getTitle());
+    }
+
+    @Test
+    void getErrorShouldReturnGenericKO() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
+                .thenThrow(new RuntimeException("error"));
+
+        AppException exception =
+                assertThrows(AppException.class, () -> noticeGenerationService.getError("test", "test", "test"));
+        assertNotNull(exception);
+        assertEquals(exception.getTitle(), AppError.ERROR_ON_GET_ERROR.getTitle());
+    }
+
+
 
 }

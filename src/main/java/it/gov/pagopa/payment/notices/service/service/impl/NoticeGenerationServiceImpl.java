@@ -6,10 +6,7 @@ import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationReque
 import it.gov.pagopa.payment.notices.service.entity.PaymentNoticeGenerationRequestError;
 import it.gov.pagopa.payment.notices.service.exception.AppError;
 import it.gov.pagopa.payment.notices.service.exception.AppException;
-import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
-import it.gov.pagopa.payment.notices.service.model.GetSignedUrlResource;
-import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
-import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
+import it.gov.pagopa.payment.notices.service.model.*;
 import it.gov.pagopa.payment.notices.service.model.enums.PaymentGenerationRequestStatus;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestErrorRepository;
 import it.gov.pagopa.payment.notices.service.repository.PaymentGenerationRequestRepository;
@@ -225,6 +222,31 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new AppException(AppError.ERROR_ON_GET_FOLDER_URL_REQUEST);
+        }
+
+    }
+
+    @Override
+    public GetErrorResource getError(String folderId, String errorId, String userId) {
+
+        try {
+            findFolderIfExists(folderId, userId);
+            PaymentNoticeGenerationRequestError paymentNoticeGenerationRequestError =
+                    paymentGenerationRequestErrorRepository.findByFolderIdAndErrorId(folderId, errorId)
+                            .orElseThrow(() -> new AppException(AppError.ERROR_NOT_FOUND));
+            return GetErrorResource
+                    .builder()
+                    .errorId(paymentNoticeGenerationRequestError.getErrorId())
+                    .errorCode(paymentNoticeGenerationRequestError.getErrorCode())
+                    .errorDescription(paymentNoticeGenerationRequestError.getErrorDescription())
+                    .createdAt(paymentNoticeGenerationRequestError.getCreatedAt())
+                    .compressionError(paymentNoticeGenerationRequestError.isCompressionError())
+                    .build();
+        } catch (AppException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new AppException(AppError.ERROR_ON_GET_ERROR, e);
         }
 
     }

@@ -74,6 +74,12 @@ public enum AppError {
     ERROR_ON_PT_ALLOWANCE_CHECK(HttpStatus.INTERNAL_SERVER_ERROR,
             "Error on pt allowance check", "Error occured during allowance check for PT"),
 
+    ERROR_ON_GET_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,
+            "Error on folder error retrieval",
+            "Error occurred during retrieval of the folder related error"),
+
+    ERROR_NOT_FOUND(HttpStatus.NOT_FOUND, "Error not found", "No error has been found for the folder and id provided"),
+
     UNKNOWN(null, null, null);
 
 
