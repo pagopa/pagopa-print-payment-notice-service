@@ -228,7 +228,7 @@ Then('can download content using signedUrl', async function () {
     assert.equal(responseToCheck.headers['content-type'], 'application/pdf');
 });
 
-Then('the request has error after {int} ms', async function (status, time) {
+Then('the request has error after {int} ms', async function (time) {
     // boundary time spent by azure function to process event
     await sleep(time);
     responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/status', null, {
@@ -239,7 +239,6 @@ Then('the request has error after {int} ms', async function (status, time) {
     assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
     assert.strictEqual(responseToCheck.status, 200);
     assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
-    assert.notEqual(responseToCheck.data.status, status);
     assert.strictEqual(responseToCheck.data.hasOwnProperty('noticesInError'), true);
 
 });
