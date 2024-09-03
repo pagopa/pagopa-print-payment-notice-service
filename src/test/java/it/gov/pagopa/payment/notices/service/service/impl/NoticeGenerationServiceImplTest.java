@@ -602,6 +602,26 @@ class NoticeGenerationServiceImplTest {
     }
 
     @Test
+    void getErrorShouldReturnKOWithAdmin() {
+        when(paymentGenerationRequestRepository.findById(any()))
+                .thenReturn(
+                        Optional.of(
+                                PaymentNoticeGenerationRequest.builder()
+                                        .status(PaymentGenerationRequestStatus.INSERTED)
+                                        .items(Collections.emptyList())
+                                        .build()
+                        )
+                );
+        when(paymentGenerationRequestErrorRepository.findByFolderIdAndErrorId(any(), any())).thenReturn(
+                Optional.empty()
+        );
+        AppException exception =
+                assertThrows(AppException.class, () -> noticeGenerationService.getError("test", "test", "ADMIN"));
+        assertNotNull(exception);
+        assertEquals(exception.getTitle(), AppError.ERROR_NOT_FOUND.getTitle());
+    }
+
+    @Test
     void getErrorShouldReturnGenericKO() {
         when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
                 .thenThrow(new RuntimeException("error"));
