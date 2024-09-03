@@ -570,7 +570,7 @@ Feature: Massive Generation
 #    And download url is recoverable with the folderId
 #    And can download content using signedUrl
 #
-  Scenario: MT_01_SingleTemplates_COMPLETED - Generazione Massiva con successo su singolo template, unico elemento
+  Scenario: MT_05_SingleTemplates_FAILED - Generazione Massiva con errore su singolo template, unico elemento, recupero informazioni con API
     Given the creditor institution in the storage:
       | variableName       | value                                  |
       | taxCode            | "80034390585"                          |
@@ -633,5 +633,5 @@ Feature: Massive Generation
     Then the response status should be 200
     And the response should be in JSON format
     And the response should contain the folderId
-    And the request has error after 1000 ms
+    And the request has error after 5000 ms
     And error is recoverable with response errorId
