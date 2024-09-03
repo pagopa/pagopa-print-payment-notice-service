@@ -246,6 +246,8 @@ Then('the request has error after {int} ms', async function (time) {
 
 Then('error is recoverable with response errorId', async function () {
     // boundary time spent by azure function to process event
+    console.log("ERRORID");
+    console.log(responseToCheck.data.noticesInError[0]);
     responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/error/'+ responseToCheck.data.noticesInError[0], null, {
         'X-User-Id': ciTaxCode ?? 'ADMIN'
     });
