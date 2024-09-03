@@ -228,7 +228,7 @@ Then('can download content using signedUrl', async function () {
     assert.equal(responseToCheck.headers['content-type'], 'application/pdf');
 });
 
-Then('the request is not in status {string} after {int} ms', async function (status, time) {
+Then('the request has error after {int} ms', async function (status, time) {
     // boundary time spent by azure function to process event
     await sleep(time);
     responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/status', null, {
@@ -240,13 +240,14 @@ Then('the request is not in status {string} after {int} ms', async function (sta
     assert.strictEqual(responseToCheck.status, 200);
     assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
     assert.notEqual(responseToCheck.data.status, status);
+    assert.strictEqual(responseToCheck.data.hasOwnProperty('noticesInError'), true);
+
 });
 
 
 Then('error is recoverable with response errorId', async function () {
-    assert.strictEqual(responseToCheck.data.hasOwnProperty('noticesInError'), true);
     // boundary time spent by azure function to process event
-    responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/error/'+ errorId, null, {
+    responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/error/'+ responseToCheck.data.noticesInError[0], null, {
         'X-User-Id': ciTaxCode ?? 'ADMIN'
     });
     console.log(responseToCheck)

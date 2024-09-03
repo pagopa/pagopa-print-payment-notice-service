@@ -230,6 +230,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
     public GetErrorResource getError(String folderId, String errorId, String userId) {
 
         try {
+
             findFolderIfExists(folderId, userId);
             PaymentNoticeGenerationRequestError paymentNoticeGenerationRequestError =
                     paymentGenerationRequestErrorRepository.findByFolderIdAndErrorId(folderId, errorId)
@@ -251,10 +252,12 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
     }
 
-
     private PaymentNoticeGenerationRequest findFolderIfExists(String folderId, String userId) {
-        return paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId)
-                .orElseThrow(() -> new AppException(AppError.FOLDER_NOT_AVAILABLE));
+        return (userId != null && userId.toUpperCase().startsWith("ADMIN") ?
+                paymentGenerationRequestRepository.findById(folderId)
+                        .orElseThrow(() -> new AppException(AppError.FOLDER_NOT_AVAILABLE)) :
+                paymentGenerationRequestRepository.findByIdAndUserId(folderId, userId)
+                        .orElseThrow(() -> new AppException(AppError.FOLDER_NOT_AVAILABLE)));
     }
 
 }
