@@ -227,3 +227,31 @@ Then('can download content using signedUrl', async function () {
     assert.strictEqual(responseToCheck.headers.hasOwnProperty('content-type'), true);
     assert.equal(responseToCheck.headers['content-type'], 'application/pdf');
 });
+
+Then('the request is not in status {string} after {int} ms', async function (status, time) {
+    // boundary time spent by azure function to process event
+    await sleep(time);
+    responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/status', null, {
+        'X-User-Id': ciTaxCode ?? 'ADMIN'
+    });
+    console.log(responseToCheck)
+    assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
+    assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
+    assert.strictEqual(responseToCheck.status, 200);
+    assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
+    assert.notEqual(responseToCheck.data.status, status);
+});
+
+
+Then('error is recoverable with response errorId', async function () {
+    assert.strictEqual(responseToCheck.data.hasOwnProperty('noticesInError'), true);
+    // boundary time spent by azure function to process event
+    responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/error/'+ errorId, null, {
+        'X-User-Id': ciTaxCode ?? 'ADMIN'
+    });
+    console.log(responseToCheck)
+    assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
+    assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
+    assert.strictEqual(responseToCheck.status, 200);
+    assert.strictEqual(responseToCheck.hasOwnProperty('data'), true);
+});

@@ -805,8 +805,8 @@
     },
     "/notices/folder/{folder_id}/error/{error_id}" : {
       "get" : {
-        "description" : "Return generation request status for a folder of notices",
-        "operationId" : "getErrorDetail",
+        "description" : "Return error of an item inside a notice generation request",
+        "operationId" : "GetErrorResource",
         "parameters" : [ {
           "description" : "folderId to use for error detail retrieval",
           "in" : "path",
@@ -942,7 +942,7 @@
         "security" : [ {
           "ApiKey" : [ ]
         } ],
-        "summary" : "getFolderStatus",
+        "summary" : "getError",
         "tags" : [ "Notice Generation Request APIs" ]
       },
       "parameters" : [ {
