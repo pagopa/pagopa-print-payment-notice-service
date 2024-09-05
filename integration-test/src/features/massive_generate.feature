@@ -1,4 +1,4 @@
-#Feature: Massive Generation
+Feature: Massive Generation
 #
 #  Scenario: MT_01_SingleTemplates_COMPLETED - Generazione Massiva con successo su singolo template, unico elemento
 #    Given the creditor institution in the storage:
@@ -569,3 +569,69 @@
 #    And the request is in status "PROCESSED_WITH_FAILURES" after 15000 ms
 #    And download url is recoverable with the folderId
 #    And can download content using signedUrl
+#
+  Scenario: MT_05_SingleTemplates_FAILED - Generazione Massiva con errore su singolo template, unico elemento, recupero informazioni con API
+    Given the creditor institution in the storage:
+      | variableName       | value                                  |
+      | taxCode            | "80034390585"                          |
+      | fullName           | "Comune di Test"                       |
+      | organization       | "Settore di Test"                      |
+      | info               | "Info di Test"                         |
+      | webChannel         | true                                   |
+      | appChannel         | false                                  |
+      | physicalChannel    | "Canale Fisico"                        |
+      | cbill              | "CBI1234"                              |
+      | posteAccountNumber | "000000123456"                         |
+      | posteAuth          | "AUT. 08/5 S3/81 53079 08129.07.20211" |
+      | logo               | "./resources/logo1.png"                |
+    When I send a GET request to "/notices/templates"
+    Then the response status should be 200
+    And the response should contain "TemplateSingleInstalment"
+    Given I have the following variables:
+      | variableName               | value                      |
+      | Avviso.Oggetto             | "Avviso Pagamento di TEST" |
+      | Avviso.Importo             | 450000                     |
+      | Avviso.Data                | "31/12/2024"               |
+      | Avviso.Codice              | "470000008800999050"       |
+      | Ente.CF                    | "80034390585"              |
+      | Destinatario.CF            | "FFFCST83A15L113V"         |
+      | Destinatario.NomeCompleto  | "Mario Rossi"              |
+      | Destinatario.Indirizzo     | "Via Nazionale"            |
+      | Destinatario.CodicePostale | "00100"                    |
+      | Destinatario.Citta         | "Roma"                     |
+      | Destinatario.Building      | "1"                        |
+      | Destinatario.Provincia     | "RM"                       |
+    When I send a POST request to "/notices/generate-massive" without stream, with body:
+    """
+      {
+        "notices": [
+          {
+            "templateId": "TemplateSingleInstalment",
+            "data": {
+              "notice": {
+                "subject": <Avviso.Oggetto>,
+                "dueDate": <Avviso.Data>,
+                "code": <Avviso.Codice>
+              },
+              "creditorInstitution": {
+                "taxCode": <Ente.CF>
+              },
+              "debtor": {
+                "taxCode": <Destinatario.CF>,
+                "fullName": <Destinatario.NomeCompleto>,
+                "address": <Destinatario.Indirizzo>,
+                "postalCode": <Destinatario.CodicePostale>,
+                "city": <Destinatario.Citta>,
+                "buildingNumber": <Destinatario.Building>,
+                "province": <Destinatario.Provincia>
+              }
+            }
+          }
+        ]
+      }
+      """
+    Then the response status should be 200
+    And the response should be in JSON format
+    And the response should contain the folderId
+    And the request has error after 5000 ms
+    And error is recoverable with response errorId

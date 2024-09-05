@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   k6:
-    image: grafana/k6
+    image: grafana/k6@sha256:9e37f3209c16af8c17a79cf3a5f7d4402673726de4c7e25572d189acf06405c5
     container_name: k6
     volumes:
       - '${PWD}/src:/scripts'
@@ -18,7 +18,7 @@ services:
       - nginx
 
   nginx:
-    image: nginx
+    image: nginx@sha256:1a2bb47140dd616774ffe05ea1ea8762e1f1f08e20a35632e1e6539376d44d60
     container_name: nginx
     volumes:
       - '${PWD}/nginx/nginx.conf:/etc/nginx/nginx.conf'

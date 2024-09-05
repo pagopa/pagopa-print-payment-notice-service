@@ -321,4 +321,46 @@ public class NoticesController {
         return noticeGenerationService.getFolderSignedUrl(folderId, userId);
     }
 
+    /**
+     * Retrieve an error item related to a notice generation request
+     *
+     * @param folderId folderId to retrieve generation error
+     * @param errorId error identifier used for retreival
+     * @param userId   userId contained in the X-User-Id to be used for data retrieval
+     * @return instance of GetGenerationRequestStatusResource containing a folder status
+     */
+    @Operation(summary = "getError",
+            description = "Return error of an item inside a notice generation request",
+            security = {@SecurityRequirement(name = "ApiKey")})
+    @OpenApiTableMetadata(readWriteIntense = OpenApiTableMetadata.ReadWrite.READ,
+            cacheable = true, external = true, internal = false)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = GetGenerationRequestStatusResource.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "Unauthorized", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "403",
+                    description = "Forbidden", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "404", description = "Folder not found or unavailable for the requirer",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemJson.class))),
+            @ApiResponse(responseCode = "429",
+                    description = "Too many requests", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "500",
+                    description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemJson.class)))
+    })
+    @GetMapping("/folder/{folder_id}/error/{error_id}")
+    public GetErrorResource GetErrorResource(
+            @Valid @NotNull @Parameter(description = "folderId to use for error detail retrieval") @PathVariable("folder_id") String folderId,
+            @Valid @NotNull @Parameter(description = "errorId to use for error detail retrieval") @PathVariable("error_id") String errorId,
+            @Valid @NotNull @Parameter(description = "userId to use for error detail retrieval") @RequestHeader(Constants.X_USER_ID) String userId) {
+        return noticeGenerationService.getError(folderId, errorId, userId);
+    }
+
+
 }
