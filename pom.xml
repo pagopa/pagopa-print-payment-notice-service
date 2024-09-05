@@ -12,7 +12,7 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>print-payment-notices-service</artifactId>
-    <version>0.8.3</version>
+    <version>0.9.0</version>
     <name>Print Payment Notices - Service</name>
     <description>Microservice to expose the APIs for Print Payment Notices</description>
 

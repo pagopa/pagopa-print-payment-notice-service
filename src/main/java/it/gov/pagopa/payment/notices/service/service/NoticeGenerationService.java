@@ -1,9 +1,6 @@
 package it.gov.pagopa.payment.notices.service.service;
 
-import it.gov.pagopa.payment.notices.service.model.GetGenerationRequestStatusResource;
-import it.gov.pagopa.payment.notices.service.model.GetSignedUrlResource;
-import it.gov.pagopa.payment.notices.service.model.NoticeGenerationMassiveRequest;
-import it.gov.pagopa.payment.notices.service.model.NoticeGenerationRequestItem;
+import it.gov.pagopa.payment.notices.service.model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,4 +73,14 @@ public interface NoticeGenerationService {
      * @return instance of GetSignedUrlResource containing a signed url
      */
     GetSignedUrlResource getFolderSignedUrl(String folderId, String userId);
+
+    /**
+     * Return error detail
+     * @param folderId folder id to use for error retrieval
+     * @param errorId error id to use for error retreival
+     * @param userId user id to use for permission check
+     * @return instance of GetErrorResource containing error details
+     */
+    GetErrorResource getError(String folderId, String errorId, String userId);
+
 }
