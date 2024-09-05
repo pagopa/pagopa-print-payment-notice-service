@@ -237,11 +237,11 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
                             .orElseThrow(() -> new AppException(AppError.ERROR_NOT_FOUND));
             return GetErrorResource
                     .builder()
+                    .folderId(paymentNoticeGenerationRequestError.getFolderId())
                     .errorId(paymentNoticeGenerationRequestError.getErrorId())
                     .errorCode(paymentNoticeGenerationRequestError.getErrorCode())
                     .errorDescription(paymentNoticeGenerationRequestError.getErrorDescription())
                     .createdAt(paymentNoticeGenerationRequestError.getCreatedAt())
-                    .compressionError(paymentNoticeGenerationRequestError.isCompressionError())
                     .build();
         } catch (AppException e) {
             throw e;

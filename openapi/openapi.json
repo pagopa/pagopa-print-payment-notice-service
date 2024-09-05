@@ -837,7 +837,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/GetGenerationRequestStatusResource"
+                  "$ref" : "#/components/schemas/GetErrorResource"
                 }
               }
             },
@@ -1734,6 +1734,32 @@
           }
         },
         "description" : "Debtor data"
+      },
+      "GetErrorResource" : {
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "description" : "error creation date",
+            "format" : "date-time"
+          },
+          "errorCode" : {
+            "type" : "string",
+            "description" : "code identifying the error"
+          },
+          "errorDescription" : {
+            "type" : "string",
+            "description" : "description of the specific error"
+          },
+          "errorId" : {
+            "type" : "string",
+            "description" : "id of the item inside the generation request producing the error"
+          },
+          "folderId" : {
+            "type" : "string",
+            "description" : "folder id of the massive generation request"
+          }
+        }
       },
       "GetGenerationRequestStatusResource" : {
         "required" : [ "noticesInError", "processedNotices", "status" ],
