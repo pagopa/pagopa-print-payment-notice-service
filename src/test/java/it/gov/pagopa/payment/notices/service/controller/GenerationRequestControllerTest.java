@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.time.Instant;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -298,6 +299,20 @@ class GenerationRequestControllerTest {
                 )
                 .andExpect(status().is5xxServerError());
         verify(noticeGenerationService).getFolderSignedUrl(any(), any());
+    }
+
+    @Test
+    void getErrorShouldReturnDataOnOk() throws Exception {
+        when(noticeGenerationService.getError(any(), any(),any()))
+                .thenReturn(GetErrorResource.builder().errorCode("test").createdAt(Instant.now()).build());
+        String url = "/notices/folder/folderId/error/errorId";
+        mvc.perform(get(url)
+                        .header("X-User-Id", "test")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        verify(noticeGenerationService).getError(any(), any(), any());
     }
 
 }
