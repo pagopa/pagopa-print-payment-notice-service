@@ -178,7 +178,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
         try {
             return GetSignedUrlResource.builder()
-                    .signedUrl(noticeStorageClient.getFileSignedUrl(folderId, fileId))
+                    .signedUrl(noticeStorageClient.getFileSignedUrl(folderId, fileId.concat(".pdf")))
                     .build();
         } catch (AppException e) {
             throw e;
