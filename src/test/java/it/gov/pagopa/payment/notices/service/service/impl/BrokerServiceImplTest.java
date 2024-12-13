@@ -53,10 +53,21 @@ class BrokerServiceImplTest {
     @Test
     public void shouldReturnTrueOnValidElementOnList() {
         doReturn(CreditorInstitutionsView.builder().creditorInstitutionList(Collections.singletonList(
-                CreditorInstitutionView.builder().auxDigit(3L).progressivo(2L).segregazione(0L).build()
+                CreditorInstitutionView.builder().auxDigit(3L).progressivo(2L).segregazione(1L).build()
         )).build()).when(apiConfigClient).getCreditorInstitutionsAssociatedToBrokerStations(any(),any(),any(),any());
         boolean result = brokerService.checkBrokerAllowance(
-                "test","test","3202323");
+                "test","test","30242323");
+        assertTrue(result);
+        verify(apiConfigClient).getCreditorInstitutionsAssociatedToBrokerStations(any(),any(),any(),any());
+    }
+
+    @Test
+    public void shouldReturnTrueOnValidElementOnList_segregation() {
+        doReturn(CreditorInstitutionsView.builder().creditorInstitutionList(Collections.singletonList(
+                CreditorInstitutionView.builder().auxDigit(null).progressivo(null).segregazione(19L).build()
+        )).build()).when(apiConfigClient).getCreditorInstitutionsAssociatedToBrokerStations(any(),any(),any(),any());
+        boolean result = brokerService.checkBrokerAllowance(
+                "test","test","31942323");
         assertTrue(result);
         verify(apiConfigClient).getCreditorInstitutionsAssociatedToBrokerStations(any(),any(),any(),any());
     }
