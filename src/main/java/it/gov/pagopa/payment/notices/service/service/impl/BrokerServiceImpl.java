@@ -4,10 +4,8 @@ import it.gov.pagopa.payment.notices.service.client.ApiConfigClient;
 import it.gov.pagopa.payment.notices.service.model.CreditorInstitutionView;
 import it.gov.pagopa.payment.notices.service.model.CreditorInstitutionsView;
 import it.gov.pagopa.payment.notices.service.service.BrokerService;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -78,18 +76,18 @@ public class BrokerServiceImpl implements BrokerService {
               // Note: auxDigit = null is 0 or 3
               // if auxDigit is 0 or 3 NAV must start with 3|0 + segregationCode|applicationCode
               if (item.getAuxDigit() == null) {
-                  List<String> prefixes = getPrefixes(item);
+                List<String> prefixes = getPrefixes(item);
 
-                  return prefixes.stream().anyMatch(noticeCode::startsWith);
+                return prefixes.stream().anyMatch(noticeCode::startsWith);
               }
 
               // if auxDigit = 1 the NAV must start with 1
-              if (item.getAuxDigit() == 1) {
+              if (item.getAuxDigit() == 1L) {
                 return noticeCode.startsWith("1");
               }
 
               // if auxDigit = 2 the NAV must start with 2
-              if (item.getAuxDigit() == 2) {
+              if (item.getAuxDigit() == 2L) {
                 return noticeCode.startsWith("2");
               }
 
@@ -97,35 +95,35 @@ public class BrokerServiceImpl implements BrokerService {
             });
   }
 
-/**
-*
- * @param stationConfiguration the item of the page
- * @return a list of valid prefixes extracted from the configuration of the station for the EC
-*/
-    @NotNull
-    private static List<String> getPrefixes(CreditorInstitutionView stationConfiguration) {
-        List<String> prefixes = new ArrayList<>();
+  /**
+   * @param stationConfiguration the item of the page
+   * @return a list of valid prefixes extracted from the configuration of the station for the EC
+   */
+  @NotNull
+  private static List<String> getPrefixes(CreditorInstitutionView stationConfiguration) {
+    List<String> prefixes = new ArrayList<>();
 
-        if (stationConfiguration.getSegregazione() != null) {
-          String segregationCode = String.format("%02d", stationConfiguration.getSegregazione());
-          prefixes.add("3" + segregationCode);
-          prefixes.add("0" + segregationCode);
-        }
-        if (stationConfiguration.getProgressivo() != null) {
-          String applicationCode = String.format("%02d", stationConfiguration.getProgressivo());
-          prefixes.add("3" + applicationCode);
-          prefixes.add("0" + applicationCode);
-        }
-        return prefixes;
+    if (stationConfiguration.getSegregazione() != null) {
+      String segregationCode = String.format("%02d", stationConfiguration.getSegregazione());
+      prefixes.add("3" + segregationCode);
+      prefixes.add("0" + segregationCode);
     }
+    if (stationConfiguration.getProgressivo() != null) {
+      String applicationCode = String.format("%02d", stationConfiguration.getProgressivo());
+      prefixes.add("3" + applicationCode);
+      prefixes.add("0" + applicationCode);
+    }
+    return prefixes;
+  }
 
-    /**
+  /**
    * @param creditorInstitutionsView the page return from ApiConfig
    * @return true if the page is the last
    */
-  private static boolean isPagesFinished(CreditorInstitutionsView creditorInstitutionsView) {
+  private boolean isPagesFinished(CreditorInstitutionsView creditorInstitutionsView) {
     return creditorInstitutionsView == null
         || creditorInstitutionsView.getCreditorInstitutionList() == null
-        || creditorInstitutionsView.getCreditorInstitutionList().isEmpty();
+        || creditorInstitutionsView.getCreditorInstitutionList().isEmpty()
+        || creditorInstitutionsView.getCreditorInstitutionList().size() < this.pageLimit;
   }
 }

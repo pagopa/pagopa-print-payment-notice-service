@@ -1,22 +1,20 @@
 package it.gov.pagopa.payment.notices.service.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+
 import it.gov.pagopa.payment.notices.service.client.ApiConfigClient;
 import it.gov.pagopa.payment.notices.service.model.CreditorInstitutionView;
 import it.gov.pagopa.payment.notices.service.model.CreditorInstitutionsView;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class BrokerServiceImplTest {
@@ -51,9 +49,9 @@ class BrokerServiceImplTest {
     }
 
     @Test
-    public void shouldReturnTrueOnValidElementOnList() {
+    public void shouldReturnTrueOnValidElementOnList_applicationCode() {
         doReturn(CreditorInstitutionsView.builder().creditorInstitutionList(Collections.singletonList(
-                CreditorInstitutionView.builder().auxDigit(3L).progressivo(2L).segregazione(1L).build()
+                CreditorInstitutionView.builder().auxDigit(null).progressivo(2L).segregazione(1L).build()
         )).build()).when(apiConfigClient).getCreditorInstitutionsAssociatedToBrokerStations(any(),any(),any(),any());
         boolean result = brokerService.checkBrokerAllowance(
                 "test","test","30242323");
@@ -62,7 +60,7 @@ class BrokerServiceImplTest {
     }
 
     @Test
-    public void shouldReturnTrueOnValidElementOnList_segregation() {
+    public void shouldReturnTrueOnValidElementOnList_segregationCode() {
         doReturn(CreditorInstitutionsView.builder().creditorInstitutionList(Collections.singletonList(
                 CreditorInstitutionView.builder().auxDigit(null).progressivo(null).segregazione(19L).build()
         )).build()).when(apiConfigClient).getCreditorInstitutionsAssociatedToBrokerStations(any(),any(),any(),any());
@@ -73,13 +71,13 @@ class BrokerServiceImplTest {
     }
 
     @Test
-    public void shouldReturnTrueOnValidElementOnListWithDefaultValues() {
+    public void shouldReturnFalseOnInvalidElement() {
         doReturn(CreditorInstitutionsView.builder().creditorInstitutionList(Collections.singletonList(
                 CreditorInstitutionView.builder().auxDigit(null).progressivo(null).segregazione(null).build()
         )).build()).when(apiConfigClient).getCreditorInstitutionsAssociatedToBrokerStations(any(),any(),any(),any());
         boolean result = brokerService.checkBrokerAllowance(
                 "test","test","3002323");
-        assertTrue(result);
+        assertFalse(result);
         verify(apiConfigClient).getCreditorInstitutionsAssociatedToBrokerStations(any(),any(),any(),any());
     }
 
