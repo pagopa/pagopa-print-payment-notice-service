@@ -71,6 +71,28 @@ class BrokerServiceImplTest {
     }
 
     @Test
+    public void shouldReturnTrueOnValidElementOnList_auxDigit1() {
+        doReturn(CreditorInstitutionsView.builder().creditorInstitutionList(Collections.singletonList(
+                CreditorInstitutionView.builder().auxDigit(1L).progressivo(null).segregazione(19L).build()
+        )).build()).when(apiConfigClient).getCreditorInstitutionsAssociatedToBrokerStations(any(),any(),any(),any());
+        boolean result = brokerService.checkBrokerAllowance(
+                "test","test","18842323");
+        assertTrue(result);
+        verify(apiConfigClient).getCreditorInstitutionsAssociatedToBrokerStations(any(),any(),any(),any());
+    }
+
+    @Test
+    public void shouldReturnTrueOnValidElementOnList_auxDigit2() {
+        doReturn(CreditorInstitutionsView.builder().creditorInstitutionList(Collections.singletonList(
+                CreditorInstitutionView.builder().auxDigit(2L).progressivo(null).segregazione(19L).build()
+        )).build()).when(apiConfigClient).getCreditorInstitutionsAssociatedToBrokerStations(any(),any(),any(),any());
+        boolean result = brokerService.checkBrokerAllowance(
+                "test","test","28842323");
+        assertTrue(result);
+        verify(apiConfigClient).getCreditorInstitutionsAssociatedToBrokerStations(any(),any(),any(),any());
+    }
+
+    @Test
     public void shouldReturnFalseOnInvalidElement() {
         doReturn(CreditorInstitutionsView.builder().creditorInstitutionList(Collections.singletonList(
                 CreditorInstitutionView.builder().auxDigit(null).progressivo(null).segregazione(null).build()

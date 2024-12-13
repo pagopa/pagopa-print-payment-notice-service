@@ -23,10 +23,16 @@ public class BrokerServiceImpl implements BrokerService {
     this.pageLimit = pageLimit;
   }
 
+  /**
+   * @param brokerTaxCode the code of the broker
+   * @param ecTaxCode the code of the EC
+   * @param noticeCode the notice number (NAV)
+   * @return true if NAV is valid.
+   *     <p>The NAV is valid if the prefix identifies a broker's station associated with the EC.
+   */
   @Override
   @Cacheable(value = "checkBrokerAllowance")
-  public boolean checkBrokerAllowance(
-      String brokerTaxCode, String targetTaxCode, String noticeCode) {
+  public boolean checkBrokerAllowance(String brokerTaxCode, String ecTaxCode, String noticeCode) {
 
     int pageNumber = 0;
     boolean isValid;
@@ -34,10 +40,10 @@ public class BrokerServiceImpl implements BrokerService {
     CreditorInstitutionsView creditorInstitutionsView;
 
     do {
-      // get paged of stations
+      // get a page of stations
       creditorInstitutionsView =
           apiConfigClient.getCreditorInstitutionsAssociatedToBrokerStations(
-              pageLimit, pageNumber, targetTaxCode, brokerTaxCode);
+              pageLimit, pageNumber, ecTaxCode, brokerTaxCode);
 
       // check every station in the page
       isValid = checkNoticeNumberInPage(noticeCode, creditorInstitutionsView);
