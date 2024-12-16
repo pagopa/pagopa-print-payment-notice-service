@@ -65,7 +65,7 @@ class BrokerServiceImplTest {
                 .build())
         .when(apiConfigClient)
         .getCreditorInstitutionsAssociatedToBrokerStations(any(), any(), any(), any());
-    boolean result = brokerService.checkBrokerAllowance("test", "test", "30242323");
+    boolean result = brokerService.checkBrokerAllowance("test", "test", "30142323");
     assertTrue(result);
     verify(apiConfigClient)
         .getCreditorInstitutionsAssociatedToBrokerStations(any(), any(), any(), any());

@@ -60,7 +60,7 @@ public class BrokerServiceImpl implements BrokerService {
    * @param noticeCode the notice code is the NAV
    * @param creditorInstitutionsView the list of configured stations for the EC
    * @return true if the NAV starts with a valid configuration
-   *     <p>if auxDigit = null the NAV must start with (0|3 + segregationCode|applicationCode)
+   *     <p>if auxDigit = null the NAV must start with (3 + segregationCode or 0 + applicationCode)
    *     <p>if auxDigit = 1 the NAV must start with 1
    *     <p>if auxDigit = 2 the NAV must start with 2
    */
@@ -80,7 +80,8 @@ public class BrokerServiceImpl implements BrokerService {
             item -> {
 
               // Note: auxDigit = null is 0 or 3
-              // if auxDigit is 0 or 3 NAV must start with 3|0 + segregationCode|applicationCode
+              // if auxDigit is 0 the NAV must start with 0 + applicationCode
+              // if auxDigit is 3 the NAV must start with 3 + segregationCode
               if (item.getAuxDigit() == null) {
                 List<String> prefixes = getPrefixes(item);
 
@@ -112,11 +113,9 @@ public class BrokerServiceImpl implements BrokerService {
     if (stationConfiguration.getSegregazione() != null) {
       String segregationCode = String.format("%02d", stationConfiguration.getSegregazione());
       prefixes.add("3" + segregationCode);
-      prefixes.add("0" + segregationCode);
     }
     if (stationConfiguration.getProgressivo() != null) {
       String applicationCode = String.format("%02d", stationConfiguration.getProgressivo());
-      prefixes.add("3" + applicationCode);
       prefixes.add("0" + applicationCode);
     }
     return prefixes;
