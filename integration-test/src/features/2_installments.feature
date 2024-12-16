@@ -103,11 +103,11 @@ Feature: Single Generation - 2 Installments
       | Avviso.Oggetto             | "Avviso Pagamento di TEST" |
       | Avviso.Importo             | 300000                     |
       | Avviso.Data                | "30/12/2024"               |
-      | Avviso.Codice              | "470000008800999051"       |
-      | Avviso.Rata1.Codice        | "470000008800999062"       |
+      | Avviso.Codice              | "347000008800999051"       |
+      | Avviso.Rata1.Codice        | "347000008800999062"       |
       | Avviso.Rata1.Importo       | 160000                     |
       | Avviso.Rata1.Data          | "31/12/2024"               |
-      | Avviso.Rata2.Codice        | "470000008800999073"       |
+      | Avviso.Rata2.Codice        | "347000008800999073"       |
       | Avviso.Rata2.Importo       | 140000                     |
       | Avviso.Rata2.Data          | "31/12/2025"               |
       | Ente.CF                    | "80034390585"              |
