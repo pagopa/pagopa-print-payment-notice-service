@@ -109,7 +109,7 @@ public class InstitutionsController {
 
             UploadData institutionsData = objectMapper.readValue(institutionsDataContent, UploadData.class);
             if(!validator.validate(institutionsData).isEmpty()) {
-                throw new AppException(AppError.BAD_REQUEST, "Validation errors on provided input {}", validator.validate(institutionsData));
+                throw new AppException(AppError.BAD_REQUEST, "Validation errors on provided input %s", validator.validate(institutionsData));
             }
 
             if (logo != null) {
