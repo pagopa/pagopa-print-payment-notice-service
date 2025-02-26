@@ -15,9 +15,11 @@ import it.gov.pagopa.payment.notices.service.model.ProblemJson;
 import it.gov.pagopa.payment.notices.service.model.institutions.UploadData;
 import it.gov.pagopa.payment.notices.service.service.InstitutionsService;
 import it.gov.pagopa.payment.notices.service.util.OpenApiTableMetadata;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 
 import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.createWorkingDirectory;
 
@@ -108,8 +111,10 @@ public class InstitutionsController {
         try {
 
             UploadData institutionsData = objectMapper.readValue(institutionsDataContent, UploadData.class);
-            if(!validator.validate(institutionsData).isEmpty()) {
-                throw new AppException(AppError.BAD_REQUEST, "Validation errors on provided input %s", validator.validate(institutionsData));
+            Set<ConstraintViolation<UploadData>> validationResults = validator.validate(institutionsData);
+
+            if(!validationResults.isEmpty()) {
+                throw new AppException(AppError.BAD_REQUEST, String.format("Validation errors on provided input: %s", getValidationErrorString(validationResults)));
             }
 
             if (logo != null) {
@@ -171,6 +176,15 @@ public class InstitutionsController {
             @Parameter(description = "tax code of the CI to use for retrieval")
             @PathVariable(name = "taxCode") String taxCode) {
         return institutionsService.getInstitutionData(taxCode);
+    }
+
+    private String getValidationErrorString(Set<ConstraintViolation<UploadData>> validationResults){
+        var sb = new StringBuilder();
+
+        for (ConstraintViolation<UploadData> error : validationResults) {
+            sb.append(error.getPropertyPath()).append(" ").append(error.getMessage()).append(". ");
+        }
+        return StringUtils.chop(sb.toString());
     }
 
 }
