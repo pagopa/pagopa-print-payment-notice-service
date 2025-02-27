@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: "print-payment-notice-service"
   image:
     repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
-    tag: "0.9.3-1-PIDM-45-fix-error-log-format"
+    tag: "0.9.4"
     pullPolicy: Always
   livenessProbe:
     httpGet:
