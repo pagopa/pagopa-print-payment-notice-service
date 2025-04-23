@@ -33,9 +33,9 @@ microservice-chart:
     path: /pagopa-print-payment-notice-service/(.*)
     servicePort: 8080
   serviceAccount:
-    create: false
-    annotations: {}
-    name: ""
+    name: "payopt-workload-identity"
+  azure:
+    workloadIdentityClientId: <workload-identity-client-id-set-automatically-by-gha>
   podAnnotations: {}
   podSecurityContext:
     seccompProfile:
