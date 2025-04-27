@@ -35,7 +35,7 @@ microservice-chart:
   serviceAccount:
     create: false
     annotations: {}
-    name: ""
+    name: "printit-workload-identity"
   podAnnotations: {}
   podSecurityContext:
     seccompProfile:
@@ -59,7 +59,7 @@ microservice-chart:
       cpu: "0.25"
     limits:
       memory: "728Mi"
-      cpu: "0.25"
+      cpu: "0.30"
   autoscaling:
     enable: true
     minReplica: 1
@@ -73,6 +73,7 @@ microservice-chart:
           type: Utilization # Allowed types are 'Utilization' or 'AverageValue'
           value: "75"
   envConfig:
+    ASPNETCORE_URLS: "http://*:8080"
     WEBSITE_SITE_NAME: 'print-payment-notice-service' # required to show cloud role name in application insights
     ENV: 'azure-dev'
     APP_LOGGING_LEVEL: 'DEBUG'
@@ -97,7 +98,7 @@ microservice-chart:
   envSecret:
     # required
     APPLICATIONINSIGHTS_CONNECTION_STRING: 'app-insight-connection-string'
-    OTEL_EXPORTER_OTLP_HEADERS: elastic-apm-secret-token
+    OTEL_EXPORTER_OTLP_HEADERS: 'elastic-apm-secret-token'
     MONGODB_CONNECTION_URI: 'notices-mongo-connection-string'
     TEMPLATE_STORAGE_CONN_STRING: 'templates-storage-account-connection-string'
     INSTITUTION_STORAGE_CONN_STRING: 'institutions-storage-account-connection-string'
@@ -125,21 +126,7 @@ microservice-chart:
                 values:
                   - user
   canaryDelivery:
-    create: false
-    ingress:
-      create: true
-      canary:
-        type: header
-        headerName: X-Canary
-        headerValue: canary
-        weightPercent: 0
-    service:
-      create: true
     deployment:
-      create: true
       image:
-        repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
         tag: "0.0.0"
-        pullPolicy: Always
-      envConfig: {}
-      envSecret: {}
+    create: false
