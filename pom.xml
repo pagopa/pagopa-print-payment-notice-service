@@ -12,7 +12,7 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>print-payment-notices-service</artifactId>
-    <version>0.9.10-2-PIDM-1218-fix-ci-upload-error</version>
+    <version>0.9.10-3-PIDM-1218-fix-ci-upload-error</version>
     <name>Print Payment Notices - Service</name>
     <description>Microservice to expose the APIs for Print Payment Notices</description>
 
