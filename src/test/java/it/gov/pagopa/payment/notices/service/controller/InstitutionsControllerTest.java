@@ -164,4 +164,54 @@ class InstitutionsControllerTest {
         verify(institutionsService).getInstitutionData(any());
     }
 
+    @Test
+    void updateInstitutionsShouldReturnOkWithFullNameAt100Chars() throws Exception {
+        String fullName100Chars = "A".repeat(100);
+        UploadData uploadData =
+                UploadData.builder()
+                        .cbill("cbill")
+                        .info("info")
+                        .webChannel(true)
+                        .appChannel(false)
+                        .taxCode("123132")
+                        .posteAccountNumber("1313")
+                        .fullName(fullName100Chars)
+                        .organization("test")
+                        .physicalChannel("1212")
+                        .build();
+        String url = "/institutions/data";
+        mvc.perform(multipart(url)
+                        .file("file", "".getBytes())
+                        .part(new MockPart("institutions-data",
+                                objectMapper.writeValueAsString(uploadData).getBytes()))
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andExpect(status().isOk());
+        verify(institutionsService).uploadInstitutionsData(any(), any());
+    }
+
+    @Test
+    void updateInstitutionsShouldReturnBadRequestWithFullNameOver100Chars() throws Exception {
+        String fullName101Chars = "A".repeat(101);
+        UploadData uploadData =
+                UploadData.builder()
+                        .cbill("cbill")
+                        .info("info")
+                        .webChannel(true)
+                        .appChannel(false)
+                        .taxCode("123132")
+                        .posteAccountNumber("1313")
+                        .fullName(fullName101Chars)
+                        .organization("test")
+                        .physicalChannel("1212")
+                        .build();
+        String url = "/institutions/data";
+        mvc.perform(multipart(url)
+                        .file("file", "".getBytes())
+                        .part(new MockPart("institutions-data",
+                                objectMapper.writeValueAsString(uploadData).getBytes()))
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andExpect(status().isBadRequest());
+        verify(institutionsService, never()).uploadInstitutionsData(any(), any());
+    }
+
 }
