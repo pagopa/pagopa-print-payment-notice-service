@@ -110,7 +110,7 @@ Feature: Single Generation - 2 Installments
       | Avviso.Rata2.Codice        | "347000008800999073"       |
       | Avviso.Rata2.Importo       | 140000                     |
       | Avviso.Rata2.Data          | "31/12/2025"               |
-      | Ente.CF                    | "80034390585"              |
+      | Ente.CF                    | "99999000013"              |
       | Destinatario.CF            | "FFFCST83A15L113V"         |
       | Destinatario.NomeCompleto  | "Mario Rossi"              |
       | Destinatario.Indirizzo     | "Via Nazionale"            |
