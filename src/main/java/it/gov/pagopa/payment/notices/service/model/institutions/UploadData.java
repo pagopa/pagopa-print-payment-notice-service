@@ -24,7 +24,7 @@ public class UploadData {
     @Schema(description = "CI full name", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull
     @NotEmpty
-    @Size(max = 50)
+    @Size(max = 100)
     private String fullName;
 
     @Schema(description = "CI organization unit managing the payment")
