@@ -29,7 +29,6 @@ on:
         type: choice
         description: Select the Environment
         options:
-          - local
           - dev
           - uat
       canary:
@@ -50,10 +49,9 @@ permissions:
 
 
 jobs:
-
   integration_test:
     name: Test ${{(github.event.inputs == null && 'dev') || inputs.environment }}
-    runs-on: ubuntu-latest
+    runs-on: [ self-hosted-job, "${{(github.event.inputs == null && 'uat') || inputs.environment }}" ]
     environment: ${{(github.event.inputs == null && 'dev') || inputs.environment }}
     steps:
       - name: Checkout
@@ -69,25 +67,17 @@ jobs:
           tenant-id: ${{ secrets.TENANT_ID }}
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
-      - name: Run Service on Docker
-        shell: bash
-        id: run_service_docker
-        run: |
-          cd ./docker
-          chmod +x ./run_docker.sh
-          ./run_docker.sh ${{ env.RUN_ENV }}
-
       - name: Run Integration Tests
         shell: bash
         env:
-            SUBKEY: ${{ secrets.SUBKEY }}
-            CUCUMBER_PUBLISH_TOKEN: ${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
+          SUBKEY: ${{ secrets.SUBKEY }}
+          CUCUMBER_PUBLISH_TOKEN: ${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
         run: |
           export CANARY=${{ inputs.canary }}
 
           cd ./integration-test
           chmod +x ./run_integration_test.sh
-          ./run_integration_test.sh ${{ env.RUN_ENV }}
+          ./run_integration_test.sh ${{(github.event.inputs == null && 'dev') || inputs.environment }}
 
 
   notify:
