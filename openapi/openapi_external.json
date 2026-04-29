@@ -4,7 +4,7 @@
     "description": "Microservice to expose the APIs for Print Payment Notices",
     "termsOfService": "https://www.pagopa.gov.it/",
     "title": "Print Payment Notices - Service - Payment Notice Service (External)",
-    "version": "0.9.11-1-PIDM-1434-update-openapi-responses"
+    "version": "0.9.11-2-PIDM-1434-update-openapi-responses"
   },
   "servers": [
     {
