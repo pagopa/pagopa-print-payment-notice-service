@@ -63,7 +63,7 @@ public class NoticesController {
                     description = "Unauthorized", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "403",
                     description = "Forbidden", content = @Content(schema = @Schema())),
-            @ApiResponse(responseCode = "412",
+            @ApiResponse(responseCode = "404",
                     description = "Institution Not Found", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "429",
                     description = "Too many requests", content = @Content(schema = @Schema())),

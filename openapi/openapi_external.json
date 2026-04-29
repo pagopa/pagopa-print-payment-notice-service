@@ -888,7 +888,7 @@
               }
             }
           },
-          "412": {
+          "404": {
             "description": "Institution Not Found",
             "headers": {
               "X-Request-Id": {
