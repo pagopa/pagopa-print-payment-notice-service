@@ -27,7 +27,7 @@ function get(url, headers) {
 }
 
 function post(url, body, headers, stream) {
-    console.log('config axios', headers)
+    // console.log('config axios', headers)
 
     let config = {
         headers: {
@@ -43,7 +43,7 @@ function post(url, body, headers, stream) {
     // console.log('config axios', config)
     return axios.post(url, body, config)
         .then(res => {
-            console.log(res);
+            // console.log(res);
             return res;
         })
         .catch(error => {
