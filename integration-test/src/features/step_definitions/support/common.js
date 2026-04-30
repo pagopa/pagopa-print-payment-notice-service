@@ -40,7 +40,7 @@ function post(url, body, headers, stream) {
         config.responseType = 'stream';
     }
 
-    console.log('config axios', config)
+    // console.log('config axios', config)
     return axios.post(url, body, config)
         .then(res => {
             console.log(res);

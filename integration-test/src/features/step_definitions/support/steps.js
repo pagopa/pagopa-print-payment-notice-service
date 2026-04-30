@@ -48,8 +48,8 @@ Given(/^the creditor institution in the storage:$/, async function (dataTable) {
             logoPath = JSON.parse(value);
         }
     });
-    console.log(jsonBody);
-    console.log(JSON.stringify(jsonBody));
+    // console.log(jsonBody);
+    // console.log(JSON.stringify(jsonBody));
 
     let data = new FormData();
 
@@ -58,7 +58,7 @@ Given(/^the creditor institution in the storage:$/, async function (dataTable) {
 
 
     const response = await formData(app_host + '/institutions/data', data);
-    console.log(response);
+    // console.log(response);
     assert.strictEqual(response !== null && response !== undefined, true);
     assert.strictEqual(response.hasOwnProperty('status'), true);
     assert.strictEqual(response.status, 200);
@@ -81,9 +81,9 @@ When(/^I send a (POST|PUT) request to "([^"]*)" with body:$/, async function (me
         const regex = new RegExp(`<${key}>`, 'g');
         jsonBody = jsonBody.replace(regex, value);
     }
-    console.log(jsonBody);
+    // console.log(jsonBody);
     let idempotencyKey = (Math.random() + 1).toString(36).substring(7);
-    console.log(idempotencyKey);
+    // console.log(idempotencyKey);
     responseToCheck = await call(method, app_host + url, jsonBody, {
         'X-User-Id': ciTaxCode ?? 'ADMIN',
         'Idempotency-Key': idempotencyKey
@@ -96,7 +96,7 @@ When(/^I send a POST request to "([^"]*)" with idempotency_key "([^"]*)" and wit
         const regex = new RegExp(`<${key}>`, 'g');
         jsonBody = jsonBody.replace(regex, value);
     }
-    console.log(jsonBody);
+    // console.log(jsonBody);
     responseToCheck = await call(method, app_host + url, jsonBody, {
         'X-User-Id': ciTaxCode ?? 'ADMIN',
         'Idempotency-Key': idempotencyKey
@@ -109,9 +109,9 @@ When(/^I send a (POST|PUT) request to "([^"]*)" without stream, with body:$/, as
         const regex = new RegExp(`<${key}>`, 'g');
         jsonBody = jsonBody.replace(regex, value);
     }
-    console.log(jsonBody);
+    // console.log(jsonBody);
     let idempotencyKey = (Math.random() + 1).toString(36).substring(7);
-    console.log(idempotencyKey);
+    // console.log(idempotencyKey);
     responseToCheck = await call(method, app_host + url, jsonBody, {
         'X-User-Id': ciTaxCode ?? 'ADMIN',
         'Idempotency-Key': idempotencyKey
@@ -196,7 +196,7 @@ Then('the request is in status {string} after {int} ms', async function (status,
     responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/status', null, {
         'X-User-Id': ciTaxCode ?? 'ADMIN'
     });
-    console.log(responseToCheck)
+    // console.log(responseToCheck)
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
     assert.strictEqual(responseToCheck.status, 200);
@@ -234,7 +234,7 @@ Then('the request has error after {int} ms', async function (time) {
     responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/status', null, {
         'X-User-Id': ciTaxCode ?? 'ADMIN'
     });
-    console.log(responseToCheck)
+    // console.log(responseToCheck)
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
     assert.strictEqual(responseToCheck.status, 200);
@@ -246,12 +246,12 @@ Then('the request has error after {int} ms', async function (time) {
 
 Then('error is recoverable with response errorId', async function () {
     // boundary time spent by azure function to process event
-    console.log("ERRORID");
-    console.log(responseToCheck.data.noticesInError[0]);
+    // console.log("ERRORID");
+    // console.log(responseToCheck.data.noticesInError[0]);
     responseToCheck = await call('GET', app_host + '/notices/folder/' + folderId + '/error/'+ responseToCheck.data.noticesInError[0], null, {
         'X-User-Id': ciTaxCode ?? 'ADMIN'
     });
-    console.log(responseToCheck)
+    // console.log(responseToCheck)
     assert.strictEqual(responseToCheck !== null && responseToCheck !== undefined, true);
     assert.strictEqual(responseToCheck.hasOwnProperty('status'), true);
     assert.strictEqual(responseToCheck.status, 200);
