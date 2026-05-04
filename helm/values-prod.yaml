@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: "print-payment-notice-service"
   image:
     repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
-    tag: "0.9.11-2-PIDM-1434-update-openapi-responses"
+    tag: "0.9.12"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -22,6 +22,12 @@ microservice-chart:
     periodSeconds: 10
   deployment:
     create: true
+    replicas: 3 # (default) same as HPA minReplica
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1
   service:
     create: true
     type: ClusterIP
