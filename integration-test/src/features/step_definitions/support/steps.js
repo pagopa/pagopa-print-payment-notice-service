@@ -132,14 +132,26 @@ Then(/^the PDF document should be equal to the reference PDF "([^"]*)"$/, async 
     const timestampPattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/g;
     const metaPattern = /<meta name="resourceName" content=".*\.pdf"\/>/g;
     const metaLengthPattern = /<meta name="Content-Length" content=".*"\/>/g;
+    const creatorToolPattern = /<meta name="xmp:CreatorTool" content=".*"\/>/g;
+    const producerPattern = /<meta name="pdf:producer" content=".*"\/>/g;
+    const docInfoCreatorToolPattern = /<meta name="pdf:docinfo:creator_tool" content=".*"\/>/g;
+    const docInfoCreatorToolProducerPattern = /<meta name="pdf:docinfo:producer" content=".*"\/>/g;
 
     html1 = html1.replace(timestampPattern, '');
     html1 = html1.replace(metaPattern, '');
     html1 = html1.replace(metaLengthPattern, '');
-
+    html1 = html1.replace(creatorToolPattern, '');
+    html1 = html1.replace(producerPattern, '');
+    html1 = html1.replace(docInfoCreatorToolPattern, '');
+    html1 = html1.replace(docInfoCreatorToolProducerPattern, '');
     html2 = html2.replace(timestampPattern, '');
+
     html2 = html2.replace(metaPattern, '');
     html2 = html2.replace(metaLengthPattern, '');
+    html2 = html2.replace(creatorToolPattern, '');
+    html2 = html2.replace(producerPattern, '');
+    html2 = html2.replace(docInfoCreatorToolPattern, '');
+    html2 = html2.replace(docInfoCreatorToolProducerPattern, '');
 
     assert.equal(html1, html2);
 });
