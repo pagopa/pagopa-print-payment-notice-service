@@ -144,8 +144,8 @@ Then(/^the PDF document should be equal to the reference PDF "([^"]*)"$/, async 
     html1 = html1.replace(producerPattern, '');
     html1 = html1.replace(docInfoCreatorToolPattern, '');
     html1 = html1.replace(docInfoCreatorToolProducerPattern, '');
-    html2 = html2.replace(timestampPattern, '');
 
+    html2 = html2.replace(timestampPattern, '');
     html2 = html2.replace(metaPattern, '');
     html2 = html2.replace(metaLengthPattern, '');
     html2 = html2.replace(creatorToolPattern, '');
