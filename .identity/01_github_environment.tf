@@ -41,32 +41,6 @@ locals {
     "SLACK_WEBHOOK_URL_DEPLOY" : data.azurerm_key_vault_secret.key_vault_deploy_webhook_slack.value,
     "SLACK_WEBHOOK_URL_INTEGRATION_TEST" : data.azurerm_key_vault_secret.key_vault_integration_test_webhook_slack.value,
   }
-  special_repo_secrets = {
-    "CLIENT_ID_PR" : {
-      "key" : "${upper(var.env)}_CLIENT_ID_PR",
-      "value" : data.azurerm_user_assigned_identity.identity_pr_01.client_id
-    },
-    "CLIENT_ID_BRANCH" : {
-      "key" : "${upper(var.env)}_CLIENT_ID_BRANCH",
-      "value" : data.azurerm_user_assigned_identity.identity_ref_01.client_id
-    },
-    "TENANT_ID_PR" : {
-      "key" : "${upper(var.env)}_TENANT_ID_PR",
-      "value" : data.azurerm_user_assigned_identity.identity_pr_01.tenant_id
-    },
-    "TENANT_ID_BRANCH" : {
-      "key" : "${upper(var.env)}_TENANT_ID_BRANCH",
-      "value" : data.azurerm_user_assigned_identity.identity_ref_01.tenant_id
-    },
-    "SUBSCRIPTION_ID" : {
-      "key" : "${upper(var.env)}_SUBSCRIPTION_ID",
-      "value" : data.azurerm_subscription.current.subscription_id
-    },
-    "SUBKEY" : {
-      "key" : "${upper(var.env)}_SUBKEY",
-      "value" : data.azurerm_key_vault_secret.key_vault_integration_test_subkey.value
-    },
-  }
 }
 
 ###############
@@ -104,12 +78,4 @@ resource "github_actions_secret" "repo_secrets" {
   repository      = local.github.repository
   secret_name     = each.key
   plaintext_value = each.value
-}
-
-
-resource "github_actions_secret" "special_repo_secrets" {
-  for_each        = local.special_repo_secrets
-  repository      = local.github.repository
-  secret_name     = each.value.key
-  plaintext_value = each.value.value
 }
