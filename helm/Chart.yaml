@@ -2,9 +2,9 @@ apiVersion: v2
 name: pagopa-print-payment-notice-service
 description: Microservice that handles services for notice print
 type: application
-version: 0.78.0
-appVersion: 0.9.12
+version: 0.80.0
+appVersion: 0.9.12-2-new-blueprint
 dependencies:
   - name: microservice-chart
-    version: 8.1.1
+    version: '9.0.0'
     repository: "https://pagopa.github.io/aks-microservice-chart-blueprint"
