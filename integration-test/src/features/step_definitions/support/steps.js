@@ -143,7 +143,7 @@ Then(/^the PDF document should be equal to the reference PDF "([^"]*)"$/, async 
     html1 = html1.replace(creatorToolPattern, '');
     html1 = html1.replace(producerPattern, '');
     html1 = html1.replace(docInfoCreatorToolPattern, '');
-    html1 = html1.replace(docInfoCreatorToolProducerPattern, '');
+    html1 = html1.replace(docInfoProducerPattern, '');
 
     html2 = html2.replace(timestampPattern, '');
     html2 = html2.replace(metaPattern, '');
@@ -151,7 +151,7 @@ Then(/^the PDF document should be equal to the reference PDF "([^"]*)"$/, async 
     html2 = html2.replace(creatorToolPattern, '');
     html2 = html2.replace(producerPattern, '');
     html2 = html2.replace(docInfoCreatorToolPattern, '');
-    html2 = html2.replace(docInfoCreatorToolProducerPattern, '');
+    html2 = html2.replace(docInfoProducerPattern, '');
 
     assert.equal(html1, html2);
 });
