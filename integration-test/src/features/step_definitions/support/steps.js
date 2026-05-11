@@ -135,7 +135,7 @@ Then(/^the PDF document should be equal to the reference PDF "([^"]*)"$/, async 
     const creatorToolPattern = /<meta name="xmp:CreatorTool" content=".*"\/>/g;
     const producerPattern = /<meta name="pdf:producer" content=".*"\/>/g;
     const docInfoCreatorToolPattern = /<meta name="pdf:docinfo:creator_tool" content=".*"\/>/g;
-    const docInfoCreatorToolProducerPattern = /<meta name="pdf:docinfo:producer" content=".*"\/>/g;
+    const docInfoProducerPattern = /<meta name="pdf:docinfo:producer" content=".*"\/>/g;
 
     html1 = html1.replace(timestampPattern, '');
     html1 = html1.replace(metaPattern, '');
