@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: "print-payment-notice-service"
   image:
     repository: ghcr.io/pagopa/pagopa-print-payment-notice-service
-    tag: "0.9.12"
+    tag: "0.9.12-1-PIDM-1434-update-openapi-responses"
     pullPolicy: Always
   livenessProbe:
     httpGet:
