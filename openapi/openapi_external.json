@@ -4,7 +4,7 @@
     "description": "Microservice to expose the APIs for Print Payment Notices",
     "termsOfService": "https://www.pagopa.gov.it/",
     "title": "Print Payment Notices - Service - Payment Notice Service (External)",
-    "version": "0.9.12"
+    "version": "0.9.13"
   },
   "servers": [
     {
@@ -879,6 +879,17 @@
           },
           "403": {
             "description": "Forbidden",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Institution Not Found",
             "headers": {
               "X-Request-Id": {
                 "description": "This header identifies the call",
