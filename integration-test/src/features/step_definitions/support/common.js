@@ -1,6 +1,4 @@
 const axios = require("axios");
-const FormData = require("form-data");
-const fs = require("fs");
 
 axios.defaults.headers.common['Ocp-Apim-Subscription-Key'] = process.env.SUBKEY // for all requests
 if (process.env.CANARY) {
@@ -15,19 +13,15 @@ function get(url, headers) {
 
     return axios.get(url, config)
         .then(res => {
-            // console.info("STATUS");
-            // console.info(res);
             return res;
         })
         .catch(error => {
-            console.info("ERROR");
-            console.info(error.response);
             return error.response;
         });
 }
 
 function post(url, body, headers, stream) {
-    console.log('config axios', headers)
+    // console.log('config axios', headers)
 
     let config = {
         headers: {
@@ -40,14 +34,12 @@ function post(url, body, headers, stream) {
         config.responseType = 'stream';
     }
 
-    console.log('config axios', config)
+    // console.log('config axios', config)
     return axios.post(url, body, config)
         .then(res => {
-            console.log(res);
             return res;
         })
         .catch(error => {
-            console.log(error.response);
             return error.response;
         });
 }

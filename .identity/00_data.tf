@@ -22,16 +22,6 @@ data "azurerm_user_assigned_identity" "identity_cd_01" {
   name                = "${local.product}-${local.domain}-job-01-github-cd-identity"
 }
 
-data "azurerm_user_assigned_identity" "identity_pr_01" {
-  name                = "${local.prefix}-${var.env_short}-${local.domain}-01-pr-github-cd-identity"
-  resource_group_name = "${local.prefix}-${var.env_short}-identity-rg"
-}
-
-data "azurerm_user_assigned_identity" "identity_ref_01" {
-  name                = "${local.prefix}-${var.env_short}-${local.domain}-01-ref-github-cd-identity"
-  resource_group_name = "${local.prefix}-${var.env_short}-identity-rg"
-}
-
 data "azurerm_key_vault" "key_vault" {
   name                = "pagopa-${var.env_short}-kv"
   resource_group_name = "pagopa-${var.env_short}-sec-rg"
@@ -40,10 +30,6 @@ data "azurerm_key_vault" "key_vault" {
 data "azurerm_key_vault" "domain_key_vault" {
   name                = "pagopa-${var.env_short}-itn-${local.domain}-kv"
   resource_group_name = "pagopa-${var.env_short}-itn-${local.domain}-sec-rg"
-}
-
-data "azurerm_resource_group" "apim_resource_group" {
-  name = "${local.product}-api-rg"
 }
 
 data "azurerm_key_vault_secret" "key_vault_sonar" {
