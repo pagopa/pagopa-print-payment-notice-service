@@ -13,11 +13,11 @@
     "scenarios": {
       "contacts": {
         "executor": "constant-arrival-rate",
-        "duration": "5m",
-        "rate": 75,
+        "duration": "60m",
+        "rate": 60,
         "timeUnit": "1s",
-        "preAllocatedVUs": 100,
-        "maxVUs": 200
+        "preAllocatedVUs": 200,
+        "maxVUs": 2000
       }
     },
     "thresholds": {
@@ -46,5 +46,5 @@
         "rate>=0"
       ]
     },
-    "setupTimeout": "60m"
+    "setupTimeout": "120m"
   }
