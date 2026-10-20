@@ -183,10 +183,11 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         } catch (AppException e) {
             throw e;
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("Signed URL request failed: phase=SERVICE_GET_FILE_SIGNED_URL " + "folderId={} exceptionType={}",
+                    folderId, e.getClass().getName());
+
             throw new AppException(AppError.ERROR_ON_GET_FILE_URL_REQUEST, e);
         }
-
     }
 
     @Override
@@ -220,10 +221,12 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         } catch (AppException e) {
             throw e;
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error(
+                    "Signed URL request failed: phase=SERVICE_GET_FOLDER_SIGNED_URL " + "folderId={} exceptionType={}",
+                    folderId, e.getClass().getName());
+
             throw new AppException(AppError.ERROR_ON_GET_FOLDER_URL_REQUEST, e);
         }
-
     }
 
     @Override

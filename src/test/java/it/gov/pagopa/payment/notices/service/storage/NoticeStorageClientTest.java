@@ -7,6 +7,8 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobStorageException;
+import com.azure.storage.blob.models.UserDelegationKey;
+import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -18,6 +20,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -31,6 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @ExtendWith(MockitoExtension.class)
 class NoticeStorageClientTest {
@@ -183,7 +189,7 @@ class NoticeStorageClientTest {
         assertFalse(message.contains("https://example.invalid"));
         assertNull(event.getThrowableProxy());
     }
-    
+
     @Test
     void shouldLogNestedAuthenticationMetadataWithoutSensitiveData() {
         HttpResponse response = mock(HttpResponse.class);
@@ -211,6 +217,49 @@ class NoticeStorageClientTest {
         assertFalse(message.contains("secret-for-log-test"));
         assertFalse(message.contains("sas-for-log-test"));
         assertNull(event.getThrowableProxy());
+    }
+
+    @Test
+    void shouldUseSameValidityWindowForDelegationKeyAndSas() {
+        UserDelegationKey delegationKey = new UserDelegationKey();
+
+        when(blobServiceClient.getUserDelegationKey(any(), any())).thenReturn(delegationKey);
+
+        when(blobClientMock.generateUserDelegationSas(any(), same(delegationKey))).thenReturn("test-token");
+
+        when(blobClientMock.getBlobUrl()).thenReturn("https://storage.example.invalid/notices/folderId/fileId.pdf");
+
+        String url = noticeStorageClient.getFileSignedUrl("folderId", "fileId.pdf");
+
+        assertNotNull(url);
+
+        ArgumentCaptor<OffsetDateTime> keyStartCaptor = ArgumentCaptor.forClass(OffsetDateTime.class);
+
+        ArgumentCaptor<OffsetDateTime> keyExpiryCaptor = ArgumentCaptor.forClass(OffsetDateTime.class);
+
+        verify(blobServiceClient).getUserDelegationKey(keyStartCaptor.capture(), keyExpiryCaptor.capture());
+
+        ArgumentCaptor<BlobServiceSasSignatureValues> sasCaptor = ArgumentCaptor
+                .forClass(BlobServiceSasSignatureValues.class);
+
+        verify(blobClientMock).generateUserDelegationSas(sasCaptor.capture(), same(delegationKey));
+
+        OffsetDateTime keyStart = keyStartCaptor.getValue();
+        OffsetDateTime keyExpiry = keyExpiryCaptor.getValue();
+        BlobServiceSasSignatureValues sasValues = sasCaptor.getValue();
+
+        assertEquals(keyStart, sasValues.getStartTime());
+        assertEquals(keyExpiry, sasValues.getExpiryTime());
+
+        assertEquals(keyStart.plusMinutes(10), keyExpiry);
+
+        assertEquals(ZoneOffset.UTC, keyStart.getOffset());
+        assertEquals(ZoneOffset.UTC, keyExpiry.getOffset());
+
+        assertEquals(0, keyStart.getNano());
+        assertEquals(0, keyExpiry.getNano());
+
+        verify(blobContainerClient).getBlobClient("folderId/fileId.pdf");
     }
 
     private ILoggingEvent getSignedUrlFailureLog() {

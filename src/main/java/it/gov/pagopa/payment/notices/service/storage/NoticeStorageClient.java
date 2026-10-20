@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.regex.Pattern;
 
 @Component
@@ -82,20 +83,24 @@ public class NoticeStorageClient {
         String phase = "GET_USER_DELEGATION_KEY";
 
         try {
-            UserDelegationKey userDelegationKey = blobServiceClient
-                    .getUserDelegationKey(OffsetDateTime.now().minusMinutes(5), OffsetDateTime.now().plusMinutes(5));
+            OffsetDateTime referenceTime = OffsetDateTime.now(ZoneOffset.UTC).withNano(0);
+
+            OffsetDateTime startTime = referenceTime.minusMinutes(5);
+
+            // The delegation key and SAS expire five minutes after the reference time.
+            OffsetDateTime expiryTime = referenceTime.plusMinutes(5);
+
+            UserDelegationKey userDelegationKey = blobServiceClient.getUserDelegationKey(startTime, expiryTime);
 
             phase = "PREPARE_SAS";
 
-            // Create a SAS token that's valid for 1 day, as an example
-            OffsetDateTime expiryTime = OffsetDateTime.now().plusMinutes(5);
             // Assign read permissions to the SAS token
             BlobSasPermission sasPermission = new BlobSasPermission().setReadPermission(true);
 
             BlobClient blobClient = blobContainerClient.getBlobClient(String.join("/", folderId, fileId));
 
             BlobServiceSasSignatureValues sasSignatureValues = new BlobServiceSasSignatureValues(expiryTime,
-                    sasPermission).setStartTime(OffsetDateTime.now().minusMinutes(5));
+                    sasPermission).setStartTime(startTime);
 
             phase = "GENERATE_SAS";
 
