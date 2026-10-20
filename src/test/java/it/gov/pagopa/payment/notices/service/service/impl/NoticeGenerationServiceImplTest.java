@@ -30,6 +30,8 @@ import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
@@ -689,6 +691,44 @@ class NoticeGenerationServiceImplTest {
                 assertThrows(AppException.class, () -> noticeGenerationService.getError("test", "test", "test"));
         assertNotNull(exception);
         assertEquals(exception.getTitle(), AppError.ERROR_ON_GET_ERROR.getTitle());
+    }
+
+    @ParameterizedTest(name = "folder URL={0}")
+    @ValueSource(booleans = { false, true })
+    void shouldSanitizeFolderIdInSignedUrlFailureLog(boolean folderUrl) {
+
+        String folderId = "folderId\r\nFORGED_ENTRY";
+
+        when(paymentGenerationRequestRepository.findByIdAndUserId(folderId, "userId")).thenReturn(Optional
+                .of(PaymentNoticeGenerationRequest.builder().status(PaymentGenerationRequestStatus.PROCESSED).build()));
+
+        RuntimeException cause = new RuntimeException("Unexpected storage failure");
+
+        when(noticeStorageClient.getFileSignedUrl(anyString(), anyString())).thenThrow(cause);
+
+        AppException exception = assertThrows(AppException.class, () -> {
+            if (folderUrl) {
+                noticeGenerationService.getFolderSignedUrl(folderId, "userId");
+            } else {
+                noticeGenerationService.getFileSignedUrl(folderId, "fileId", "userId");
+            }
+        });
+
+        assertSame(cause, exception.getCause());
+
+        String expectedPhase = folderUrl ? "SERVICE_GET_FOLDER_SIGNED_URL" : "SERVICE_GET_FILE_SIGNED_URL";
+
+        assertSafeSignedUrlFailureLog(expectedPhase, "suspicious log param");
+
+        for (ILoggingEvent event : logAppender.list) {
+            String message = event.getFormattedMessage();
+
+            assertFalse(message.contains("\r"));
+            assertFalse(message.contains("\n"));
+            assertFalse(message.contains("FORGED_ENTRY"));
+        }
+
+        verify(noticeStorageClient).getFileSignedUrl(folderId, folderUrl ? folderId + ".zip" : "fileId.pdf");
     }
 
     private void assertSafeSignedUrlFailureLog(String expectedPhase, String expectedFolderId) {

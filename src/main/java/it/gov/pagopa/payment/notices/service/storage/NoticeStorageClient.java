@@ -28,6 +28,8 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.regex.Pattern;
 
+import static it.gov.pagopa.payment.notices.service.util.CommonUtility.sanitizeLogParam;
+
 @Component
 @Slf4j
 public class NoticeStorageClient {
@@ -159,8 +161,9 @@ public class NoticeStorageClient {
         log.error(
                 "Signed URL generation failed: phase={} folderId={} "
                         + "upstreamHttpStatus={} azureErrorCode={} exceptionType={}",
-                phase, folderId, upstreamHttpStatus != null ? upstreamHttpStatus.toString() : "N/A",
-                azureErrorCode != null ? azureErrorCode : "N/A", exception.getClass().getName());
+                phase, folderId != null ? sanitizeLogParam(folderId) : "N/A",
+                upstreamHttpStatus != null ? upstreamHttpStatus.toString() : "N/A",
+                azureErrorCode != null ? sanitizeLogParam(azureErrorCode) : "N/A", exception.getClass().getName());
     }
 
     private Integer extractUpstreamHttpStatus(Throwable exception) {

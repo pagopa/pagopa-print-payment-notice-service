@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static it.gov.pagopa.payment.notices.service.util.CommonUtility.checkUserId;
+import static it.gov.pagopa.payment.notices.service.util.CommonUtility.sanitizeLogParam;
 import static it.gov.pagopa.payment.notices.service.util.WorkingDirectoryUtils.createWorkingDirectory;
 
 /**
@@ -178,13 +179,12 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
 
         try {
             return GetSignedUrlResource.builder()
-                    .signedUrl(noticeStorageClient.getFileSignedUrl(folderId, fileId.concat(".pdf")))
-                    .build();
+                    .signedUrl(noticeStorageClient.getFileSignedUrl(folderId, fileId.concat(".pdf"))).build();
         } catch (AppException e) {
             throw e;
         } catch (Exception e) {
             log.error("Signed URL request failed: phase=SERVICE_GET_FILE_SIGNED_URL " + "folderId={} exceptionType={}",
-                    folderId, e.getClass().getName());
+                    folderId != null ? sanitizeLogParam(folderId) : "N/A", e.getClass().getName());
 
             throw new AppException(AppError.ERROR_ON_GET_FILE_URL_REQUEST, e);
         }
@@ -223,7 +223,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
         } catch (Exception e) {
             log.error(
                     "Signed URL request failed: phase=SERVICE_GET_FOLDER_SIGNED_URL " + "folderId={} exceptionType={}",
-                    folderId, e.getClass().getName());
+                    folderId != null ? sanitizeLogParam(folderId) : "N/A", e.getClass().getName());
 
             throw new AppException(AppError.ERROR_ON_GET_FOLDER_URL_REQUEST, e);
         }
