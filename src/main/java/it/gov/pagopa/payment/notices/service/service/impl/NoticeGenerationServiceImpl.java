@@ -184,7 +184,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             throw e;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new AppException(AppError.ERROR_ON_GET_FILE_URL_REQUEST);
+            throw new AppException(AppError.ERROR_ON_GET_FILE_URL_REQUEST, e);
         }
 
     }
@@ -221,7 +221,7 @@ public class NoticeGenerationServiceImpl implements NoticeGenerationService {
             throw e;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new AppException(AppError.ERROR_ON_GET_FOLDER_URL_REQUEST);
+            throw new AppException(AppError.ERROR_ON_GET_FOLDER_URL_REQUEST, e);
         }
 
     }

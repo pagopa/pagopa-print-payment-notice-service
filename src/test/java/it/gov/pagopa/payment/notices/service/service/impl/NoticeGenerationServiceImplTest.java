@@ -424,15 +424,22 @@ class NoticeGenerationServiceImplTest {
 
     @Test
     void getFileSignedUrlShouldReturnExceptionOnClientException() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
+                .thenReturn(Optional.of(PaymentNoticeGenerationRequest.builder().build()));
 
-        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any())).thenReturn(
-                Optional.of(PaymentNoticeGenerationRequest.builder().build()));
-        when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(
-                FeignException.class);
-        assertThrows(AppException.class, () -> noticeGenerationService
-                .getFileSignedUrl("test", "test", "test"));
-        verify(noticeStorageClient).getFileSignedUrl(any(), any());
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
+        RuntimeException cause = new RuntimeException("Unexpected storage failure");
+
+        when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(cause);
+
+        AppException exception = assertThrows(AppException.class,
+                () -> noticeGenerationService.getFileSignedUrl("folderId", "fileId", "userId"));
+
+        assertSame(cause, exception.getCause());
+        assertEquals(AppError.ERROR_ON_GET_FILE_URL_REQUEST.getHttpStatus(), exception.getHttpStatus());
+        assertEquals(AppError.ERROR_ON_GET_FILE_URL_REQUEST.getTitle(), exception.getTitle());
+        assertEquals(AppError.ERROR_ON_GET_FILE_URL_REQUEST.getDetails(), exception.getMessage());
+
+        verify(noticeStorageClient).getFileSignedUrl("folderId", "fileId.pdf");
     }
 
     @Test
@@ -514,6 +521,26 @@ class NoticeGenerationServiceImplTest {
         verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         assertNotNull(resource);
         assertNotNull(resource.getSignedUrl());
+    }
+    
+    @Test
+    void getFolderSignedUrlShouldPreserveOriginalCause() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any())).thenReturn(Optional
+                .of(PaymentNoticeGenerationRequest.builder().status(PaymentGenerationRequestStatus.PROCESSED).build()));
+
+        RuntimeException cause = new RuntimeException("Unexpected storage failure");
+
+        when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(cause);
+
+        AppException exception = assertThrows(AppException.class,
+                () -> noticeGenerationService.getFolderSignedUrl("folderId", "userId"));
+
+        assertSame(cause, exception.getCause());
+        assertEquals(AppError.ERROR_ON_GET_FOLDER_URL_REQUEST.getHttpStatus(), exception.getHttpStatus());
+        assertEquals(AppError.ERROR_ON_GET_FOLDER_URL_REQUEST.getTitle(), exception.getTitle());
+        assertEquals(AppError.ERROR_ON_GET_FOLDER_URL_REQUEST.getDetails(), exception.getMessage());
+
+        verify(noticeStorageClient).getFileSignedUrl("folderId", "folderId.zip");
     }
 
     @Test
