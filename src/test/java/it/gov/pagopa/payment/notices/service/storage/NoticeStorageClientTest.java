@@ -262,6 +262,47 @@ class NoticeStorageClientTest {
         verify(blobContainerClient).getBlobClient("folderId/fileId.pdf");
     }
 
+    @Test
+    void shouldSanitizeExternalValuesInFailureLog() {
+        String injectedFolderId = "folderId\r\nFORGED_FOLDER_ENTRY";
+
+        String injectedAzureCode = "AuthorizationPermissionMismatch\r\nFORGED_AZURE_ENTRY";
+
+        HttpHeaders headers = mock(HttpHeaders.class);
+        when(headers.getValue("x-ms-error-code")).thenReturn(injectedAzureCode);
+
+        HttpResponse response = mock(HttpResponse.class);
+        when(response.getStatusCode()).thenReturn(403);
+        when(response.getHeaders()).thenReturn(headers);
+
+        BlobStorageException cause = new BlobStorageException("Delegation denied", response, null);
+
+        when(blobServiceClient.getUserDelegationKey(any(), any())).thenThrow(cause);
+
+        AppException exception = assertThrows(AppException.class,
+                () -> noticeStorageClient.getFileSignedUrl(injectedFolderId, "fileId"));
+
+        assertSame(cause, exception.getCause());
+
+        ILoggingEvent event = getSignedUrlFailureLog();
+        String message = event.getFormattedMessage();
+
+        assertTrue(message.contains("phase=GET_USER_DELEGATION_KEY"));
+        assertTrue(message.contains("upstreamHttpStatus=403"));
+        assertTrue(message.contains("folderId=suspicious log param"));
+        assertTrue(message.contains("azureErrorCode=suspicious log param"));
+
+        assertFalse(message.contains("\r"));
+        assertFalse(message.contains("\n"));
+        assertFalse(message.contains("FORGED_FOLDER_ENTRY"));
+        assertFalse(message.contains("FORGED_AZURE_ENTRY"));
+
+        assertNull(event.getThrowableProxy());
+
+        verify(blobContainerClient, never()).getBlobClient(anyString());
+        verifyNoInteractions(blobClientMock);
+    }
+
     private ILoggingEvent getSignedUrlFailureLog() {
         return logAppender.list.stream()
                 .filter(event -> event.getFormattedMessage().startsWith("Signed URL generation failed:")).findFirst()
