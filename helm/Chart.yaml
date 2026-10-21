@@ -2,8 +2,8 @@ apiVersion: v2
 name: pagopa-print-payment-notice-service
 description: Microservice that handles services for notice print
 type: application
-version: 0.81.0
-appVersion: 0.9.14
+version: 0.82.0
+appVersion: 0.9.14-1-PIDM-2526-error-recovering-folder-signed-url
 dependencies:
   - name: microservice-chart
     version: 8.1.1
