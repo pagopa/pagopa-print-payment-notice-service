@@ -139,23 +139,29 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
      * @param request from frontend
      * @return a {@link ProblemJson} as response with the cause and with an appropriated HTTP status
      */
-    @ExceptionHandler({AppException.class})
-    public ResponseEntity<ProblemJson> handleAppException(final AppException ex,
-                                                          final WebRequest request) {
-        if(ex.getCause() != null) {
-            log.warn("App Exception raised: " + ex.getMessage() + "\nCause of the App Exception: ",
-                    ex.getCause());
+    @ExceptionHandler({ AppException.class })
+    public ResponseEntity<ProblemJson> handleAppException(final AppException ex, final WebRequest request) {
+
+        if (isSignedUrlError(ex)) {
+
+            String causeType = ex.getCause() != null ? ex.getCause().getClass().getName() : "N/A";
+
+            log.warn("Signed URL request failed: httpStatus={} " + "exceptionType={} causeType={}",
+                    ex.getHttpStatus().value(), ex.getClass().getName(), causeType);
+
+        } else if (ex.getCause() != null) {
+
+            log.warn("App Exception raised: " + ex.getMessage() + "\nCause of the App Exception: ", ex.getCause());
+
         } else {
             log.warn("App Exception raised: ", ex);
         }
-        var errorResponse = ProblemJson.builder()
-                .status(ex.getHttpStatus().value())
-                .title(ex.getTitle())
-                .detail(ex.getMessage())
-                .build();
+
+        var errorResponse = ProblemJson.builder().status(ex.getHttpStatus().value()).title(ex.getTitle())
+                .detail(ex.getMessage()).build();
+
         return new ResponseEntity<>(errorResponse, ex.getHttpStatus());
     }
-
 
     /**
      * Handle if a {@link Exception} is raised
@@ -174,5 +180,10 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
                 .detail(ex.getMessage())
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private boolean isSignedUrlError(AppException exception) {
+        return AppError.ERROR_ON_GET_FILE_URL_REQUEST.getTitle().equals(exception.getTitle())
+                || AppError.ERROR_ON_GET_FOLDER_URL_REQUEST.getTitle().equals(exception.getTitle());
     }
 }

@@ -1,6 +1,11 @@
 package it.gov.pagopa.payment.notices.service.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
@@ -22,10 +27,15 @@ import it.gov.pagopa.payment.notices.service.service.async.AsyncService;
 import it.gov.pagopa.payment.notices.service.storage.NoticeStorageClient;
 import it.gov.pagopa.payment.notices.service.util.Aes256Utils;
 import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -76,20 +86,26 @@ class NoticeGenerationServiceImplTest {
 
     private NoticeGenerationServiceImpl noticeGenerationService;
 
+    private Logger serviceLogger;
+    private ListAppender<ILoggingEvent> logAppender;
+
     @BeforeEach
-    public void init() {
-        Mockito.reset(
-                paymentGenerationRequestErrorRepository,
-                paymentGenerationRequestRepository,
-                noticeGenerationRequestProducer,
-                brokerService);
+    void init() {
+        Mockito.reset(paymentGenerationRequestErrorRepository, paymentGenerationRequestRepository,
+                noticeGenerationRequestProducer, brokerService);
         when(brokerService.checkBrokerAllowance(any(), any(), any())).thenReturn(false);
-        noticeGenerationService = new NoticeGenerationServiceImpl(
-                paymentGenerationRequestRepository,
-                paymentGenerationRequestErrorRepository,
-                asyncService,
-                noticeGenerationClient,
-                brokerService, noticeStorageClient);
+        noticeGenerationService = new NoticeGenerationServiceImpl(paymentGenerationRequestRepository,
+                paymentGenerationRequestErrorRepository, asyncService, noticeGenerationClient, brokerService,
+                noticeStorageClient);
+
+        setupLogging();
+    }
+
+    @AfterEach
+    void cleanupLogging() {
+        serviceLogger.detachAppender(logAppender);
+        logAppender.stop();
+        MDC.clear();
     }
 
     @Test
@@ -424,15 +440,25 @@ class NoticeGenerationServiceImplTest {
 
     @Test
     void getFileSignedUrlShouldReturnExceptionOnClientException() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any()))
+                .thenReturn(Optional.of(PaymentNoticeGenerationRequest.builder().build()));
 
-        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any())).thenReturn(
-                Optional.of(PaymentNoticeGenerationRequest.builder().build()));
-        when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(
-                FeignException.class);
-        assertThrows(AppException.class, () -> noticeGenerationService
-                .getFileSignedUrl("test", "test", "test"));
-        verify(noticeStorageClient).getFileSignedUrl(any(), any());
-        verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
+        RuntimeException cause = new RuntimeException(
+                "client_secret=secret-for-log-test " + "https://example.invalid/file?sig=sas-for-log-test");
+
+        when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(cause);
+
+        AppException exception = assertThrows(AppException.class,
+                () -> noticeGenerationService.getFileSignedUrl("folderId", "fileId", "userId"));
+
+        assertSame(cause, exception.getCause());
+        assertEquals(AppError.ERROR_ON_GET_FILE_URL_REQUEST.getHttpStatus(), exception.getHttpStatus());
+        assertEquals(AppError.ERROR_ON_GET_FILE_URL_REQUEST.getTitle(), exception.getTitle());
+        assertEquals(AppError.ERROR_ON_GET_FILE_URL_REQUEST.getDetails(), exception.getMessage());
+
+        verify(noticeStorageClient).getFileSignedUrl("folderId", "fileId.pdf");
+
+        assertSafeSignedUrlFailureLog("SERVICE_GET_FILE_SIGNED_URL", "folderId");
     }
 
     @Test
@@ -514,6 +540,29 @@ class NoticeGenerationServiceImplTest {
         verify(paymentGenerationRequestRepository).findByIdAndUserId(any(), any());
         assertNotNull(resource);
         assertNotNull(resource.getSignedUrl());
+    }
+    
+    @Test
+    void getFolderSignedUrlShouldPreserveOriginalCause() {
+        when(paymentGenerationRequestRepository.findByIdAndUserId(any(), any())).thenReturn(Optional
+                .of(PaymentNoticeGenerationRequest.builder().status(PaymentGenerationRequestStatus.PROCESSED).build()));
+
+        RuntimeException cause = new RuntimeException(
+                "client_secret=secret-for-log-test " + "https://example.invalid/file?sig=sas-for-log-test");
+
+        when(noticeStorageClient.getFileSignedUrl(any(), any())).thenThrow(cause);
+
+        AppException exception = assertThrows(AppException.class,
+                () -> noticeGenerationService.getFolderSignedUrl("folderId", "userId"));
+
+        assertSame(cause, exception.getCause());
+        assertEquals(AppError.ERROR_ON_GET_FOLDER_URL_REQUEST.getHttpStatus(), exception.getHttpStatus());
+        assertEquals(AppError.ERROR_ON_GET_FOLDER_URL_REQUEST.getTitle(), exception.getTitle());
+        assertEquals(AppError.ERROR_ON_GET_FOLDER_URL_REQUEST.getDetails(), exception.getMessage());
+
+        verify(noticeStorageClient).getFileSignedUrl("folderId", "folderId.zip");
+
+        assertSafeSignedUrlFailureLog("SERVICE_GET_FOLDER_SIGNED_URL", "folderId");
     }
 
     @Test
@@ -632,6 +681,79 @@ class NoticeGenerationServiceImplTest {
         assertEquals(exception.getTitle(), AppError.ERROR_ON_GET_ERROR.getTitle());
     }
 
+    @ParameterizedTest(name = "folder URL={0}")
+    @ValueSource(booleans = { false, true })
+    void shouldSanitizeFolderIdInSignedUrlFailureLog(boolean folderUrl) {
 
+        String folderId = "folderId\r\nFORGED_ENTRY";
 
+        when(paymentGenerationRequestRepository.findByIdAndUserId(folderId, "userId")).thenReturn(Optional
+                .of(PaymentNoticeGenerationRequest.builder().status(PaymentGenerationRequestStatus.PROCESSED).build()));
+
+        RuntimeException cause = new RuntimeException("Unexpected storage failure");
+
+        when(noticeStorageClient.getFileSignedUrl(anyString(), anyString())).thenThrow(cause);
+
+        AppException exception;
+
+        if (folderUrl) {
+            exception = assertThrows(AppException.class,
+                    () -> noticeGenerationService.getFolderSignedUrl(folderId, "userId"));
+        } else {
+            exception = assertThrows(AppException.class,
+                    () -> noticeGenerationService.getFileSignedUrl(folderId, "fileId", "userId"));
+        }
+
+        assertSame(cause, exception.getCause());
+
+        String expectedPhase = folderUrl ? "SERVICE_GET_FOLDER_SIGNED_URL" : "SERVICE_GET_FILE_SIGNED_URL";
+
+        assertSafeSignedUrlFailureLog(expectedPhase, "suspicious log param");
+
+        for (ILoggingEvent event : logAppender.list) {
+            String message = event.getFormattedMessage();
+
+            assertFalse(message.contains("\r"));
+            assertFalse(message.contains("\n"));
+            assertFalse(message.contains("FORGED_ENTRY"));
+        }
+
+        verify(noticeStorageClient).getFileSignedUrl(folderId, folderUrl ? folderId + ".zip" : "fileId.pdf");
+    }
+
+    private void setupLogging() {
+        MDC.clear();
+
+        serviceLogger = (Logger) LoggerFactory.getLogger(NoticeGenerationServiceImpl.class);
+
+        logAppender = new ListAppender<>();
+        logAppender.setContext(serviceLogger.getLoggerContext());
+        logAppender.start();
+
+        serviceLogger.addAppender(logAppender);
+    }
+
+    private void assertSafeSignedUrlFailureLog(String expectedPhase, String expectedFolderId) {
+
+        var events = logAppender.list.stream()
+                .filter(event -> event.getFormattedMessage().startsWith("Signed URL request failed:")).toList();
+
+        assertEquals(1, events.size());
+
+        ILoggingEvent event = events.get(0);
+        String message = event.getFormattedMessage();
+
+        assertEquals(Level.ERROR, event.getLevel());
+        assertTrue(message.contains("phase=" + expectedPhase));
+        assertTrue(message.contains("folderId=" + expectedFolderId));
+        assertTrue(message.contains("exceptionType=" + RuntimeException.class.getName()));
+
+        assertFalse(message.contains("client_secret="));
+        assertFalse(message.contains("secret-for-log-test"));
+        assertFalse(message.contains("sig="));
+        assertFalse(message.contains("sas-for-log-test"));
+        assertFalse(message.contains("https://example.invalid"));
+
+        assertNull(event.getThrowableProxy());
+    }
 }

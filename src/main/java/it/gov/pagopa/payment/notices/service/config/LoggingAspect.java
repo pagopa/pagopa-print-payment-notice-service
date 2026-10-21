@@ -1,6 +1,7 @@
 package it.gov.pagopa.payment.notices.service.config;
 
 import it.gov.pagopa.payment.notices.service.exception.AppError;
+import it.gov.pagopa.payment.notices.service.model.GetSignedUrlResource;
 import it.gov.pagopa.payment.notices.service.model.ProblemJson;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
@@ -91,6 +92,14 @@ public class LoggingAspect {
         return params;
     }
 
+    private static Object safeResultForLogging(Object result) {
+        if (result instanceof GetSignedUrlResource) {
+            return "[SIGNED_URL_REDACTED]";
+        }
+
+        return result;
+    }
+
     @Pointcut("@within(org.springframework.web.bind.annotation.RestController)")
     public void restController() {
         // all rest controllers
@@ -119,7 +128,7 @@ public class LoggingAspect {
         MDC.put(METHOD, joinPoint.getSignature().getName());
         MDC.put(START_TIME, String.valueOf(System.currentTimeMillis()));
         MDC.put(OPERATION_ID, UUID.randomUUID().toString());
-        if(MDC.get(REQUEST_ID) == null) {
+        if (MDC.get(REQUEST_ID) == null) {
             var requestId = UUID.randomUUID().toString();
             MDC.put(REQUEST_ID, requestId);
         }
@@ -133,7 +142,8 @@ public class LoggingAspect {
         MDC.put(STATUS, "OK");
         MDC.put(CODE, String.valueOf(httpResponse.getStatus()));
         MDC.put(RESPONSE_TIME, getExecutionTime());
-        log.info("Successful API operation {} - result: {}", joinPoint.getSignature().getName(), result);
+        log.info("Successful API operation {} - result: {}", joinPoint.getSignature().getName(),
+                safeResultForLogging(result));
         MDC.remove(STATUS);
         MDC.remove(CODE);
         MDC.remove(RESPONSE_TIME);
@@ -157,7 +167,8 @@ public class LoggingAspect {
         Map<String, String> params = getParams(joinPoint);
         log.debug("Call method {} - args: {}", joinPoint.getSignature().toShortString(), params);
         Object result = joinPoint.proceed();
-        log.debug("Return method {} - result: {}", joinPoint.getSignature().toShortString(), result);
+        log.debug("Return method {} - result: {}", joinPoint.getSignature().toShortString(),
+                safeResultForLogging(result));
         return result;
     }
 }
